@@ -1,0 +1,62 @@
+apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
+    defaultConfig {
+        applicationId "frc3824.rscout2018"
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
+    }
+    dataBinding {
+        enabled = true
+    }
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    compile 'com.android.support:appcompat-v7:26.0.2'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:support-v4:26.0.2'
+    compile 'com.android.support:design:26.0.2'
+    compile 'com.android.support:support-v13:26.0.2'
+
+    compile 'info.hoang8f:fbutton:1.0.5'
+
+    compile 'com.marcinmoskala.activitystarter:activitystarter:1.00'
+
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+
+    compile 'com.sdsmdg.tastytoast:tastytoast:0.1.1'
+
+    compile('com.mikepenz:materialdrawer:5.9.5@aar') {
+        transitive = true
+    }
+
+    compile 'id.zelory:compressor:2.1.0'
+
+    compile 'com.github.bumptech.glide:glide:4.1.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.1.1'
+
+    compile 'com.frosquivel:magicalcamera:5.0.5'
+
+    testCompile 'junit:junit:4.12'
+}
