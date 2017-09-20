@@ -2,29 +2,29 @@ package frc3824.rscout2018.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-// import android.databinding.DataBindingUtil;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import frc3824.rscout2018.R;
-
 /**
- * @class SavableEditText
- * @brief A savable widget that has a label and an EditText
+ * Created by andrew on 9/17/17.
  */
-public class SavableEditText extends RelativeLayout
+
+public class SavableNumeric extends RelativeLayout
 {
     EditText mEditText;
+    double mValue;
+    double mMin;
+    double mMax;
 
     /**
      * Constructor
      * @param context
      * @param attrs
      */
-    public SavableEditText(Context context, AttributeSet attrs)
+    public SavableNumeric(Context context, AttributeSet attrs)
     {
         super(context, attrs);
 
@@ -37,24 +37,41 @@ public class SavableEditText extends RelativeLayout
         TextView label = findViewById(R.id.label);
         label.setText(typedArray.getString(R.styleable.SavableView_label));
 
+        // Set min and max
+        typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableNumeric);
+        mMin = typedArray.getFloat(R.styleable.SavableNumeric_min, Float.MIN_VALUE);
+        mMax = typedArray.getFloat(R.styleable.SaveableNumeric_max, Float.MAX_VALUE);
+
         mEditText = findViewById(R.id.edittext);
     }
 
     /**
      * Setter function for the data binding
-     * @param text The text to set for the {@link EditText}
+     * @param value The value to set for the {@link EditText}
      */
-    public void setText(String text)
+    public void setNumber(double value)
     {
-        mEditText.setText(text);
+        if(value > mMax)
+        {
+            mValue = mMax;
+        }
+        else if(value < mMin)
+        {
+            mValue = mMin;
+        }
+        else
+        {
+            mValue = value;
+        }
+        mEditText.setText(String.valueOf(mValue));
     }
 
     /**
      * Getter function for the data binding
      * @returns The text currently in the {@link EditText}
      */
-    public String getText()
+    public double getNumber()
     {
-        return mEditText.getText().toString();
+        return mValue;
     }
 }

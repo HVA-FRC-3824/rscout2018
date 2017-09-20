@@ -4,8 +4,8 @@
     <data>
 
         <variable
-            name = "tmd"
-            type = "frc3824.rscout2018.data_models.TeamMatchData" />
+            name = "tpd"
+            type = "frc3824.rscout2018.data_models.TeamPitData" />
     </data>
 
     <LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"
@@ -14,30 +14,25 @@
                   android:layout_height = "match_parent"
                   android:orientation = "vertical">
 
-
-        <frc3824.rscout2018.views.SavableCounter
+        <frc3824.rscout2018.views.SavableAutoCompleteTextView
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
-            app:label = "Fouls"
-            app:count = "@{tmd.fouls}" />
+            app:label = "Programming Language"
+            app:count = "@{tpd.notes}"
+            app:options = "@array/programming_languages"/>
 
-        <frc3824.rscout2018.views.SavableCounter
+        <frc3824.rscout2018.views.SavableAutoCompleteTextView
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
-            app:label = "Tech Fouls"
-            app:count = "@{tmd.techFouls}" />
+            app:label = "Drive Train"
+            app:count = "@{tpd.driveTrain}"
+            app:options = "@array/drive_train"/>
 
-        <frc3824.rscout2018.views.SavableSwitch
+        <frc3824.rscout2018.views.SavableEditText
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
-            app:label = "Yellow Card"
-            app:bool = "@{tmd.yellowCard}" />
-
-        <frc3824.rscout2018.views.SavableSwitch
-            android:layout_width = "match_parent"
-            android:layout_height = "wrap_content"
-            app:label = "Red Card"
-            app:bool = "@{tmd.redCard}" />
+            app:label = "Notes"
+            app:count = "@{tpd.notes}" />
 
     </LinearLayout>
 </layout>

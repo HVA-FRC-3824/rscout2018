@@ -2,9 +2,9 @@ package frc3824.rscout2018.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-// import android.databinding.DataBindingUtil;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -12,24 +12,24 @@ import android.widget.TextView;
 import frc3824.rscout2018.R;
 
 /**
- * @class SavableEditText
- * @brief A savable widget that has a label and an EditText
+ * @class SavableAutoCompleteTextView
+ * @brief A savable widget that has a label and an AutoCompleteTextView
  */
-public class SavableEditText extends RelativeLayout
+public class SavableAutoCompleteTextView extends RelativeLayout
 {
-    EditText mEditText;
+    AutoCompleteTextView mAutoCompleteTextView;
 
     /**
      * Constructor
      * @param context
      * @param attrs
      */
-    public SavableEditText(Context context, AttributeSet attrs)
+    public SavableAutoCompleteTextView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.savable_edittext, this, false);
+        inflater.inflate(R.layout.savable_autocompletetextview, this, false);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 
@@ -37,24 +37,24 @@ public class SavableEditText extends RelativeLayout
         TextView label = findViewById(R.id.label);
         label.setText(typedArray.getString(R.styleable.SavableView_label));
 
-        mEditText = findViewById(R.id.edittext);
+        mAutoCompleteTextView = findViewById(R.id.autocompletetextview);
     }
 
     /**
      * Setter function for the data binding
-     * @param text The text to set for the {@link EditText}
+     * @param text The text to set for the {@link AutoCompleteTextView}
      */
     public void setText(String text)
     {
-        mEditText.setText(text);
+        mAutoCompleteTextView.setText(text);
     }
 
     /**
      * Getter function for the data binding
-     * @returns The text currently in the {@link EditText}
+     * @returns The text currently in the {@link AutoCompleteTextView}
      */
     public String getText()
     {
-        return mEditText.getText().toString();
+        return mAutoCompleteTextView.getText().toString();
     }
 }

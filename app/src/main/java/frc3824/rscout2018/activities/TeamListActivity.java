@@ -13,30 +13,42 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.Map;
 
+import activitystarter.ActivityStarter;
 import activitystarter.Arg;
+import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.data_models.MatchLogistics;
 import frc3824.rscout2018.data_models.TeamLogistics;
 import frc3824.rscout2018.utilities.Constants;
 import io.realm.Realm;
 
 /**
- *
+ * @class TeamListActivity
+ * @brief Activity that displays all the teams to select from. Determines which activity to start
+ *        based on the intent extra {@link TeamListActivity#nextPage} passed to it.
  */
+@MakeActivityStarter
 public class TeamListActivity extends ListActivity
 {
     @Arg
-    String next_page;
+    String nextPage;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_match_list);
+        ActivityStarter.fill(this);
 
         ListView listView = findViewById(R.id.list);
         listView.setAdapter(new TeamListAdapter());
     }
 
+    /**
+     * @class TeamListAdapter
+     * @brief The {@link ListAdapter} for showing the list of teams
+     */
     private class TeamListAdapter implements ListAdapter, View.OnClickListener
     {
         LayoutInflater mLayoutInflator;
@@ -44,6 +56,9 @@ public class TeamListActivity extends ListActivity
         Map<Integer, Integer> mTeamNumbers;
         Integer mNumberOfTeams = null;
 
+        /**
+         * Constructor
+         */
         TeamListAdapter()
         {
             mLayoutInflator = getLayoutInflater();
@@ -51,30 +66,39 @@ public class TeamListActivity extends ListActivity
             mTeamNumbers = new HashMap<>();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean areAllItemsEnabled()
         {
             return true;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean isEnabled(int i)
         {
             return true;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        public void registerDataSetObserver(DataSetObserver dataSetObserver)
-        {
+        public void registerDataSetObserver(DataSetObserver dataSetObserver) {}
 
-        }
-
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        public void unregisterDataSetObserver(DataSetObserver dataSetObserver)
-        {
+        public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {}
 
-        }
-
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int getCount()
         {
@@ -85,30 +109,42 @@ public class TeamListActivity extends ListActivity
             return mNumberOfTeams;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Object getItem(int i)
         {
             return null;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public long getItemId(int i)
         {
             return i;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean hasStableIds()
         {
             return true;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public View getView(int i, View view, ViewGroup viewGroup)
         {
             if(view == null)
             {
-                view = mLayoutInflator.inflate(R.layout.list_item_textview, null);
+                view = mLayoutInflator.inflate(R.layout.list_item_fbutton, null);
             }
 
 
@@ -131,18 +167,27 @@ public class TeamListActivity extends ListActivity
             return null;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int getItemViewType(int i)
         {
             return 0;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int getViewTypeCount()
         {
             return 0;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean isEmpty()
         {
@@ -153,15 +198,18 @@ public class TeamListActivity extends ListActivity
             return mNumberOfTeams == 0;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void onClick(View view)
         {
-            switch (next_page)
+            switch (nextPage)
             {
-                case Constants.IntentExtras.NextPage.PIT_SCOUTING:
+                case Constants.IntentExtras.NextPageOptions.PIT_SCOUTING:
                     // PitScoutActivityStarter.start(view.getId());
                     break;
-                case Constants.IntentExtras.NextPage.TEAM_VIEW:
+                case Constants.IntentExtras.NextPageOptions.TEAM_VIEW:
                     // TeamViewActivityStarter.start(view.getId());
                     break;
                 default:

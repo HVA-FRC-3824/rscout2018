@@ -40,7 +40,7 @@ public interface Constants
 
     interface IntentExtras
     {
-        interface NextPage
+        interface NextPageOptions
         {
             String MATCH_SCOUTING = "match_scouting";
             String PIT_SCOUTING = "pit_scouting";

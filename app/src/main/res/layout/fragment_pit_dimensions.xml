@@ -4,8 +4,8 @@
     <data>
 
         <variable
-            name = "tmd"
-            type = "frc3824.rscout2018.data_models.TeamMatchData" />
+            name = "tpd"
+            type = "frc3824.rscout2018.data_models.TeamPitData" />
     </data>
 
     <LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"
@@ -15,29 +15,29 @@
                   android:orientation = "vertical">
 
 
-        <frc3824.rscout2018.views.SavableCounter
+        <frc3824.rscout2018.views.SavableNumeric
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
-            app:label = "Fouls"
-            app:count = "@{tmd.fouls}" />
+            app:label = "Robot Width"
+            app:count = "@{tpd.robotWidth}" />
 
-        <frc3824.rscout2018.views.SavableCounter
+        <frc3824.rscout2018.views.SavableNumeric
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
-            app:label = "Tech Fouls"
-            app:count = "@{tmd.techFouls}" />
+            app:label = "Robot Length"
+            app:count = "@{tpd.robotLength}" />
 
-        <frc3824.rscout2018.views.SavableSwitch
+        <frc3824.rscout2018.views.SavableNumeric
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
-            app:label = "Yellow Card"
-            app:bool = "@{tmd.yellowCard}" />
+            app:label = "Robot Height"
+            app:count = "@{tpd.robotHeight}" />
 
-        <frc3824.rscout2018.views.SavableSwitch
+        <frc3824.rscout2018.views.SavableNumeric
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
-            app:label = "Red Card"
-            app:bool = "@{tmd.redCard}" />
+            app:label = "Robot Weight"
+            app:count = "@{tpd.robotWeight}" />
 
     </LinearLayout>
 </layout>

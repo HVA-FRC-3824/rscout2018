@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 
+import activitystarter.ActivityStarter;
 import activitystarter.Arg;
 import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
@@ -31,13 +32,10 @@ public class MatchScoutActivity extends Activity
 
     private int mTeamNumber = -1;
     @Arg
-    private int mMatchNumber;
+    protected int mMatchNumber = -1;
     private boolean mPractice = false;
 
-    private String mScoutName;
-
     private Realm mDatabase;
-    private boolean mDirty = false;
 
     private MatchScoutFragmentPagerAdapter mSFPA;
     private TeamMatchData mTMD;
@@ -46,7 +44,8 @@ public class MatchScoutActivity extends Activity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_match_scout);
+        setContentView(R.layout.activity_scout);
+        ActivityStarter.fill(this);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         int position = sharedPreferences.getInt(Constants.Settings.MATCH_SCOUT_POSITION, -1);
@@ -142,10 +141,9 @@ public class MatchScoutActivity extends Activity
          */
         public void previous()
         {
-            final Intent intent = new Intent(MatchScoutActivity.this, MatchScoutActivity.class);
             if (mPractice)
             {
-                MatchScoutActivityStarter.start(-1);
+                MatchScoutActivityStarter.start(MatchScoutActivity.this, -1);
             }
             else
             {
@@ -155,7 +153,7 @@ public class MatchScoutActivity extends Activity
                 }
                 else
                 {
-                    MatchScoutActivityStarter.start(mMatchNumber - 1);
+                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber - 1);
                 }
             }
         }
@@ -165,10 +163,9 @@ public class MatchScoutActivity extends Activity
          */
         public void next()
         {
-            final Intent intent = new Intent(MatchScoutActivity.this, MatchScoutActivity.class);
             if (mPractice)
             {
-                MatchScoutActivityStarter.start(-1);
+                MatchScoutActivityStarter.start(MatchScoutActivity.this, -1);
             }
             else
             {
@@ -178,7 +175,7 @@ public class MatchScoutActivity extends Activity
                 }
                 else
                 {
-                    MatchScoutActivityStarter.start(mMatchNumber + 1);
+                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber + 1);
                 }
             }
         }
@@ -190,7 +187,7 @@ public class MatchScoutActivity extends Activity
         {
             if (mPractice)
             {
-                HomeActivityStarter.start();
+                HomeActivityStarter.start(MatchScoutActivity.this);
             }
             else
             {
@@ -200,7 +197,7 @@ public class MatchScoutActivity extends Activity
                 }
                 else
                 {
-                    HomeActivityStarter.start();
+                    HomeActivityStarter.start(MatchScoutActivity.this);
                 }
             }
         }
@@ -212,7 +209,7 @@ public class MatchScoutActivity extends Activity
         {
             if (mPractice)
             {
-                MatchListActivityStarter.start(Constants.IntentExtras.NextPage.MATCH_SCOUTING);
+                MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
             }
             else
             {
@@ -222,7 +219,7 @@ public class MatchScoutActivity extends Activity
                 }
                 else
                 {
-                    MatchListActivityStarter.start(Constants.IntentExtras.NextPage.MATCH_SCOUTING);
+                    MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
                 }
             }
         }

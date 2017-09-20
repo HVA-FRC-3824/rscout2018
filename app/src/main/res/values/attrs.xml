@@ -4,7 +4,33 @@
         <attr name="label" format="string"/>
     </declare-styleable>
 
-    <declare-styleable name="SavableEditText">
+    <declare-styleable name="SavableEditText" parent="SavableView">
         <attr name="text" format="string"/>
     </declare-styleable>
+
+    <declare-styleable name="SavableNumeric" parent="SavableView">
+        <attr name="number" format="string"/>
+        <attr name="min" format="integer|float"/>
+        <attr name="max" format="integer|float"/>
+    </declare-styleable>
+
+    <declare-styleable name="SavableAutoCompleteTextView" parent="SavableView">
+        <attr name="text" />
+        <attr name="options" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="SavableSwitch" parent="SavableView">
+        <attr name="bool" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="SavableCheckbox" parent="SavableView">
+        <attr name="bool" />
+    </declare-styleable>
+
+    <declare-styleable name="SavableCounter" parent="SavableView">
+        <attr name="count" format="integer"/>
+        <attr name="min"/>
+        <attr name="max"/>
+    </declare-styleable>
+
 </resources>

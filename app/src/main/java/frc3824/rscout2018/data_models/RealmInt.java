@@ -3,9 +3,9 @@ package frc3824.rscout2018.data_models;
 import io.realm.RealmObject;
 
 /**
- * Created by andrew on 9/14/17.
+ * @class RealmInt
+ * @brief Realm wrapped integer
  */
-
 public class RealmInt extends RealmObject
 {
     private int i;

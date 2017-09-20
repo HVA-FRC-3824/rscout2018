@@ -2,29 +2,26 @@ package frc3824.rscout2018.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-// import android.databinding.DataBindingUtil;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
-import frc3824.rscout2018.R;
-
 /**
- * @class SavableEditText
- * @brief A savable widget that has a label and an EditText
+ * @class SavableSwitch
+ * @brief A savable widget that contains a switch
  */
-public class SavableEditText extends RelativeLayout
+public class SavableSwitch extends RelativeLayout
 {
-    EditText mEditText;
+    Switch mSwitch;
 
     /**
      * Constructor
      * @param context
      * @param attrs
      */
-    public SavableEditText(Context context, AttributeSet attrs)
+    public SavableSwitch(Context context, AttributeSet attrs)
     {
         super(context, attrs);
 
@@ -37,24 +34,24 @@ public class SavableEditText extends RelativeLayout
         TextView label = findViewById(R.id.label);
         label.setText(typedArray.getString(R.styleable.SavableView_label));
 
-        mEditText = findViewById(R.id.edittext);
+        mSwitch = findViewById(R.id.switch_);
     }
 
     /**
-     * Setter function for the data binding
-     * @param text The text to set for the {@link EditText}
+     * Setter function for the binding
+     * @param value
      */
-    public void setText(String text)
+    public void setBool(boolean value)
     {
-        mEditText.setText(text);
+        mSwitch.setChecked(value);
     }
 
     /**
-     * Getter function for the data binding
-     * @returns The text currently in the {@link EditText}
+     * Getter function for the binding
+     * @returns
      */
-    public String getText()
+    public boolean getBool()
     {
-        return mEditText.getText().toString();
+        return mSwitch.isChecked();
     }
 }

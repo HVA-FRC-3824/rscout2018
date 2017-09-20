@@ -6,5 +6,6 @@
     <color name="navyBlue">#000080</color>
     <color name="columbiaBlue">#9BDDFF</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="black">#000000</color>
+    <color name="black">#00000000</color>
+    <color name="gray">#88888888</color>
 </resources>

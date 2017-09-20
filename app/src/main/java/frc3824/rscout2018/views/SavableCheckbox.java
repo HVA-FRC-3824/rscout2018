@@ -2,29 +2,26 @@ package frc3824.rscout2018.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-// import android.databinding.DataBindingUtil;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.EditText;
+import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import frc3824.rscout2018.R;
-
 /**
- * @class SavableEditText
- * @brief A savable widget that has a label and an EditText
+ * @class SavableCheckbox
+ * @brief Savable widget with a label and a checkbox
  */
-public class SavableEditText extends RelativeLayout
+public class SavableCheckbox extends RelativeLayout
 {
-    EditText mEditText;
+    CheckBox mCheckBox;
 
     /**
      * Constructor
      * @param context
      * @param attrs
      */
-    public SavableEditText(Context context, AttributeSet attrs)
+    public SavableCheckbox(Context context, AttributeSet attrs)
     {
         super(context, attrs);
 
@@ -37,24 +34,24 @@ public class SavableEditText extends RelativeLayout
         TextView label = findViewById(R.id.label);
         label.setText(typedArray.getString(R.styleable.SavableView_label));
 
-        mEditText = findViewById(R.id.edittext);
+        mCheckBox = findViewById(R.id.checkbox);
     }
 
     /**
-     * Setter function for the data binding
-     * @param text The text to set for the {@link EditText}
+     * Setter function for data binding
+     * @param value The value of the checkbox
      */
-    public void setText(String text)
+    public void setBool(boolean value)
     {
-        mEditText.setText(text);
+        mCheckBox.setChecked(value);
     }
 
     /**
-     * Getter function for the data binding
-     * @returns The text currently in the {@link EditText}
+     * Getter function for data binding
+     * @returns The value of the checkbox
      */
-    public String getText()
+    public boolean getBool()
     {
-        return mEditText.getText().toString();
+        return mCheckBox.isChecked();
     }
 }

@@ -6,18 +6,22 @@ import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 
 import frc3824.rscout2018.data_models.TeamMatchData;
-import frc3824.rscout2018.fragments.MatchScout.MatchAutoFragment;
+import frc3824.rscout2018.fragments.match_scout.MatchAutoFragment;
+import frc3824.rscout2018.fragments.match_scout.MatchEndgameFragment;
+import frc3824.rscout2018.fragments.match_scout.MatchFoulsFragment;
+import frc3824.rscout2018.fragments.match_scout.MatchMiscFragment;
+import frc3824.rscout2018.fragments.match_scout.MatchTeleopFragment;
 
 /**
  * @class MatchScoutFragmentPagerAdapter
  *
- * Creates multiple fragments based on the LAYOUTS passed in
+ * Creates multiple fragments based for the match scout activity
  */
 public class MatchScoutFragmentPagerAdapter extends FragmentPagerAdapter
 {
     static final String TAG = "MatchScoutFragmentPagerAdapter";
 
-    String[] mTitles = { "Auto" }; //{ "Auto", "Teleop", "Endgame", "Fouls", "Misc"};
+    String[] mTitles = { "Auto", "Teleop", "Endgame", "Fouls", "Misc"};
     TeamMatchData mTeamMatchData;
 
 
@@ -37,7 +41,6 @@ public class MatchScoutFragmentPagerAdapter extends FragmentPagerAdapter
     public Fragment getItem(int position)
     {
         assert(position >= 0 && position < mTitles.length);
-        Fragment f;
         switch (position)
         {
             case 0:
@@ -45,13 +48,22 @@ public class MatchScoutFragmentPagerAdapter extends FragmentPagerAdapter
                 maf.setData(mTeamMatchData);
                 return maf;
             case 1:
-                break;
+                MatchTeleopFragment mtf = new MatchTeleopFragment();
+                mtf.setData(mTeamMatchData);
+                return mtf;
             case 2:
+                MatchEndgameFragment mef = new MatchEndgameFragment();
+                mef.setData(mTeamMatchData);
+                return mef;
                 break;
             case 3:
-                break;
+                MatchFoulsFragment mff = new MatchFoulsFragment();
+                mff.setData(mTeamMatchData);
+                return mff;
             case 4:
-                break;
+                MatchMiscFragment mmf = new MatchMiscFragment();
+                mmf.setData(mTeamMatchData);
+                return mmf;
             default:
                 assert(false);
         }
