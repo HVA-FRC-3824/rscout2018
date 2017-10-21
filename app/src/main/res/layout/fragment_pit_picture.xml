@@ -33,7 +33,7 @@
         android:id="@+id/carousel"
         app:fillColor="@color/Black"
         app:pageColor="@color/White"
-        app:strokeColor="#@color/White"
+        app:strokeColor="@color/White"
         app:strokeWidth="2dp"
         app:radius="6dp"
         app:autoPlay="false"
