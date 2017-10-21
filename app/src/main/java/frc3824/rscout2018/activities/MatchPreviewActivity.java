@@ -12,8 +12,6 @@ import activitystarter.MakeActivityStarter;
 @MakeActivityStarter
 public class MatchPreviewActivity extends Activity
 {
-    private MatchPreviewFragmentPagerAdapter mFPA;
-    
     @Override
     protected void onCreate(Bundle savedInstance)
     {

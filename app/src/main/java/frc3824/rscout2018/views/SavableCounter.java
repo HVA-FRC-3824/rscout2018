@@ -7,14 +7,17 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import frc3824.rscout2018.R;
 
 /**
  * @class SavableCounter
  * @brief
  */
-public class SavableCounter extends RelativeLayout implements View.OnClickListener, View.OnLongClickListener
+public class SavableCounter extends LinearLayout implements View.OnClickListener, View.OnLongClickListener
 {
     Button mButton;
     Integer mCount;
@@ -26,7 +29,7 @@ public class SavableCounter extends RelativeLayout implements View.OnClickListen
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.savable_edittext, this, false);
+        inflater.inflate(R.layout.savable_counter, this);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 
@@ -36,7 +39,7 @@ public class SavableCounter extends RelativeLayout implements View.OnClickListen
 
         typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableCounter);
         mMin = typedArray.getInt(R.styleable.SavableCounter_min, Integer.MIN_VALUE);
-        mMax = typedArray.getInt(R.styleable.SavabeCounter_max, Integer.MAX_VALUE);
+        mMax = typedArray.getInt(R.styleable.SavableCounter_max, Integer.MAX_VALUE);
 
         mButton = findViewById(R.id.button);
     }

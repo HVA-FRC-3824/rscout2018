@@ -15,7 +15,8 @@ import frc3824.rscout2018.R;
  *
  * Header for the various scout activities
  */
-public class ScoutHeader extends LinearLayout implements View.OnClickListener {
+public class ScoutHeader extends LinearLayout implements View.OnClickListener
+{
     ScoutHeaderInterface mInterface;
 
     /**
@@ -24,7 +25,8 @@ public class ScoutHeader extends LinearLayout implements View.OnClickListener {
      * @param context
      * @param attrs
      */
-    public ScoutHeader(Context context, @Nullable AttributeSet attrs) {
+    public ScoutHeader(Context context, @Nullable AttributeSet attrs)
+    {
         super(context, attrs);
         LayoutInflater inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.header_scout, this);
@@ -39,10 +41,12 @@ public class ScoutHeader extends LinearLayout implements View.OnClickListener {
 
     /**
      * Sets the title for the header
+     *
      * @param title The title to display
      */
-    public void setTitle(String title) {
-        ((TextView)findViewById(R.id.title)).setText(title);
+    public void setTitle(String title)
+    {
+        ((TextView) findViewById(R.id.title)).setText(title);
     }
 
     /**
@@ -50,26 +54,33 @@ public class ScoutHeader extends LinearLayout implements View.OnClickListener {
      *
      * @param interface_ The interface with the functions for each header button
      */
-    public void setInterface(ScoutHeaderInterface interface_) {
+    public void setInterface(ScoutHeaderInterface interface_)
+    {
         mInterface = interface_;
     }
 
     /**
      * Removes the previous button from the header
-     *
-     * @note This should only be called for the first match or team
      */
-    public void removePrevious() {
+    public void removePrevious()
+    {
         findViewById(R.id.previous).setVisibility(INVISIBLE);
     }
 
     /**
      * Removes the next button from the header
-     *
-     * @note This should only be called for the last match or team
      */
-    public void removeNext() {
+    public void removeNext()
+    {
         findViewById(R.id.next).setVisibility(INVISIBLE);
+    }
+
+    /**
+     * Removes the save button from the header
+     */
+    public void removeSave()
+    {
+        findViewById(R.id.save).setVisibility(INVISIBLE);
     }
 
     /**
@@ -78,7 +89,8 @@ public class ScoutHeader extends LinearLayout implements View.OnClickListener {
      * @param view The button
      */
     @Override
-    public void onClick(View view) {
+    public void onClick(View view)
+    {
         switch (view.getId())
         {
             case R.id.previous:

@@ -14,6 +14,17 @@
                   android:layout_height = "match_parent"
                   android:orientation = "vertical">
 
+        <frc3824.rscout2018.views.SavableSwitch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:label = "DQ"
+            app:bool="@{tmd.dq}"/>
+
+        <frc3824.rscout2018.views.SavableSwitch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:label = "No Show"
+            app:bool="@{tmd.noShow}"/>
 
         <frc3824.rscout2018.views.SavableEditText
             android:layout_width = "match_parent"

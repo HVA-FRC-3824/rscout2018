@@ -5,6 +5,8 @@ import android.databinding.Bindable;
 import android.databinding.Observable;
 import android.databinding.PropertyChangeRegistry;
 
+import java.util.ArrayList;
+
 import frc3824.rscout2018.BR;
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -35,6 +37,7 @@ public class TeamPitData extends RealmObject implements Observable
     //endregion
 
     //region Logistics
+    //region Team Number
     @PrimaryKey
     int teamNumber;
 
@@ -57,7 +60,8 @@ public class TeamPitData extends RealmObject implements Observable
         this.teamNumber = teamNumber;
         mPropertyChangeRegistry.notifyChange(this, BR.teamNumber);
     }
-
+    //endregion
+    //region Scout Name
     String scoutName;
 
     /**
@@ -80,13 +84,76 @@ public class TeamPitData extends RealmObject implements Observable
         mPropertyChangeRegistry.notifyChange(this, BR.scoutName);
     }
     //endregion
+    //endregion
 
     //region Picture
     RealmList<RealmString> pictureFilepaths;
 
+    /**
+     * Getter function for the list of picture file paths for this robot
+     * @returns The list of picture file paths for this robot
+     */
+    public ArrayList<String> getPictureFilepaths()
+    {
+        ArrayList<String> rv = new ArrayList<>();
+        for(RealmString str : pictureFilepaths)
+        {
+            rv.add(str.get());
+        }
+        return rv;
+    }
+
+
+
+    /**
+     * Setter function for the list of picture file paths for this robot
+     * @param pictureFilepaths The list of picture file paths for this robot
+     */
+    public void setPictureFilepaths(ArrayList<String> pictureFilepaths)
+    {
+        for(String str : pictureFilepaths)
+        {
+            this.pictureFilepaths.add(new RealmString(str));
+        }
+    }
+
+    /**
+     * Returns the number of pictures of this robot
+     * @return
+     */
+    public int numberOfPictures()
+    {
+        return pictureFilepaths.size();
+    }
+
+    public void addPicture(String filepath)
+    {
+        pictureFilepaths.add(new RealmString(filepath));
+    }
+
+    String defaultPictureFilepath;
+
+    /**
+     * Getter function for the file path to the default picture
+     * @return
+     */
+    public String getDefaultPictureFilepath()
+    {
+        return defaultPictureFilepath;
+    }
+
+    /**
+     * Setter function for the file path to the default picture
+     * @param defaultPictureFilepath
+     */
+    public void setDefaultPictureFilepath(String defaultPictureFilepath)
+    {
+        this.defaultPictureFilepath = defaultPictureFilepath;
+    }
     //endregion
 
     //region Dimensions
+    //region Robot Width
     double robotWidth;
 
     /**
@@ -108,7 +175,8 @@ public class TeamPitData extends RealmObject implements Observable
         this.robotWidth = robotWidth;
         mPropertyChangeRegistry.notifyChange(this, BR.robotWidth);
     }
-
+    //endregion
+    //region Robot Length
     double robotLength;
 
     /**
@@ -130,7 +198,8 @@ public class TeamPitData extends RealmObject implements Observable
         this.robotLength = robotLength;
         mPropertyChangeRegistry.notifyChange(this, BR.robotLength);
     }
-
+    //endregion
+    //region Robot Height
     double robotHeight;
 
     /**
@@ -152,7 +221,8 @@ public class TeamPitData extends RealmObject implements Observable
         this.robotHeight = robotHeight;
         mPropertyChangeRegistry.notifyChange(this, BR.robotHeight);
     }
-
+    //endregion
+    //region Robot Weight
     double robotWeight;
 
     /**
@@ -175,8 +245,10 @@ public class TeamPitData extends RealmObject implements Observable
         mPropertyChangeRegistry.notifyChange(this, BR.robotWeight);
     }
     //endregion
+    //endregion
 
     //region Misc
+    //region Programming Language
     String programmingLanguage;
 
     /**
@@ -198,7 +270,8 @@ public class TeamPitData extends RealmObject implements Observable
         this.programmingLanguage = programmingLanguage;
         mPropertyChangeRegistry.notifyChange(this, BR.programmingLanguage);
     }
-
+    //endregion
+    //region Drive Train
     String driveTrain;
 
     /**
@@ -220,7 +293,8 @@ public class TeamPitData extends RealmObject implements Observable
         this.driveTrain = driveTrain;
         mPropertyChangeRegistry.notifyChange(this, BR.driveTrain);
     }
-
+    //endregion
+    //region Notes
     String notes;
 
     /**
@@ -241,6 +315,14 @@ public class TeamPitData extends RealmObject implements Observable
     {
         this.notes = notes;
         mPropertyChangeRegistry.notifyChange(this, BR.notes);
+    }
+    //endregion
+    //endregion
+
+    //region Constructors
+    public TeamPitData()
+    {
+        mPropertyChangeRegistry = new PropertyChangeRegistry();
     }
     //endregion
 }

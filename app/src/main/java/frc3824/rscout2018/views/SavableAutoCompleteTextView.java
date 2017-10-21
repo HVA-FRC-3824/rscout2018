@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -15,7 +16,7 @@ import frc3824.rscout2018.R;
  * @class SavableAutoCompleteTextView
  * @brief A savable widget that has a label and an AutoCompleteTextView
  */
-public class SavableAutoCompleteTextView extends RelativeLayout
+public class SavableAutoCompleteTextView extends LinearLayout
 {
     AutoCompleteTextView mAutoCompleteTextView;
 
@@ -29,7 +30,7 @@ public class SavableAutoCompleteTextView extends RelativeLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.savable_autocompletetextview, this, false);
+        inflater.inflate(R.layout.savable_autocompletetextview, this);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 

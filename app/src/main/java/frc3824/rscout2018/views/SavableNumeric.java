@@ -5,14 +5,17 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import frc3824.rscout2018.R;
 
 /**
  * Created by andrew on 9/17/17.
  */
 
-public class SavableNumeric extends RelativeLayout
+public class SavableNumeric extends LinearLayout
 {
     EditText mEditText;
     double mValue;
@@ -29,7 +32,7 @@ public class SavableNumeric extends RelativeLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.savable_edittext, this, false);
+        inflater.inflate(R.layout.savable_edittext, this);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 
@@ -40,7 +43,7 @@ public class SavableNumeric extends RelativeLayout
         // Set min and max
         typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableNumeric);
         mMin = typedArray.getFloat(R.styleable.SavableNumeric_min, Float.MIN_VALUE);
-        mMax = typedArray.getFloat(R.styleable.SaveableNumeric_max, Float.MAX_VALUE);
+        mMax = typedArray.getFloat(R.styleable.SavableNumeric_max, Float.MAX_VALUE);
 
         mEditText = findViewById(R.id.edittext);
     }

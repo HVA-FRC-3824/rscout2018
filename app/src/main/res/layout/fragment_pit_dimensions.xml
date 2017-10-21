@@ -14,30 +14,29 @@
                   android:layout_height = "match_parent"
                   android:orientation = "vertical">
 
-
         <frc3824.rscout2018.views.SavableNumeric
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
             app:label = "Robot Width"
-            app:count = "@{tpd.robotWidth}" />
+            app:number = "@{tpd.robotWidth}" />
 
         <frc3824.rscout2018.views.SavableNumeric
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
             app:label = "Robot Length"
-            app:count = "@{tpd.robotLength}" />
+            app:number = "@{tpd.robotLength}" />
 
         <frc3824.rscout2018.views.SavableNumeric
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
             app:label = "Robot Height"
-            app:count = "@{tpd.robotHeight}" />
+            app:number = "@{tpd.robotHeight}" />
 
         <frc3824.rscout2018.views.SavableNumeric
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
             app:label = "Robot Weight"
-            app:count = "@{tpd.robotWeight}" />
+            app:number = "@{tpd.robotWeight}" />
 
     </LinearLayout>
 </layout>

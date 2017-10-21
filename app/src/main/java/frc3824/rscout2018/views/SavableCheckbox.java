@@ -5,14 +5,17 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import frc3824.rscout2018.R;
 
 /**
  * @class SavableCheckbox
  * @brief Savable widget with a label and a checkbox
  */
-public class SavableCheckbox extends RelativeLayout
+public class SavableCheckbox extends LinearLayout
 {
     CheckBox mCheckBox;
 
@@ -26,7 +29,7 @@ public class SavableCheckbox extends RelativeLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.savable_edittext, this, false);
+        inflater.inflate(R.layout.savable_edittext, this);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 

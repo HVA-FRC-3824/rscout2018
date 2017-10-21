@@ -36,6 +36,26 @@ public class TeamMatchData extends RealmObject implements Observable
     @PrimaryKey
     String id; //!< Solely for the database
 
+    /**
+     * Getter function for the id
+     * @returns The id
+     */
+    @Bindable
+    public String getId()
+    {
+        return id;
+    }
+
+    /**
+     * Setter function for the id
+     * @param id The id
+     */
+    public void setId(String id)
+    {
+        this.id = id;
+        mPropertyChangeRegistry.notifyChange(this, BR.id);
+    }
+
     //region Match Number
     int matchNumber;
 
@@ -57,7 +77,6 @@ public class TeamMatchData extends RealmObject implements Observable
     {
         this.matchNumber = matchNumber;
         mPropertyChangeRegistry.notifyChange(this, BR.matchNumber);
-        this.id = String.format("%d_%d", this.teamNumber, this.matchNumber);
     }
     //endregion
     //region Team Number
@@ -82,7 +101,6 @@ public class TeamMatchData extends RealmObject implements Observable
     {
         this.teamNumber = teamNumber;
         mPropertyChangeRegistry.notifyChange(this, BR.teamNumber);
-        this.id = String.format("%d_%d", this.teamNumber, matchNumber);
     }
     //endregion
     //region Scout Name
@@ -214,6 +232,50 @@ public class TeamMatchData extends RealmObject implements Observable
     //endregion
 
     //region Misc
+    //region DQ
+    boolean dq;
+
+    /**
+     * Getter function for whether team {@link TeamMatchData#teamNumber} was disqualified in match {@link TeamMatchData#matchNumber}
+     * @returns Whether team {@link TeamMatchData#teamNumber} was disqualified in match {@link TeamMatchData#matchNumber}
+     */
+    public boolean isDq()
+    {
+        return dq;
+    }
+
+    /**
+     * Setter function for whether team {@link TeamMatchData#teamNumber} was disqualified in match {@link TeamMatchData#matchNumber}
+     * @param dq Whether team {@link TeamMatchData#teamNumber} was disqualified in match {@link TeamMatchData#matchNumber}
+     */
+    public void setDq(boolean dq)
+    {
+        this.dq = dq;
+        mPropertyChangeRegistry.notifyChange(this, BR.dq);
+    }
+    //endregion
+    //region No Show
+    boolean noShow;
+
+    /**
+     * Getter function for whether team {@link TeamMatchData#teamNumber} did not show up to match {@link TeamMatchData#matchNumber}
+     * @returns Whether team {@link TeamMatchData#teamNumber} did not show up to match {@link TeamMatchData#matchNumber}
+     */
+    public boolean isNoShow()
+    {
+        return noShow;
+    }
+
+    /**
+     * Setter function for whether team {@link TeamMatchData#teamNumber} did not show up to match {@link TeamMatchData#matchNumber}
+     * @param noShow Whether team {@link TeamMatchData#teamNumber} did not show up to match {@link TeamMatchData#matchNumber}
+     */
+    public void setNoShow(boolean noShow)
+    {
+        this.noShow = noShow;
+        mPropertyChangeRegistry.notifyChange(this, BR.noShow);
+    }
+    //endregion
     //region Notes
     String notes;
 
@@ -244,6 +306,7 @@ public class TeamMatchData extends RealmObject implements Observable
     //region Test
     String test;
 
+    @Bindable
     public String getTest()
     {
         return test;
@@ -252,6 +315,7 @@ public class TeamMatchData extends RealmObject implements Observable
     public void setTest(String test)
     {
         this.test = test;
+        mPropertyChangeRegistry.notifyChange(this, BR.test);
     }
     //endregion
     //endregion

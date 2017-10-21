@@ -1,32 +1,41 @@
 package frc3824.rscout2018.activities;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.TabLayout;
+import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.sdsmdg.tastytoast.TastyToast;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
 import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.adapters.fpa.MatchScoutFragmentPagerAdapter;
 import frc3824.rscout2018.data_models.MatchLogistics;
 import frc3824.rscout2018.data_models.TeamMatchData;
+import frc3824.rscout2018.fragments.match_scout.MatchAutoFragment;
+import frc3824.rscout2018.fragments.match_scout.MatchEndgameFragment;
+import frc3824.rscout2018.fragments.match_scout.MatchFoulsFragment;
+import frc3824.rscout2018.fragments.match_scout.MatchMiscFragment;
+import frc3824.rscout2018.fragments.match_scout.MatchTeleopFragment;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.ScoutHeader;
 import frc3824.rscout2018.views.ScoutHeaderInterface;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 /**
  * @class MatchScoutActivity
  * @brief The page for scouting an individual team in a single match
  */
 @MakeActivityStarter
-public class MatchScoutActivity extends Activity
+public class MatchScoutActivity extends Activity implements RealmChangeListener<TeamMatchData>
 {
     private final static String TAG = "MatchScoutActivity";
 
@@ -37,8 +46,9 @@ public class MatchScoutActivity extends Activity
 
     private Realm mDatabase;
 
-    private MatchScoutFragmentPagerAdapter mSFPA;
+    private MatchScoutFragmentPagerAdapter mFPA;
     private TeamMatchData mTMD;
+    private boolean mDirty = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -48,7 +58,7 @@ public class MatchScoutActivity extends Activity
         ActivityStarter.fill(this);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int position = sharedPreferences.getInt(Constants.Settings.MATCH_SCOUT_POSITION, -1);
+        int position = Integer.parseInt(sharedPreferences.getString(Constants.Settings.MATCH_SCOUT_POSITION, "-1"));
         if (position == -1)
         {
             // Shouldn't be possible to get here
@@ -69,7 +79,8 @@ public class MatchScoutActivity extends Activity
                                         .findFirst();
             if (m == null)
             {
-                // error
+                // Shouldn't be possible to get here
+                // todo: Error
             }
             mTeamNumber = m.getTeamNumber(position);
             header.setTitle(String.format("Match Number: %d Team Number: %d",
@@ -88,35 +99,42 @@ public class MatchScoutActivity extends Activity
                 header.removeNext();
             }
 
+            mTMD = mDatabase.where(TeamMatchData.class)
+                            .equalTo(Constants.Database.PrimaryKeys.TEAM_MATCH_DATA,
+                                     String.format("%d_%d", mTeamNumber, mMatchNumber))
+                            .findFirst();
+            if (mTMD == null)
+            {
+                mDatabase.beginTransaction();
+                mTMD = mDatabase.createObject(TeamMatchData.class, String.format("%d_%d", mTeamNumber, mMatchNumber));
+                mTMD.setTeamNumber(mTeamNumber);
+                mTMD.setMatchNumber(mMatchNumber);
+                mDatabase.commitTransaction();
+            }
+            mTMD.addChangeListener(this);
+
         }
         else
-        { // Practice
+        {
             mPractice = true;
             header.setTitle("Practice Match");
+            mTMD = new TeamMatchData();
+            header.removeSave();
         }
 
         // Keep screen on while scouting
         findViewById(android.R.id.content).setKeepScreenOn(true);
 
-        mTMD = mDatabase.where(TeamMatchData.class)
-                        .equalTo(Constants.Database.PrimaryKeys.TEAM_MATCH_DATA,
-                                 String.format("%d_%d", mTeamNumber, mMatchNumber))
-                        .findFirst();
-        if (mTMD == null)
-        {
-            mTMD = new TeamMatchData(mTeamNumber, mMatchNumber);
-        }
-
         // Setup the TABS and fragment pages
-        mSFPA = new MatchScoutFragmentPagerAdapter(getFragmentManager(),
-                                                   mTMD);
+        mFPA = new MatchScoutFragmentPagerAdapter(getFragmentManager(),
+                                                  mTMD);
 
         // Setup view pager
         ViewPager viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(mSFPA);
-        viewPager.setOffscreenPageLimit(mSFPA.getCount());
+        viewPager.setAdapter(mFPA);
+        viewPager.setOffscreenPageLimit(mFPA.getCount());
 
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        SmartTabLayout tabLayout = findViewById(R.id.tab_layout);
         if (position < 3)
         {
             tabLayout.setBackgroundColor(Color.BLUE);
@@ -125,9 +143,16 @@ public class MatchScoutActivity extends Activity
         {
             tabLayout.setBackgroundColor(Color.RED);
         }
-        tabLayout.setTabTextColors(Color.WHITE, Color.GREEN);
-        tabLayout.setSelectedTabIndicatorColor(Color.GREEN);
-        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setViewPager(viewPager);
+    }
+
+    /**
+     * When the data model is changed dirty is set to true
+     * @param t The data model
+     */
+    public void onChange(TeamMatchData t)
+    {
+        mDirty = true;
     }
 
     /**
@@ -229,7 +254,95 @@ public class MatchScoutActivity extends Activity
          */
         public void save()
         {
+            if(!mPractice)
+            {
+                mDatabase.beginTransaction();
+                mDatabase.copyToRealmOrUpdate(mTMD);
+                mDatabase.commitTransaction();
+                mDirty = false;
+                TastyToast.makeText(MatchScoutActivity.this, "Saved", TastyToast.LENGTH_SHORT, TastyToast.SUCCESS);
+            }
+        }
+    }
 
+    /**
+     * @class MatchScoutFragmentPagerAdapter
+     *
+     * Creates multiple fragments based for the match scout activity
+     */
+    private class MatchScoutFragmentPagerAdapter extends FragmentPagerAdapter
+    {
+        static final String TAG = "MatchScoutFragmentPagerAdapter";
+
+        String[] mTitles = { "Auto", "Teleop", "Endgame", "Fouls", "Misc"};
+        TeamMatchData mTeamMatchData;
+
+
+        public MatchScoutFragmentPagerAdapter(FragmentManager fm, TeamMatchData teamMatchData)
+        {
+            super(fm);
+            mTeamMatchData = teamMatchData;
+        }
+
+        /**
+         * Gets the fragment at the specified position for display
+         *
+         * @param position Position of the fragment wanted
+         * @returns fragment to be displayed
+         */
+        @Override
+        public Fragment getItem(int position)
+        {
+            assert(position >= 0 && position < mTitles.length);
+            switch (position)
+            {
+                case 0:
+                    MatchAutoFragment maf = new MatchAutoFragment();
+                    maf.setData(mTeamMatchData);
+                    return maf;
+                case 1:
+                    MatchTeleopFragment mtf = new MatchTeleopFragment();
+                    mtf.setData(mTeamMatchData);
+                    return mtf;
+                case 2:
+                    MatchEndgameFragment mef = new MatchEndgameFragment();
+                    mef.setData(mTeamMatchData);
+                    return mef;
+                case 3:
+                    MatchFoulsFragment mff = new MatchFoulsFragment();
+                    mff.setData(mTeamMatchData);
+                    return mff;
+                case 4:
+                    MatchMiscFragment mmf = new MatchMiscFragment();
+                    mmf.setData(mTeamMatchData);
+                    return mmf;
+                default:
+                    assert(false);
+            }
+            return null;
+        }
+
+        /**
+         * Returns the number of fragments
+         * @returns The number of fragments
+         */
+        @Override
+        public int getCount()
+        {
+            return mTitles.length;
+        }
+
+        /**
+         * Returns the title of the fragment at the specified position
+         *
+         * @param position Position of the fragment
+         * @return The title of the fragment
+         */
+        @Override
+        public String getPageTitle(int position)
+        {
+            assert(position >= 0 && position < mTitles.length);
+            return mTitles[position];
         }
     }
 }

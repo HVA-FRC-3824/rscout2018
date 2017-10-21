@@ -29,10 +29,10 @@ import io.realm.Realm;
  *        based on the intent extra {@link MatchListActivity#mNextPage}passed to it.
  */
 @MakeActivityStarter
-public class MatchListActivity extends ListActivity
+public class MatchListActivity extends ListActivity implements View.OnClickListener
 {
     @Arg
-    String mNextPage;
+    protected String mNextPage;
 
     int mMatchScoutPosition;
 
@@ -58,8 +58,20 @@ public class MatchListActivity extends ListActivity
             // todo error
         }
 
+        findViewById(R.id.practice).setOnClickListener(this);
+
         ListView listView = findViewById(android.R.id.list);
         listView.setAdapter(new MatchListAdapter());
+    }
+
+    /**
+     * Practice button clicked
+     * {@inheritDoc}
+     */
+    @Override
+    public void onClick(View view)
+    {
+        MatchScoutActivityStarter.start(this, -1);
     }
 
     /**

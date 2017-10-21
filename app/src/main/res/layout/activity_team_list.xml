@@ -9,10 +9,10 @@
         android:id="@+id/practice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:shadowColor="@color/black"
+        android:shadowColor="@color/Black"
         android:text="Practice Team"
-        android:textColor="@color/navyBlue"
-        app:buttonColor="@color/columbiaBlue"
+        android:textColor="@color/Navy"
+        app:buttonColor="@color/ColumbiaBlue"
         app:cornerRadius="5dp"
         app:shadowEnabled="true"
         app:shadowHeight="5dp"/>

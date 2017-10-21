@@ -27,7 +27,7 @@ import io.realm.Realm;
  *        based on the intent extra {@link TeamListActivity#nextPage} passed to it.
  */
 @MakeActivityStarter
-public class TeamListActivity extends ListActivity
+public class TeamListActivity extends ListActivity implements View.OnClickListener
 {
     @Arg
     String nextPage;
@@ -38,11 +38,19 @@ public class TeamListActivity extends ListActivity
     @Override
     protected void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
-        setContentView(R.layout.activity_match_list);
+        setContentView(R.layout.activity_team_list);
         ActivityStarter.fill(this);
 
-        ListView listView = findViewById(R.id.list);
+        findViewById(R.id.practice).setOnClickListener(this);
+
+        ListView listView = findViewById(android.R.id.list);
         listView.setAdapter(new TeamListAdapter());
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        PitScoutActivityStarter.start(this, -1);
     }
 
     /**

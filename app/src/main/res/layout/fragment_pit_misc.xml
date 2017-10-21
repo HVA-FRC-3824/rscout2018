@@ -18,21 +18,21 @@
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
             app:label = "Programming Language"
-            app:count = "@{tpd.notes}"
+            app:text = "@{tpd.notes}"
             app:options = "@array/programming_languages"/>
 
         <frc3824.rscout2018.views.SavableAutoCompleteTextView
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
             app:label = "Drive Train"
-            app:count = "@{tpd.driveTrain}"
-            app:options = "@array/drive_train"/>
+            app:text = "@{tpd.driveTrain}"
+            app:options = "@array/drive_trains"/>
 
         <frc3824.rscout2018.views.SavableEditText
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
             app:label = "Notes"
-            app:count = "@{tpd.notes}" />
+            app:text = "@{tpd.notes}" />
 
     </LinearLayout>
 </layout>

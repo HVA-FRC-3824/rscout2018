@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -15,7 +16,7 @@ import frc3824.rscout2018.R;
  * @class SavableEditText
  * @brief A savable widget that has a label and an EditText
  */
-public class SavableEditText extends RelativeLayout
+public class SavableEditText extends LinearLayout
 {
     EditText mEditText;
 
@@ -29,7 +30,7 @@ public class SavableEditText extends RelativeLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.savable_edittext, this, false);
+        inflater.inflate(R.layout.savable_edittext, this);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 

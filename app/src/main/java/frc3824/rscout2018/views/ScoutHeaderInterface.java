@@ -1,7 +1,5 @@
 package frc3824.rscout2018.views;
 
-import frc3824.rscout2018.views.ScoutHeader;
-
 /**
  * @interface ScoutHeaderInterface
  *
