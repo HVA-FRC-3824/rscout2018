@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.flurgle.camerakit.CameraListener;
 import com.flurgle.camerakit.CameraView;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
@@ -22,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.data_models.TeamPitData;
+import frc3824.rscout2018.database.data_models.TeamPitData;
 import id.zelory.compressor.Compressor;
 import info.hoang8f.widget.FButton;
 
@@ -81,16 +80,30 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
         // If there are pictures then display the default image
         if(mTeamPitData.numberOfPictures() > 0)
         {
-            mPictureFilepaths = mTeamPitData.getPictureFilepaths();
+            mPictureFilepaths = mTeamPitData.getmPictureFilepaths();
             String defaultFilepath = mTeamPitData.getDefaultPictureFilepath();
+
             if(!defaultFilepath.isEmpty())
             {
                 int index = mPictureFilepaths.indexOf(defaultFilepath);
+                // Show the default image
                 if(index > -1)
                 {
-                    mCarouselView.setCurrentItem(index);
+                    mCurrentPosition = index;
+                    mCarouselView.setCurrentItem(mCurrentPosition);
                 }
-                mTeamPitData.setDefaultPictureFilepath("");
+                // if the default picture isn't in the list then show the first one
+                else
+                {
+                    mCurrentPosition = 0;
+                    mCarouselView.setCurrentItem(mCurrentPosition);
+                }
+            }
+            // if there is no default picture then show the first one
+            else
+            {
+                mCurrentPosition = 0;
+                mCarouselView.setCurrentItem(mCurrentPosition);
             }
         }
         // Otherwise hide the carousel

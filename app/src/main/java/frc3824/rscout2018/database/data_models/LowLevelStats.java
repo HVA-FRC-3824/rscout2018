@@ -1,11 +1,6 @@
-package frc3824.rscout2018.data_models;
+package frc3824.rscout2018.database.data_models;
 
 import android.databinding.Bindable;
-import android.databinding.Observable;
-import android.databinding.PropertyChangeRegistry;
-
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
 
 /**
  * @class LowLevelStats
@@ -13,25 +8,8 @@ import io.realm.annotations.Ignore;
  *
  * Contains average, standard deviation, minimum, maximum, and ranking
  */
-public class LowLevelStats extends RealmObject implements Observable
+public class LowLevelStats
 {
-    //region Observable
-    @Ignore
-    private PropertyChangeRegistry mPropertyChangeRegistry;
-
-    @Override
-    public void addOnPropertyChangedCallback(Observable.OnPropertyChangedCallback callback)
-    {
-        mPropertyChangeRegistry.add(callback);
-    }
-
-    @Override
-    public void removeOnPropertyChangedCallback(Observable.OnPropertyChangedCallback callback)
-    {
-        mPropertyChangeRegistry.remove(callback);
-    }
-    //endregion
-
     //region Average
     double average;
 
@@ -146,7 +124,6 @@ public class LowLevelStats extends RealmObject implements Observable
     //region Constructors
     public LowLevelStats()
     {
-        mPropertyChangeRegistry = new PropertyChangeRegistry();
     }
     //endregion
 }

@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 26
@@ -24,10 +23,6 @@ android {
     dataBinding {
         enabled = true
     }
-    realm {
-        syncEnabled = true
-    }
-
 }
 
 dependencies {
@@ -60,9 +55,10 @@ dependencies {
 
     compile 'com.synnapps:carouselview:0.1.4'
 
-
     compile 'com.ogaclejapan.smarttablayout:library:1.6.1@aar'
     compile 'com.ogaclejapan.smarttablayout:utils-v13:1.6.1@aar'
+
+    compile 'com.couchbase.lite:couchbase-lite-android:1.4.0'
 
     testCompile 'junit:junit:4.12'
 }

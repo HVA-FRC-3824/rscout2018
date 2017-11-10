@@ -1,44 +1,39 @@
-package frc3824.rscout2018.data_models;
+package frc3824.rscout2018.database.data_models;
 
 
+import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.databinding.Observable;
-import android.databinding.PropertyChangeRegistry;
 
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Document;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import frc3824.rscout2018.BR;
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
+import frc3824.rscout2018.database.Database;
 
 /**
  * @class TeamPitData
  * @brief Data model for holding information recorded when talking to a team in their pit
  */
-public class TeamPitData extends RealmObject implements Observable
+public class TeamPitData extends BaseObservable
 {
-    //region Observable
-    @Ignore
-    private PropertyChangeRegistry mPropertyChangeRegistry;
+    boolean mDirty; // Keeps track if anything has changed
 
-    @Override
-    public void addOnPropertyChangedCallback(Observable.OnPropertyChangedCallback callback)
+    /**
+     *
+     * @returns Whether the model have been changed
+     */
+    public boolean isDirty()
     {
-        mPropertyChangeRegistry.add(callback);
+        return mDirty;
     }
-
-    @Override
-    public void removeOnPropertyChangedCallback(Observable.OnPropertyChangedCallback callback)
-    {
-        mPropertyChangeRegistry.remove(callback);
-    }
-    //endregion
 
     //region Logistics
     //region Team Number
-    @PrimaryKey
     int teamNumber;
 
     /**
@@ -58,7 +53,8 @@ public class TeamPitData extends RealmObject implements Observable
     public void setTeamNumber(int teamNumber)
     {
         this.teamNumber = teamNumber;
-        mPropertyChangeRegistry.notifyChange(this, BR.teamNumber);
+        mDirty = true;
+        notifyChange(BR.teamNumber);
     }
     //endregion
     //region Scout Name
@@ -81,13 +77,14 @@ public class TeamPitData extends RealmObject implements Observable
     public void setScoutName(String scoutName)
     {
         this.scoutName = scoutName;
-        mPropertyChangeRegistry.notifyChange(this, BR.scoutName);
+        mDirty = true;
+        notifyChange(BR.scoutName);
     }
     //endregion
     //endregion
 
     //region Picture
-    RealmList<RealmString> pictureFilepaths;
+    ArrayList<String> pictureFilepaths;
 
     /**
      * Getter function for the list of picture file paths for this robot
@@ -95,12 +92,7 @@ public class TeamPitData extends RealmObject implements Observable
      */
     public ArrayList<String> getPictureFilepaths()
     {
-        ArrayList<String> rv = new ArrayList<>();
-        for(RealmString str : pictureFilepaths)
-        {
-            rv.add(str.get());
-        }
-        return rv;
+        return pictureFilepaths;
     }
 
 
@@ -111,10 +103,9 @@ public class TeamPitData extends RealmObject implements Observable
      */
     public void setPictureFilepaths(ArrayList<String> pictureFilepaths)
     {
-        for(String str : pictureFilepaths)
-        {
-            this.pictureFilepaths.add(new RealmString(str));
-        }
+        this.pictureFilepaths = pictureFilepaths;
+        mDirty = true;
+        notifyPropertyChanged(BR.pictureFilepaths);
     }
 
     /**
@@ -128,7 +119,9 @@ public class TeamPitData extends RealmObject implements Observable
 
     public void addPicture(String filepath)
     {
-        pictureFilepaths.add(new RealmString(filepath));
+        pictureFilepaths.add(filepath);
+        mDirty = true;
+        notifyPropertyChanged(BR.pictureFilepaths);
     }
 
     String defaultPictureFilepath;
@@ -149,6 +142,8 @@ public class TeamPitData extends RealmObject implements Observable
     public void setDefaultPictureFilepath(String defaultPictureFilepath)
     {
         this.defaultPictureFilepath = defaultPictureFilepath;
+        mDirty = true;
+        notifyPropertyChanged(BR.defaultPictureFilepath);
     }
     //endregion
 
@@ -173,7 +168,8 @@ public class TeamPitData extends RealmObject implements Observable
     public void setRobotWidth(double robotWidth)
     {
         this.robotWidth = robotWidth;
-        mPropertyChangeRegistry.notifyChange(this, BR.robotWidth);
+        mDirty = true;
+        notifyChange(BR.robotWidth);
     }
     //endregion
     //region Robot Length
@@ -196,7 +192,8 @@ public class TeamPitData extends RealmObject implements Observable
     public void setRobotLength(double robotLength)
     {
         this.robotLength = robotLength;
-        mPropertyChangeRegistry.notifyChange(this, BR.robotLength);
+        mDirty = true;
+        notifyChange(BR.robotLength);
     }
     //endregion
     //region Robot Height
@@ -219,7 +216,8 @@ public class TeamPitData extends RealmObject implements Observable
     public void setRobotHeight(double robotHeight)
     {
         this.robotHeight = robotHeight;
-        mPropertyChangeRegistry.notifyChange(this, BR.robotHeight);
+        mDirty = true;
+        notifyChange(BR.robotHeight);
     }
     //endregion
     //region Robot Weight
@@ -242,7 +240,8 @@ public class TeamPitData extends RealmObject implements Observable
     public void setRobotWeight(double robotWeight)
     {
         this.robotWeight = robotWeight;
-        mPropertyChangeRegistry.notifyChange(this, BR.robotWeight);
+        mDirty = true;
+        notifyChange(BR.robotWeight);
     }
     //endregion
     //endregion
@@ -268,7 +267,8 @@ public class TeamPitData extends RealmObject implements Observable
     public void setProgrammingLanguage(String programmingLanguage)
     {
         this.programmingLanguage = programmingLanguage;
-        mPropertyChangeRegistry.notifyChange(this, BR.programmingLanguage);
+        mDirty = true;
+        notifyChange(BR.programmingLanguage);
     }
     //endregion
     //region Drive Train
@@ -291,7 +291,8 @@ public class TeamPitData extends RealmObject implements Observable
     public void setDriveTrain(String driveTrain)
     {
         this.driveTrain = driveTrain;
-        mPropertyChangeRegistry.notifyChange(this, BR.driveTrain);
+        mDirty = true;
+        notifyChange(BR.driveTrain);
     }
     //endregion
     //region Notes
@@ -314,15 +315,71 @@ public class TeamPitData extends RealmObject implements Observable
     public void setNotes(String notes)
     {
         this.notes = notes;
-        mPropertyChangeRegistry.notifyChange(this, BR.notes);
+        mDirty = true;
+        notifyChange(BR.notes);
     }
     //endregion
     //endregion
 
     //region Constructors
-    public TeamPitData()
+    public TeamPitData(int teamNumber)
     {
-        mPropertyChangeRegistry = new PropertyChangeRegistry();
+        this.teamNumber = teamNumber;
+        load();
+        mDirty = false;
+    }
+    //endregion
+
+    //region Database
+    public void save()
+    {
+        Document document = Database.getInstance().getDocument(String.format("tpd_%d", teamNumber));
+        Map<String, Object> properties = new HashMap<>();
+        for(Field field: getClass().getDeclaredFields())
+        {
+            try
+            {
+                properties.put(field.getName(), field.get(this));
+            }
+            catch (IllegalAccessException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        try
+        {
+            document.putProperties(properties);
+        }
+        catch (CouchbaseLiteException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void load()
+    {
+        Document document = Database.getInstance().getDocument(String.format("tpd_%d", teamNumber));
+        Map<String, Object> properties = document.getProperties();
+        for(Field field: getClass().getDeclaredFields())
+        {
+            // Ignore as this was set in the constructor
+            if (field.getName() == "teamNumber" || field.getName() == "mDirty")
+            {
+                continue;
+            }
+            if(properties.containsKey(field.getName()))
+            {
+                Object property = properties.get(field.getName());
+                try
+                {
+                    field.set(this, property);
+                }
+                catch (IllegalAccessException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
     //endregion
 }

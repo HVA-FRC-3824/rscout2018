@@ -2,7 +2,6 @@
 <layout>
 
     <data>
-
         <variable
             name = "tpd"
             type = "frc3824.rscout2018.data_models.TeamPitData" />

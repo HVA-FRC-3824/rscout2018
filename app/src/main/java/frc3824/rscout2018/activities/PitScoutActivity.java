@@ -7,27 +7,26 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
 import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.adapters.fpa.PitScoutFragmentPagerAdapter;
-import frc3824.rscout2018.data_models.TeamPitData;
+import frc3824.rscout2018.database.data_models.TeamPitData;
 import frc3824.rscout2018.fragments.pit_scout.PitPictureFragment;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.ScoutHeader;
 import frc3824.rscout2018.views.ScoutHeaderInterface;
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.Sort;
 
 /**
  * @class PitScoutActivity
  * @brief The page for scouting an individual team
  */
 @MakeActivityStarter
-public class PitScoutActivity extends Activity implements RealmChangeListener<TeamPitData>
+public class PitScoutActivity extends Activity
 {
     private final static String TAG = "MatchScoutActivity";
 
@@ -35,11 +34,8 @@ public class PitScoutActivity extends Activity implements RealmChangeListener<Te
     protected int mTeamNumber = -1;
     private boolean mPractice = false;
 
-    private Realm mDatabase;
-
     private PitScoutFragmentPagerAdapter mFPA;
     private TeamPitData mTPD;
-    private boolean mDirty = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -60,7 +56,6 @@ public class PitScoutActivity extends Activity implements RealmChangeListener<Te
         ScoutHeader header = findViewById(R.id.header);
         header.setInterface(new PitScoutHeader());
 
-        mDatabase = Realm.getDefaultInstance();
 
         if (mTeamNumber > 0)
         {
@@ -81,31 +76,30 @@ public class PitScoutActivity extends Activity implements RealmChangeListener<Te
                 header.removeNext();
             }
 
-            mTPD = mDatabase.where(TeamPitData.class)
-                            .equalTo(Constants.Database.PrimaryKeys.TEAM_MATCH_DATA,
-                                     mTeamNumber)
-                            .findFirst();
-            if (mTPD == null)
-            {
-                mDatabase.beginTransaction();
-                mTPD = mDatabase.createObject(TeamPitData.class, mTeamNumber);
-                mDatabase.commitTransaction();
-            }
-            mTPD.addChangeListener(this);
+            mTPD = new TeamPitData(mTeamNumber);
         }
         else
         {
             mPractice = true;
             header.setTitle("Practice Match");
-            mTPD = new TeamPitData();
+            mTPD = new TeamPitData(-1);
             header.removeSave();
         }
-    }
 
-    @Override
-    public void onChange(TeamPitData teamPitData)
-    {
-        mDirty = true;
+        // Keep screen on while scouting
+        findViewById(android.R.id.content).setKeepScreenOn(true);
+
+        // Setup the TABS and fragment pages
+        mFPA = new PitScoutFragmentPagerAdapter(getFragmentManager(),
+                                                  mTPD);
+
+        // Setup view pager
+        ViewPager viewPager = findViewById(R.id.view_pager);
+        viewPager.setAdapter(mFPA);
+        viewPager.setOffscreenPageLimit(mFPA.getCount());
+
+        SmartTabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setViewPager(viewPager);
     }
 
     private class PitScoutHeader implements ScoutHeaderInterface
@@ -120,7 +114,7 @@ public class PitScoutActivity extends Activity implements RealmChangeListener<Te
             }
             else
             {
-                if (mDirty)
+                if (mTPD.isDirty())
                 {
                     // todo: Save dialog
                 }
@@ -149,7 +143,7 @@ public class PitScoutActivity extends Activity implements RealmChangeListener<Te
             }
             else
             {
-                if (mDirty)
+                if (mTPD.isDirty())
                 {
                     // todo: Save dialog
                 }
@@ -178,7 +172,7 @@ public class PitScoutActivity extends Activity implements RealmChangeListener<Te
             }
             else
             {
-                if (mDirty)
+                if (mTPD.isDirty())
                 {
                     // todo: Save dialog
                 }
@@ -198,7 +192,7 @@ public class PitScoutActivity extends Activity implements RealmChangeListener<Te
             }
             else
             {
-                if (mDirty)
+                if (mTPD.isDirty())
                 {
                     // todo: Save dialog
                 }

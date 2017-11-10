@@ -1,40 +1,28 @@
-package frc3824.rscout2018.data_models;
+package frc3824.rscout2018.database.data_models;
 
+import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.databinding.Observable;
-import android.databinding.PropertyChangeRegistry;
+
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Document;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 import frc3824.rscout2018.BR;
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
+import frc3824.rscout2018.database.Database;
 
 /**
  * @class TeamCalculatedData
  * @brief A data model containing the aggregated statistics about a team's performance
  */
-public class TeamCalculatedData extends RealmObject implements Observable
+public class TeamCalculatedData extends BaseObservable
 {
-    //region Observable
-    @Ignore
-    private PropertyChangeRegistry mPropertyChangeRegistry;
-
-    @Override
-    public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback)
-    {
-        mPropertyChangeRegistry.add(callback);
-    }
-
-    @Override
-    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback)
-    {
-        mPropertyChangeRegistry.remove(callback);
-    }
-    //endregion
+    
 
     //region Logistics
     //region Team Number
-    @PrimaryKey
     int teamNumber;
 
     /**
@@ -54,7 +42,7 @@ public class TeamCalculatedData extends RealmObject implements Observable
     public void setTeamNumber(int teamNumber)
     {
         this.teamNumber = teamNumber;
-        mPropertyChangeRegistry.notifyChange(this, BR.teamNumber);
+        notifyChange(BR.teamNumber);
     }
     //endregion
     //region Number of Matches Completed
@@ -77,7 +65,7 @@ public class TeamCalculatedData extends RealmObject implements Observable
     public void setNumMatchesCompleted(int numMatchesCompleted)
     {
         this.numMatchesCompleted = numMatchesCompleted;
-        mPropertyChangeRegistry.notifyChange(this, BR.numMatchesCompleted);
+        notifyChange(BR.numMatchesCompleted);
     }
     //endregion
     //endregion
@@ -112,7 +100,7 @@ public class TeamCalculatedData extends RealmObject implements Observable
     public void setFouls(LowLevelStats fouls)
     {
         this.fouls = fouls;
-        mPropertyChangeRegistry.notifyChange(this, BR.fouls);
+        notifyChange(BR.fouls);
     }
     //endregion
     //region Tech Fouls
@@ -135,7 +123,7 @@ public class TeamCalculatedData extends RealmObject implements Observable
     public void setTechFouls(LowLevelStats techFouls)
     {
         this.techFouls = techFouls;
-        mPropertyChangeRegistry.notifyChange(this, BR.techFouls);
+        notifyChange(BR.techFouls);
     }
     //endregion
     //region Yellow Cards
@@ -158,7 +146,7 @@ public class TeamCalculatedData extends RealmObject implements Observable
     public void setYellowCards(LowLevelStats yellowCards)
     {
         this.yellowCards = yellowCards;
-        mPropertyChangeRegistry.notifyChange(this, BR.yellowCards);
+        notifyChange(BR.yellowCards);
     }
     //endregion
     //region Red Cards
@@ -181,7 +169,7 @@ public class TeamCalculatedData extends RealmObject implements Observable
     public void setRedCards(LowLevelStats redCards)
     {
         this.redCards = redCards;
-        mPropertyChangeRegistry.notifyChange(this, BR.redCards);
+        notifyChange(BR.redCards);
     }
     //endregion
     //endregion
@@ -207,7 +195,7 @@ public class TeamCalculatedData extends RealmObject implements Observable
     public void setDq(LowLevelStats dq)
     {
         this.dq = dq;
-        mPropertyChangeRegistry.notifyChange(this, BR.dq);
+        notifyChange(BR.dq);
     }
     //endregion
     //region No Show
@@ -230,15 +218,69 @@ public class TeamCalculatedData extends RealmObject implements Observable
     public void setNoShow(LowLevelStats noShow)
     {
         this.noShow = noShow;
-        mPropertyChangeRegistry.notifyChange(this, BR.noShow);
+        notifyChange(BR.noShow);
     }
     //endregion
     //endregion
 
     //region Constructors
-    public TeamCalculatedData()
+    public TeamCalculatedData(int teamNumber)
     {
-        mPropertyChangeRegistry = new PropertyChangeRegistry();
+        this.teamNumber = teamNumber;
+        load();
+    }
+    //endregion
+
+    //region Database
+    public void save()
+    {
+        Document document = Database.getInstance().getDocument(String.format("tcd_%d", teamNumber));
+        Map<String, Object> properties = new HashMap<>();
+        for(Field field: getClass().getDeclaredFields())
+        {
+            try
+            {
+                properties.put(field.getName(), field.get(this));
+            }
+            catch (IllegalAccessException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        try
+        {
+            document.putProperties(properties);
+        }
+        catch (CouchbaseLiteException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void load()
+    {
+        Document document = Database.getInstance().getDocument(String.format("tcd_%d", teamNumber));
+        Map<String, Object> properties = document.getProperties();
+        for(Field field: getClass().getDeclaredFields())
+        {
+            // Ignore as this was set in the constructor
+            if (field.getName() == "teamNumber")
+            {
+                continue;
+            }
+            if(properties.containsKey(field.getName()))
+            {
+                Object property = properties.get(field.getName());
+                try
+                {
+                    field.set(this, property);
+                }
+                catch (IllegalAccessException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
     //endregion
 }

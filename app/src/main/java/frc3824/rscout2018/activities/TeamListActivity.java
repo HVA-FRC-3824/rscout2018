@@ -10,6 +10,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,9 +18,9 @@ import activitystarter.ActivityStarter;
 import activitystarter.Arg;
 import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.data_models.TeamLogistics;
+import frc3824.rscout2018.database.Database;
+import frc3824.rscout2018.database.data_models.TeamLogistics;
 import frc3824.rscout2018.utilities.Constants;
-import io.realm.Realm;
 
 /**
  * @class TeamListActivity
@@ -60,9 +61,7 @@ public class TeamListActivity extends ListActivity implements View.OnClickListen
     private class TeamListAdapter implements ListAdapter, View.OnClickListener
     {
         LayoutInflater mLayoutInflator;
-        Realm mDatabase;
-        Map<Integer, Integer> mTeamNumbers;
-        Integer mNumberOfTeams = null;
+        ArrayList<Integer> mTeamNumbers;
 
         /**
          * Constructor
@@ -70,8 +69,7 @@ public class TeamListActivity extends ListActivity implements View.OnClickListen
         TeamListAdapter()
         {
             mLayoutInflator = getLayoutInflater();
-            mDatabase = Realm.getDefaultInstance();
-            mTeamNumbers = new HashMap<>();
+            mTeamNumbers = Database.getInstance().getTeamNumbers();
         }
 
         /**
@@ -110,11 +108,7 @@ public class TeamListActivity extends ListActivity implements View.OnClickListen
         @Override
         public int getCount()
         {
-            if(mNumberOfTeams == null)
-            {
-                mNumberOfTeams = (int)mDatabase.where(TeamLogistics.class).count();
-            }
-            return mNumberOfTeams;
+            return mTeamNumbers.size();
         }
 
         /**
@@ -156,16 +150,8 @@ public class TeamListActivity extends ListActivity implements View.OnClickListen
             }
 
 
-            int teamNumber;
-            if(!mTeamNumbers.containsKey(i))
-            {
-                teamNumber = mDatabase.where(TeamLogistics.class).findAll().get(i).getTeamNumber();
-                mTeamNumbers.put(i, teamNumber);
-            }
-            else
-            {
-                teamNumber = mTeamNumbers.get(i);
-            }
+            int teamNumber = mTeamNumbers.get(i);
+
 
             ((TextView)view).setText(String.format("Team: %d", teamNumber));
 
@@ -199,11 +185,7 @@ public class TeamListActivity extends ListActivity implements View.OnClickListen
         @Override
         public boolean isEmpty()
         {
-            if(mNumberOfTeams == null)
-            {
-                mNumberOfTeams = (int)mDatabase.where(TeamLogistics.class).count();
-            }
-            return mNumberOfTeams == 0;
+            return mTeamNumbers.isEmpty();
         }
 
         /**

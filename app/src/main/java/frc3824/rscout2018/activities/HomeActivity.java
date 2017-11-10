@@ -10,12 +10,8 @@ import android.widget.TextView;
 
 import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
+import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.utilities.Constants;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.SyncConfiguration;
-import io.realm.SyncCredentials;
-import io.realm.SyncUser;
 
 @MakeActivityStarter
 public class HomeActivity extends Activity implements View.OnClickListener
@@ -31,33 +27,44 @@ public class HomeActivity extends Activity implements View.OnClickListener
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        // Inflate the match scouting button
         Button button = findViewById(R.id.match_scouting_button);
         button.setOnClickListener(this);
         button.setEnabled(sharedPreferences.getBoolean(Constants.Settings.ENABLE_MATCH_SCOUT,
                                                        false));
+
+        // Inflate the pit scouting button
         button.setOnClickListener(this);
         button = findViewById(R.id.pit_scouting_button);
         button.setEnabled(sharedPreferences.getBoolean(Constants.Settings.ENABLE_PIT_SCOUT, false));
+
+        // Inflate the super scouting button
         button.setOnClickListener(this);
         button = findViewById(R.id.super_scouting_button);
         button.setEnabled(sharedPreferences.getBoolean(Constants.Settings.ENABLE_SUPER_SCOUT,
                                                        false));
-        button.setOnClickListener(this);
 
         boolean enableStrategist = sharedPreferences.getBoolean(Constants.Settings.ENABLE_STRATEGIST,
                                                                 false);
+        // Inflate the match preview button
         button = findViewById(R.id.match_preview_button);
         button.setEnabled(enableStrategist);
         button.setOnClickListener(this);
+
+        // Inflate the team stats button
         button = findViewById(R.id.team_stats_button);
         button.setEnabled(enableStrategist);
         button.setOnClickListener(this);
+
+        // Inflate the event charts button
         button = findViewById(R.id.event_charts_button);
         button.setEnabled(enableStrategist);
         button.setOnClickListener(this);
 
+        // Inflate the settings button
         findViewById(R.id.settings_button).setOnClickListener(this);
 
+        // If an event key is selected then setup database
         if (sharedPreferences.contains(Constants.Settings.EVENT_KEY))
         {
             String temp = sharedPreferences.getString(Constants.Settings.EVENT_KEY, "");
@@ -69,17 +76,7 @@ public class HomeActivity extends Activity implements View.OnClickListener
                 int port = sharedPreferences.getInt(Constants.Settings.SERVER_PORT, -1);
                 // todo: Something when ip is empty or port is -1
 
-                // Server is connected via ethernet, so the password isn't as critical
-                SyncCredentials credentials = SyncCredentials.usernamePassword("hawk", "pass");
-                SyncUser user = SyncUser.login(credentials,
-                                               String.format("realm://%s:%d/auth", ip, port));
-                SyncConfiguration configuration = new SyncConfiguration.Builder(user,
-                                                                                String.format(
-                                                                                        "realm://%s:%d/%s",
-                                                                                        ip,
-                                                                                        port,
-                                                                                        mEventKey)).build();
-                Realm.setDefaultConfiguration(configuration);
+                Database.getInstance().setEventKey(mEventKey);
             }
         }
         else
@@ -87,9 +84,11 @@ public class HomeActivity extends Activity implements View.OnClickListener
             mEventKey = "None";
         }
 
+        // Display event key
         TextView tv = findViewById(R.id.event);
         tv.setText(String.format("Event: %s", mEventKey));
 
+        // Display version
         tv = findViewById(R.id.version);
         tv.setText(String.format("Version: %s", Constants.VERSION));
     }
@@ -101,24 +100,37 @@ public class HomeActivity extends Activity implements View.OnClickListener
 
         // Reset everything (the preferences might have changed)
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Reset match scouting button
         Button button = findViewById(R.id.match_scouting_button);
         button.setEnabled(sharedPreferences.getBoolean(Constants.Settings.ENABLE_MATCH_SCOUT,
                                                        false));
+
+        // Reset pit scouting button
         button = findViewById(R.id.pit_scouting_button);
         button.setEnabled(sharedPreferences.getBoolean(Constants.Settings.ENABLE_PIT_SCOUT, false));
+
+        // Reset super scouting button
         button = findViewById(R.id.super_scouting_button);
         button.setEnabled(sharedPreferences.getBoolean(Constants.Settings.ENABLE_SUPER_SCOUT,
                                                        false));
 
         boolean enableStrategist = sharedPreferences.getBoolean(Constants.Settings.ENABLE_STRATEGIST,
                                                                 false);
+
+        // Reset match preview button
         button = findViewById(R.id.match_preview_button);
         button.setEnabled(enableStrategist);
+
+        // Reset team stats button
         button = findViewById(R.id.team_stats_button);
         button.setEnabled(enableStrategist);
+
+        // Reset event charts button
         button = findViewById(R.id.event_charts_button);
         button.setEnabled(enableStrategist);
 
+        // Setup database
         if (sharedPreferences.contains(Constants.Settings.EVENT_KEY))
         {
             String temp = sharedPreferences.getString(Constants.Settings.EVENT_KEY, "");
@@ -130,17 +142,7 @@ public class HomeActivity extends Activity implements View.OnClickListener
                 int port = sharedPreferences.getInt(Constants.Settings.SERVER_PORT, -1);
                 // todo: Something when ip is empty or port is -1
 
-                // Server is connected via ethernet, so the password isn't as critical
-                SyncCredentials credentials = SyncCredentials.usernamePassword("hawk", "pass");
-                SyncUser user = SyncUser.login(credentials,
-                                               String.format("realm://%s:%d/auth", ip, port));
-                SyncConfiguration configuration = new SyncConfiguration.Builder(user,
-                                                                                String.format(
-                                                                                        "realm://%s:%d/%s",
-                                                                                        ip,
-                                                                                        port,
-                                                                                        mEventKey)).build();
-                Realm.setDefaultConfiguration(configuration);
+                Database.getInstance().setEventKey(mEventKey);
 
                 TextView tv = findViewById(R.id.event);
                 tv.setText(String.format("Event: %s", mEventKey));
@@ -157,28 +159,35 @@ public class HomeActivity extends Activity implements View.OnClickListener
     {
         switch (view.getId())
         {
+            // Go to the match list for match scouting
             case R.id.match_scouting_button:
                 MatchListActivityStarter.start(this,
                                                Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
                 break;
+            // Go to the team list for pit scouting
             case R.id.pit_scouting_button:
                 TeamListActivityStarter.start(this,
                                               Constants.IntentExtras.NextPageOptions.PIT_SCOUTING);
                 break;
+            // Go to the match list for super scouting
             case R.id.super_scouting_button:
                 MatchListActivityStarter.start(this,
                                                Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING);
                 break;
+            // Go to the match list for match preview
             case R.id.match_preview_button:
                 MatchListActivityStarter.start(this,
                                                Constants.IntentExtras.NextPageOptions.MATCH_VIEW);
                 break;
+            // Go to the team list for team stats
             case R.id.team_stats_button:
                 TeamListActivityStarter.start(this,
                                               Constants.IntentExtras.NextPageOptions.TEAM_VIEW);
                 break;
+            // Go to the event charts
             case R.id.event_charts_button:
                 break;
+            // Go to the settings
             case R.id.settings_button:
                 SettingsActivityStarter.start(this);
                 break;

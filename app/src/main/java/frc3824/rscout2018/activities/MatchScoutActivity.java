@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.sdsmdg.tastytoast.TastyToast;
@@ -17,8 +18,9 @@ import activitystarter.ActivityStarter;
 import activitystarter.Arg;
 import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.data_models.MatchLogistics;
-import frc3824.rscout2018.data_models.TeamMatchData;
+import frc3824.rscout2018.database.Database;
+import frc3824.rscout2018.database.data_models.MatchLogistics;
+import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.fragments.match_scout.MatchAutoFragment;
 import frc3824.rscout2018.fragments.match_scout.MatchEndgameFragment;
 import frc3824.rscout2018.fragments.match_scout.MatchFoulsFragment;
@@ -27,15 +29,13 @@ import frc3824.rscout2018.fragments.match_scout.MatchTeleopFragment;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.ScoutHeader;
 import frc3824.rscout2018.views.ScoutHeaderInterface;
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
 
 /**
  * @class MatchScoutActivity
  * @brief The page for scouting an individual team in a single match
  */
 @MakeActivityStarter
-public class MatchScoutActivity extends Activity implements RealmChangeListener<TeamMatchData>
+public class MatchScoutActivity extends Activity
 {
     private final static String TAG = "MatchScoutActivity";
 
@@ -44,11 +44,8 @@ public class MatchScoutActivity extends Activity implements RealmChangeListener<
     protected int mMatchNumber = -1;
     private boolean mPractice = false;
 
-    private Realm mDatabase;
-
     private MatchScoutFragmentPagerAdapter mFPA;
     private TeamMatchData mTMD;
-    private boolean mDirty = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -61,64 +58,42 @@ public class MatchScoutActivity extends Activity implements RealmChangeListener<
         int position = Integer.parseInt(sharedPreferences.getString(Constants.Settings.MATCH_SCOUT_POSITION, "-1"));
         if (position == -1)
         {
-            // Shouldn't be possible to get here
-            // todo: Error
+            Log.e(TAG, "Error: impossible match scout position");
+            return;
         }
 
         ScoutHeader header = findViewById(R.id.header);
         header.setInterface(new MatchScoutHeader());
 
-        mDatabase = Realm.getDefaultInstance();
-
         // Normal match
         if (mMatchNumber > 0)
         {
-            MatchLogistics m = mDatabase.where(MatchLogistics.class)
-                                        .equalTo(Constants.Database.PrimaryKeys.MATCH_LOGISTICS,
-                                                 mMatchNumber)
-                                        .findFirst();
-            if (m == null)
-            {
-                // Shouldn't be possible to get here
-                // todo: Error
-            }
+            MatchLogistics m = new MatchLogistics(mMatchNumber);
             mTeamNumber = m.getTeamNumber(position);
             header.setTitle(String.format("Match Number: %d Team Number: %d",
                                           mMatchNumber,
                                           mTeamNumber));
 
+            // If on the first match then the previous button should be hidden
             if (mMatchNumber == 1)
             {
                 header.removePrevious();
             }
 
-            if (mDatabase.where(MatchLogistics.class)
-                         .equalTo(Constants.Database.PrimaryKeys.MATCH_LOGISTICS, mMatchNumber + 1)
-                         .findFirst() == null)
+            // If on the final match then next button should be hidden
+            if (mMatchNumber == Database.getInstance().numberOfMatches())
             {
                 header.removeNext();
             }
 
-            mTMD = mDatabase.where(TeamMatchData.class)
-                            .equalTo(Constants.Database.PrimaryKeys.TEAM_MATCH_DATA,
-                                     String.format("%d_%d", mTeamNumber, mMatchNumber))
-                            .findFirst();
-            if (mTMD == null)
-            {
-                mDatabase.beginTransaction();
-                mTMD = mDatabase.createObject(TeamMatchData.class, String.format("%d_%d", mTeamNumber, mMatchNumber));
-                mTMD.setTeamNumber(mTeamNumber);
-                mTMD.setMatchNumber(mMatchNumber);
-                mDatabase.commitTransaction();
-            }
-            mTMD.addChangeListener(this);
-
+            mTMD = new TeamMatchData(mTeamNumber, mMatchNumber);
         }
+        // Practice Match
         else
         {
             mPractice = true;
             header.setTitle("Practice Match");
-            mTMD = new TeamMatchData();
+            mTMD = new TeamMatchData(-1, -1);
             header.removeSave();
         }
 
@@ -147,15 +122,6 @@ public class MatchScoutActivity extends Activity implements RealmChangeListener<
     }
 
     /**
-     * When the data model is changed dirty is set to true
-     * @param t The data model
-     */
-    public void onChange(TeamMatchData t)
-    {
-        mDirty = true;
-    }
-
-    /**
      * Inner class that handles pressing the buttons on the header
      */
     private class MatchScoutHeader implements ScoutHeaderInterface
@@ -166,13 +132,13 @@ public class MatchScoutActivity extends Activity implements RealmChangeListener<
          */
         public void previous()
         {
-            if (mPractice)
+            if (mPractice) // Don't need to worry about saving for practice
             {
                 MatchScoutActivityStarter.start(MatchScoutActivity.this, -1);
             }
             else
             {
-                if (mDirty)
+                if (mTMD.isDirty())
                 {
                     // todo: Save dialog
                 }
@@ -188,17 +154,17 @@ public class MatchScoutActivity extends Activity implements RealmChangeListener<
          */
         public void next()
         {
-            if (mPractice)
+            if (mPractice) // Don't need to worry about saving for practice
             {
                 MatchScoutActivityStarter.start(MatchScoutActivity.this, -1);
             }
             else
             {
-                if (mDirty)
+                if (mTMD.isDirty())
                 {
                     // todo: Save dialog
                 }
-                else
+                else // Don't need to worry about saving if nothing has changed
                 {
                     MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber + 1);
                 }
@@ -210,17 +176,17 @@ public class MatchScoutActivity extends Activity implements RealmChangeListener<
          */
         public void home()
         {
-            if (mPractice)
+            if (mPractice) // Don't need to worry about saving for practice
             {
                 HomeActivityStarter.start(MatchScoutActivity.this);
             }
             else
             {
-                if (mDirty)
+                if (mTMD.isDirty())
                 {
                     // todo: Save dialog
                 }
-                else
+                else // Don't need to worry about saving if nothing has changed
                 {
                     HomeActivityStarter.start(MatchScoutActivity.this);
                 }
@@ -232,17 +198,17 @@ public class MatchScoutActivity extends Activity implements RealmChangeListener<
          */
         public void list()
         {
-            if (mPractice)
+            if (mPractice) // Don't need to worry about saving for practice
             {
                 MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
             }
             else
             {
-                if (mDirty)
+                if (mTMD.isDirty())
                 {
                     // todo: Save dialog
                 }
-                else
+                else // Don't need to worry about saving if nothing has changed
                 {
                     MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
                 }
@@ -254,12 +220,9 @@ public class MatchScoutActivity extends Activity implements RealmChangeListener<
          */
         public void save()
         {
-            if(!mPractice)
+            if(!mPractice) // Don't need to worry about saving for practice
             {
-                mDatabase.beginTransaction();
-                mDatabase.copyToRealmOrUpdate(mTMD);
-                mDatabase.commitTransaction();
-                mDirty = false;
+
                 TastyToast.makeText(MatchScoutActivity.this, "Saved", TastyToast.LENGTH_SHORT, TastyToast.SUCCESS);
             }
         }
@@ -323,7 +286,6 @@ public class MatchScoutActivity extends Activity implements RealmChangeListener<
         }
 
         /**
-         * Returns the number of fragments
          * @returns The number of fragments
          */
         @Override

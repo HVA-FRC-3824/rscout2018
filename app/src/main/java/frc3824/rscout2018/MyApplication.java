@@ -2,7 +2,9 @@ package frc3824.rscout2018;
 
 import android.app.Application;
 
-import io.realm.Realm;
+import java.io.IOException;
+
+import frc3824.rscout2018.database.Database;
 
 /**
  * Base application class that runs on start up
@@ -13,6 +15,13 @@ public class MyApplication extends Application
     public void onCreate()
     {
         super.onCreate();
-        Realm.init(this);
+        try
+        {
+            Database.getInstance().setContext(this);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 }

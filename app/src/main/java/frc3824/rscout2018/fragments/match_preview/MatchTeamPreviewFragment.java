@@ -1,7 +1,6 @@
 package frc3824.rscout2018.fragments.match_preview;
 
 import android.app.Fragment;
-import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +10,7 @@ import android.view.ViewGroup;
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.data_models.TeamCalculatedData;
+import frc3824.rscout2018.database.data_models.TeamCalculatedData;
 import frc3824.rscout2018.utilities.Utilities;
 
 /**

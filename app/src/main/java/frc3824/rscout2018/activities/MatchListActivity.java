@@ -19,9 +19,9 @@ import activitystarter.ActivityStarter;
 import activitystarter.Arg;
 import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.data_models.MatchLogistics;
+import frc3824.rscout2018.database.Database;
+import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.utilities.Constants;
-import io.realm.Realm;
 
 /**
  * @class MatchListActivity
@@ -45,8 +45,10 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_match_list);
 
+        // Fill next page
         ActivityStarter.fill(this);
 
+        // Get the position of the match scout (blue 1, blue 2, red 3, etc) from the preferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         try
         {
@@ -60,6 +62,7 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
 
         findViewById(R.id.practice).setOnClickListener(this);
 
+        // Setup list of buttons for the individual matches
         ListView listView = findViewById(android.R.id.list);
         listView.setAdapter(new MatchListAdapter());
     }
@@ -71,7 +74,14 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
     @Override
     public void onClick(View view)
     {
-        MatchScoutActivityStarter.start(this, -1);
+        switch(mNextPage)
+        {
+            case Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING:
+                MatchScoutActivityStarter.start(this, -1);
+                break;
+            case Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING:
+                break;
+        }
     }
 
     /**
@@ -81,7 +91,6 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
     private class MatchListAdapter implements ListAdapter, View.OnClickListener
     {
         LayoutInflater mLayoutInflator;
-        Realm mDatabase;
         int mNumberOfMatches;
         Map<Integer, Integer> mTeamNumbers;
 
@@ -91,12 +100,11 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
         MatchListAdapter()
         {
             mLayoutInflator = getLayoutInflater();
-            mDatabase = Realm.getDefaultInstance();
             if (mNextPage == Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING)
             {
                 mTeamNumbers = new HashMap<>();
             }
-            mNumberOfMatches = (int) mDatabase.where(MatchLogistics.class).count();
+            mNumberOfMatches = (int) Database.getInstance().numberOfMatches();
         }
 
         /**
@@ -209,14 +217,7 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
                         }
                         else
                         {
-                            MatchLogistics m = mDatabase.where(MatchLogistics.class)
-                                                        .equalTo(Constants.Database.PrimaryKeys.MATCH_LOGISTICS,
-                                                                 position + 1)
-                                                        .findFirst();
-                            if (m == null)
-                            {
-                                // error
-                            }
+                            MatchLogistics m = new MatchLogistics(position + 1);
                             teamNumber = m.getTeamNumber(mMatchScoutPosition);
                             mTeamNumbers.put(position + 1, teamNumber);
                         }

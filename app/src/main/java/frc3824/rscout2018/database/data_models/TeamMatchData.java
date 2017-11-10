@@ -1,61 +1,35 @@
-package frc3824.rscout2018.data_models;
+package frc3824.rscout2018.database.data_models;
 
+import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import android.databinding.Observable;
-import android.databinding.PropertyChangeRegistry;
+
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Document;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 import frc3824.rscout2018.BR;
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.Index;
-import io.realm.annotations.PrimaryKey;
+import frc3824.rscout2018.database.Database;
 
 /**
  * Data Model for a single team in a single match
  */
-public class TeamMatchData extends RealmObject implements Observable
+public class TeamMatchData extends BaseObservable
 {
-    //region Observable
-    @Ignore
-    private PropertyChangeRegistry mPropertyChangeRegistry;
+    boolean mDirty; // Keeps track if anything has changed
 
-    @Override
-    public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback)
+    /**
+     *
+     * @returns Whether the model have been changed
+     */
+    public boolean isDirty()
     {
-        mPropertyChangeRegistry.add(callback);
+        return mDirty;
     }
-
-    @Override
-    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback)
-    {
-        mPropertyChangeRegistry.remove(callback);
-    }
-    //endregion
 
     //region Logistics
-    @PrimaryKey
-    String id; //!< Solely for the database
-
-    /**
-     * Getter function for the id
-     * @returns The id
-     */
-    @Bindable
-    public String getId()
-    {
-        return id;
-    }
-
-    /**
-     * Setter function for the id
-     * @param id The id
-     */
-    public void setId(String id)
-    {
-        this.id = id;
-        mPropertyChangeRegistry.notifyChange(this, BR.id);
-    }
-
     //region Match Number
     int matchNumber;
 
@@ -66,7 +40,7 @@ public class TeamMatchData extends RealmObject implements Observable
     @Bindable
     public int getMatchNumber()
     {
-        return this.matchNumber;
+        return matchNumber;
     }
 
     /**
@@ -76,11 +50,11 @@ public class TeamMatchData extends RealmObject implements Observable
     public void setMatchNumber(int matchNumber)
     {
         this.matchNumber = matchNumber;
-        mPropertyChangeRegistry.notifyChange(this, BR.matchNumber);
+        mDirty = true;
+        notifyChange(BR.matchNumber);
     }
     //endregion
     //region Team Number
-    @Index
     int teamNumber;
 
     /**
@@ -90,7 +64,7 @@ public class TeamMatchData extends RealmObject implements Observable
     @Bindable
     public int getTeamNumber()
     {
-        return this.teamNumber;
+        return teamNumber;
     }
 
     /**
@@ -100,7 +74,8 @@ public class TeamMatchData extends RealmObject implements Observable
     public void setTeamNumber(int teamNumber)
     {
         this.teamNumber = teamNumber;
-        mPropertyChangeRegistry.notifyChange(this, BR.teamNumber);
+        mDirty = true;
+        notifyChange(BR.teamNumber);
     }
     //endregion
     //region Scout Name
@@ -113,7 +88,7 @@ public class TeamMatchData extends RealmObject implements Observable
     @Bindable
     public String getScoutName()
     {
-        return this.scoutName;
+        return scoutName;
     }
 
     /**
@@ -123,7 +98,8 @@ public class TeamMatchData extends RealmObject implements Observable
     public void setScoutName(String scoutName)
     {
         this.scoutName = scoutName;
-        mPropertyChangeRegistry.notifyChange(this, BR.scoutName);
+        mDirty = true;
+        notifyChange(BR.scoutName);
     }
     //endregion
     //endregion
@@ -139,7 +115,7 @@ public class TeamMatchData extends RealmObject implements Observable
     @Bindable
     public int getFouls()
     {
-        return this.fouls;
+        return fouls;
     }
 
     /**
@@ -149,7 +125,8 @@ public class TeamMatchData extends RealmObject implements Observable
     public void setFouls(int fouls)
     {
         this.fouls = fouls;
-        mPropertyChangeRegistry.notifyChange(this, BR.fouls);
+        mDirty = true;
+        notifyChange(BR.fouls);
     }
     //endregion
     //region Tech Fouls
@@ -162,7 +139,7 @@ public class TeamMatchData extends RealmObject implements Observable
     @Bindable
     public int getTechFouls()
     {
-        return this.techFouls;
+        return techFouls;
     }
 
     /**
@@ -172,7 +149,8 @@ public class TeamMatchData extends RealmObject implements Observable
     public void setTechFouls(int techFouls)
     {
         this.techFouls = techFouls;
-        mPropertyChangeRegistry.notifyChange(this, BR.techFouls);
+        mDirty = true;
+        notifyChange(BR.techFouls);
     }
     //endregion
     //region Yellow Card
@@ -189,7 +167,7 @@ public class TeamMatchData extends RealmObject implements Observable
     @Bindable
     public boolean isYellowCard()
     {
-        return this.yellowCard;
+        return yellowCard;
     }
 
     /**
@@ -199,7 +177,8 @@ public class TeamMatchData extends RealmObject implements Observable
     public void setYellowCard(boolean yellowCard)
     {
         this.yellowCard = yellowCard;
-        mPropertyChangeRegistry.notifyChange(this, BR.yellowCard);
+        mDirty = true;
+        notifyChange(BR.yellowCard);
     }
     //endregion
     //region Red Card
@@ -226,7 +205,8 @@ public class TeamMatchData extends RealmObject implements Observable
     public void setRedCard(boolean redCard)
     {
         this.redCard = redCard;
-        mPropertyChangeRegistry.notifyChange(this, BR.redCard);
+        mDirty = true;
+        notifyChange(BR.redCard);
     }
     //endregion
     //endregion
@@ -251,7 +231,8 @@ public class TeamMatchData extends RealmObject implements Observable
     public void setDq(boolean dq)
     {
         this.dq = dq;
-        mPropertyChangeRegistry.notifyChange(this, BR.dq);
+        mDirty = true;
+        notifyChange(BR.dq);
     }
     //endregion
     //region No Show
@@ -273,7 +254,8 @@ public class TeamMatchData extends RealmObject implements Observable
     public void setNoShow(boolean noShow)
     {
         this.noShow = noShow;
-        mPropertyChangeRegistry.notifyChange(this, BR.noShow);
+        mDirty = true;
+        notifyChange(BR.noShow);
     }
     //endregion
     //region Notes
@@ -296,7 +278,8 @@ public class TeamMatchData extends RealmObject implements Observable
     public void setNotes(String notes)
     {
         this.notes = notes;
-        mPropertyChangeRegistry.notifyChange(this, BR.notes);
+        mDirty = true;
+        notifyChange(BR.notes);
     }
     //endregion
     //endregion
@@ -315,7 +298,8 @@ public class TeamMatchData extends RealmObject implements Observable
     public void setTest(String test)
     {
         this.test = test;
-        mPropertyChangeRegistry.notifyChange(this, BR.test);
+        mDirty = true;
+        notifyChange(BR.test);
     }
     //endregion
     //endregion
@@ -326,16 +310,72 @@ public class TeamMatchData extends RealmObject implements Observable
     //endregion
 
     //region Constructors
-    public TeamMatchData()
-    {
-        mPropertyChangeRegistry = new PropertyChangeRegistry();
-    }
-
     public TeamMatchData(int teamNumber, int matchNumber)
     {
         this.teamNumber = teamNumber;
         this.matchNumber = matchNumber;
-        id = String.format("%d_%d", this.teamNumber, this.matchNumber);
+        load();
+        mDirty = false;
+    }
+    //endregion
+
+    //region Database
+    public void save()
+    {
+        Document document = Database.getInstance().getDocument(String.format("tmd_%d_%d", teamNumber, matchNumber));
+        Map<String, Object> properties = new HashMap<>();
+        for(Field field: getClass().getDeclaredFields())
+        {
+            // Ignore are not part of the model
+            if(field.getName() == "mDirty")
+            {
+                continue;
+            }
+
+            try
+            {
+                properties.put(field.getName(), field.get(this));
+            }
+            catch (IllegalAccessException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        try
+        {
+            document.putProperties(properties);
+        }
+        catch (CouchbaseLiteException e)
+        {
+            e.printStackTrace();
+        }
+        mDirty = false;
+    }
+
+    public void load()
+    {
+        Document document = Database.getInstance().getDocument(String.format("tmd_%d_%d", teamNumber, matchNumber));
+        Map<String, Object> properties = document.getProperties();
+        for(Field field: getClass().getDeclaredFields())
+        {
+            // Ignore as these were set in the constructor
+            if (field.getName() == "teamNumber" || field.getName() == "matchNumber" || field.getName() == "mDirty")
+            {
+                continue;
+            }
+            if(properties.containsKey(field.getName()))
+            {
+                Object property = properties.get(field.getName());
+                try
+                {
+                    field.set(this, property);
+                }
+                catch (IllegalAccessException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
     //endregion
 }
