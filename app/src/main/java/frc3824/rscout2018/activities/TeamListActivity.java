@@ -11,15 +11,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
 import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.Database;
-import frc3824.rscout2018.database.data_models.TeamLogistics;
 import frc3824.rscout2018.utilities.Constants;
 
 /**
@@ -199,7 +196,7 @@ public class TeamListActivity extends ListActivity implements View.OnClickListen
                 case Constants.IntentExtras.NextPageOptions.PIT_SCOUTING:
                     // PitScoutActivityStarter.start(view.getId());
                     break;
-                case Constants.IntentExtras.NextPageOptions.TEAM_VIEW:
+                case Constants.IntentExtras.NextPageOptions.TEAM_STATS:
                     // TeamViewActivityStarter.start(view.getId());
                     break;
                 default:

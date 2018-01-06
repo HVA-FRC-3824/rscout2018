@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "frc3824.rscout2018"
         minSdkVersion 21
@@ -59,6 +59,10 @@ dependencies {
     compile 'com.ogaclejapan.smarttablayout:utils-v13:1.6.1@aar'
 
     compile 'com.couchbase.lite:couchbase-lite-android:1.4.0'
+
+    compile 'com.loopj.android:android-async-http:1.4.9'
+
+    compile 'com.google.code.gson:gson:2.8.2'
 
     testCompile 'junit:junit:4.12'
 }

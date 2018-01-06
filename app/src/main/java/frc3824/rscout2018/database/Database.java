@@ -140,5 +140,4 @@ public class Database
         QueryRow row = result.next();
         return (ArrayList<Integer>) row.getValue();
     }
-
 }

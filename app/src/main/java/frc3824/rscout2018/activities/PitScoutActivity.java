@@ -8,13 +8,17 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
+
+import java.util.ArrayList;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
 import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
+import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.TeamPitData;
 import frc3824.rscout2018.fragments.pit_scout.PitPictureFragment;
 import frc3824.rscout2018.utilities.Constants;
@@ -49,35 +53,40 @@ public class PitScoutActivity extends Activity
                                                                     "-1"));
         if (position == -1)
         {
-            // Shouldn't be possible to get here
-            // todo: Error
+            Log.e(TAG, "Error: impossible pit scout position");
+            return;
         }
 
+        // Setup header
         ScoutHeader header = findViewById(R.id.header);
         header.setInterface(new PitScoutHeader());
 
-
+        // Real pit scouting
         if (mTeamNumber > 0)
         {
             header.setTitle(String.format("Team Number: %d",
                                           mTeamNumber));
 
-            if (mDatabase.where(TeamPitData.class)
-                         .lessThan(Constants.Database.PrimaryKeys.TEAM_LOGISTICS, mTeamNumber)
-                         .count() > 0)
+            // todo: handle admin
+            // If first team then remove the previous button
+            ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
+            int index = teamNumbers.indexOf(mTeamNumber);
+            if (index - (teamNumbers.size() / 6 * position) <= 0)
             {
                 header.removePrevious();
             }
 
-            if (mDatabase.where(TeamPitData.class)
-                         .greaterThan(Constants.Database.PrimaryKeys.TEAM_LOGISTICS, mTeamNumber)
-                         .count() > 0)
+            // todo: handle admin
+            // If last team then remove the next button
+            index = teamNumbers.indexOf(mTeamNumber);
+            if (index >= (teamNumbers.size() / 6 * (position + 1)) - 1)
             {
                 header.removeNext();
             }
 
             mTPD = new TeamPitData(mTeamNumber);
         }
+        // Practice
         else
         {
             mPractice = true;
@@ -120,15 +129,11 @@ public class PitScoutActivity extends Activity
                 }
                 else
                 {
-                    TeamPitData tpd = mDatabase.where(TeamPitData.class)
-                                               .lessThan(Constants.Database.PrimaryKeys.TEAM_PIT_DATA,
-                                                         mTeamNumber)
-                                               .findAllSorted(Constants.Database.PrimaryKeys.TEAM_PIT_DATA,
-                                                              Sort.DESCENDING)
-                                               .first();
-                    if (tpd != null) // If null then this function shouldn't be possible to call as the button should have been hidden
+                    ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
+                    int index = teamNumbers.indexOf(mTeamNumber);
+                    if (index > 0) // If null then this function shouldn't be possible to call as the button should have been hidden
                     {
-                        PitScoutActivityStarter.start(PitScoutActivity.this, tpd.getTeamNumber());
+                        PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index - 1));
                     }
                 }
             }
@@ -149,15 +154,11 @@ public class PitScoutActivity extends Activity
                 }
                 else
                 {
-                    TeamPitData tpd = mDatabase.where(TeamPitData.class)
-                                               .greaterThan(Constants.Database.PrimaryKeys.TEAM_PIT_DATA,
-                                                            mTeamNumber)
-                                               .findAllSorted(Constants.Database.PrimaryKeys.TEAM_PIT_DATA,
-                                                              Sort.ASCENDING)
-                                               .first();
-                    if (tpd != null) // If null then this function shouldn't be possible to call as the button should have been hidden
+                    ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
+                    int index = teamNumbers.indexOf(mTeamNumber);
+                    if (index < teamNumbers.size() - 1) // If null then this function shouldn't be possible to call as the button should have been hidden
                     {
-                        PitScoutActivityStarter.start(PitScoutActivity.this, tpd.getTeamNumber());
+                        PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index + 1));
                     }
                 }
             }
@@ -206,11 +207,9 @@ public class PitScoutActivity extends Activity
         @Override
         public void save()
         {
-            if (!mPractice && mDirty)
+            if (!mPractice && mTPD.isDirty())
             {
-                mDatabase.beginTransaction();
-                mDatabase.copyToRealmOrUpdate(mTPD);
-                mDatabase.commitTransaction();
+                mTPD.save();
             }
         }
     }

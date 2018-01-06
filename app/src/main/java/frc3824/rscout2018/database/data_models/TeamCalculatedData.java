@@ -1,13 +1,11 @@
 package frc3824.rscout2018.database.data_models;
 
-import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
 
 import frc3824.rscout2018.BR;
@@ -17,10 +15,8 @@ import frc3824.rscout2018.database.Database;
  * @class TeamCalculatedData
  * @brief A data model containing the aggregated statistics about a team's performance
  */
-public class TeamCalculatedData extends BaseObservable
+public class TeamCalculatedData extends DataModel
 {
-    
-
     //region Logistics
     //region Team Number
     int teamNumber;
@@ -42,7 +38,7 @@ public class TeamCalculatedData extends BaseObservable
     public void setTeamNumber(int teamNumber)
     {
         this.teamNumber = teamNumber;
-        notifyChange(BR.teamNumber);
+        notifyChange();
     }
     //endregion
     //region Number of Matches Completed
@@ -65,7 +61,7 @@ public class TeamCalculatedData extends BaseObservable
     public void setNumMatchesCompleted(int numMatchesCompleted)
     {
         this.numMatchesCompleted = numMatchesCompleted;
-        notifyChange(BR.numMatchesCompleted);
+        notifyChange();
     }
     //endregion
     //endregion
@@ -100,7 +96,7 @@ public class TeamCalculatedData extends BaseObservable
     public void setFouls(LowLevelStats fouls)
     {
         this.fouls = fouls;
-        notifyChange(BR.fouls);
+        notifyChange();
     }
     //endregion
     //region Tech Fouls
@@ -123,7 +119,7 @@ public class TeamCalculatedData extends BaseObservable
     public void setTechFouls(LowLevelStats techFouls)
     {
         this.techFouls = techFouls;
-        notifyChange(BR.techFouls);
+        notifyChange();
     }
     //endregion
     //region Yellow Cards
@@ -146,7 +142,7 @@ public class TeamCalculatedData extends BaseObservable
     public void setYellowCards(LowLevelStats yellowCards)
     {
         this.yellowCards = yellowCards;
-        notifyChange(BR.yellowCards);
+        notifyChange();
     }
     //endregion
     //region Red Cards
@@ -169,7 +165,7 @@ public class TeamCalculatedData extends BaseObservable
     public void setRedCards(LowLevelStats redCards)
     {
         this.redCards = redCards;
-        notifyChange(BR.redCards);
+        notifyChange();
     }
     //endregion
     //endregion
@@ -195,7 +191,7 @@ public class TeamCalculatedData extends BaseObservable
     public void setDq(LowLevelStats dq)
     {
         this.dq = dq;
-        notifyChange(BR.dq);
+        notifyChange();
     }
     //endregion
     //region No Show
@@ -218,7 +214,7 @@ public class TeamCalculatedData extends BaseObservable
     public void setNoShow(LowLevelStats noShow)
     {
         this.noShow = noShow;
-        notifyChange(BR.noShow);
+        notifyChange();
     }
     //endregion
     //endregion
@@ -235,18 +231,7 @@ public class TeamCalculatedData extends BaseObservable
     public void save()
     {
         Document document = Database.getInstance().getDocument(String.format("tcd_%d", teamNumber));
-        Map<String, Object> properties = new HashMap<>();
-        for(Field field: getClass().getDeclaredFields())
-        {
-            try
-            {
-                properties.put(field.getName(), field.get(this));
-            }
-            catch (IllegalAccessException e)
-            {
-                e.printStackTrace();
-            }
-        }
+        Map<String, Object> properties = getProperties();
         try
         {
             document.putProperties(properties);
@@ -261,26 +246,7 @@ public class TeamCalculatedData extends BaseObservable
     {
         Document document = Database.getInstance().getDocument(String.format("tcd_%d", teamNumber));
         Map<String, Object> properties = document.getProperties();
-        for(Field field: getClass().getDeclaredFields())
-        {
-            // Ignore as this was set in the constructor
-            if (field.getName() == "teamNumber")
-            {
-                continue;
-            }
-            if(properties.containsKey(field.getName()))
-            {
-                Object property = properties.get(field.getName());
-                try
-                {
-                    field.set(this, property);
-                }
-                catch (IllegalAccessException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
+        setProperties(properties, Arrays.asList("teamNumber"));
     }
     //endregion
 }

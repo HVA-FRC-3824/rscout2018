@@ -198,7 +198,7 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
                             // TODO: 9/20/17  Admin
                         }
                         break;
-                    case Constants.IntentExtras.NextPageOptions.MATCH_VIEW:
+                    case Constants.IntentExtras.NextPageOptions.MATCH_PREVIEW:
                     case Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING:
                         view = mLayoutInflator.inflate(R.layout.list_item_fbutton, null);
                         break;
@@ -230,7 +230,7 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
                         // TODO: 9/20/17  Admin
                     }
                     break;
-                case Constants.IntentExtras.NextPageOptions.MATCH_VIEW:
+                case Constants.IntentExtras.NextPageOptions.MATCH_PREVIEW:
                 case Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING:
                     ((TextView) view).setText(String.format("Match: %d", position + 1));
                     break;
@@ -286,7 +286,7 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
                 case Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING:
                     // SuperScoutActivityStarter.start(view.getId());
                     break;
-                case Constants.IntentExtras.NextPageOptions.MATCH_VIEW:
+                case Constants.IntentExtras.NextPageOptions.MATCH_PREVIEW:
                     // MatchViewActivityStarter.start(view.getId());
                     break;
                 default:

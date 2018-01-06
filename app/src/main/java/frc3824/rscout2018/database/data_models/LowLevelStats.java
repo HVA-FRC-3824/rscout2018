@@ -1,5 +1,6 @@
 package frc3824.rscout2018.database.data_models;
 
+import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
 /**
@@ -8,7 +9,7 @@ import android.databinding.Bindable;
  *
  * Contains average, standard deviation, minimum, maximum, and ranking
  */
-public class LowLevelStats
+public class LowLevelStats extends BaseObservable
 {
     //region Average
     double average;

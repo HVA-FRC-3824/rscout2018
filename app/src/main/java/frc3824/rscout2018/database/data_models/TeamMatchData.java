@@ -1,13 +1,12 @@
 package frc3824.rscout2018.database.data_models;
 
-import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
 
 import frc3824.rscout2018.BR;
@@ -16,19 +15,8 @@ import frc3824.rscout2018.database.Database;
 /**
  * Data Model for a single team in a single match
  */
-public class TeamMatchData extends BaseObservable
+public class TeamMatchData extends DataModel
 {
-    boolean mDirty; // Keeps track if anything has changed
-
-    /**
-     *
-     * @returns Whether the model have been changed
-     */
-    public boolean isDirty()
-    {
-        return mDirty;
-    }
-
     //region Logistics
     //region Match Number
     int matchNumber;
@@ -50,8 +38,7 @@ public class TeamMatchData extends BaseObservable
     public void setMatchNumber(int matchNumber)
     {
         this.matchNumber = matchNumber;
-        mDirty = true;
-        notifyChange(BR.matchNumber);
+        notifyChange();
     }
     //endregion
     //region Team Number
@@ -74,8 +61,7 @@ public class TeamMatchData extends BaseObservable
     public void setTeamNumber(int teamNumber)
     {
         this.teamNumber = teamNumber;
-        mDirty = true;
-        notifyChange(BR.teamNumber);
+        notifyChange();
     }
     //endregion
     //region Scout Name
@@ -98,8 +84,7 @@ public class TeamMatchData extends BaseObservable
     public void setScoutName(String scoutName)
     {
         this.scoutName = scoutName;
-        mDirty = true;
-        notifyChange(BR.scoutName);
+        notifyChange();
     }
     //endregion
     //endregion
@@ -125,8 +110,7 @@ public class TeamMatchData extends BaseObservable
     public void setFouls(int fouls)
     {
         this.fouls = fouls;
-        mDirty = true;
-        notifyChange(BR.fouls);
+        notifyChange();
     }
     //endregion
     //region Tech Fouls
@@ -149,8 +133,7 @@ public class TeamMatchData extends BaseObservable
     public void setTechFouls(int techFouls)
     {
         this.techFouls = techFouls;
-        mDirty = true;
-        notifyChange(BR.techFouls);
+        notifyChange();
     }
     //endregion
     //region Yellow Card
@@ -177,8 +160,7 @@ public class TeamMatchData extends BaseObservable
     public void setYellowCard(boolean yellowCard)
     {
         this.yellowCard = yellowCard;
-        mDirty = true;
-        notifyChange(BR.yellowCard);
+        notifyChange();
     }
     //endregion
     //region Red Card
@@ -205,8 +187,7 @@ public class TeamMatchData extends BaseObservable
     public void setRedCard(boolean redCard)
     {
         this.redCard = redCard;
-        mDirty = true;
-        notifyChange(BR.redCard);
+        notifyChange();
     }
     //endregion
     //endregion
@@ -231,8 +212,7 @@ public class TeamMatchData extends BaseObservable
     public void setDq(boolean dq)
     {
         this.dq = dq;
-        mDirty = true;
-        notifyChange(BR.dq);
+        notifyChange();
     }
     //endregion
     //region No Show
@@ -254,8 +234,7 @@ public class TeamMatchData extends BaseObservable
     public void setNoShow(boolean noShow)
     {
         this.noShow = noShow;
-        mDirty = true;
-        notifyChange(BR.noShow);
+        notifyChange();
     }
     //endregion
     //region Notes
@@ -278,8 +257,7 @@ public class TeamMatchData extends BaseObservable
     public void setNotes(String notes)
     {
         this.notes = notes;
-        mDirty = true;
-        notifyChange(BR.notes);
+        notifyChange();
     }
     //endregion
     //endregion
@@ -298,8 +276,7 @@ public class TeamMatchData extends BaseObservable
     public void setTest(String test)
     {
         this.test = test;
-        mDirty = true;
-        notifyChange(BR.test);
+        notifyChange();
     }
     //endregion
     //endregion
@@ -315,67 +292,19 @@ public class TeamMatchData extends BaseObservable
         this.teamNumber = teamNumber;
         this.matchNumber = matchNumber;
         load();
-        mDirty = false;
     }
     //endregion
 
     //region Database
     public void save()
     {
-        Document document = Database.getInstance().getDocument(String.format("tmd_%d_%d", teamNumber, matchNumber));
-        Map<String, Object> properties = new HashMap<>();
-        for(Field field: getClass().getDeclaredFields())
-        {
-            // Ignore are not part of the model
-            if(field.getName() == "mDirty")
-            {
-                continue;
-            }
-
-            try
-            {
-                properties.put(field.getName(), field.get(this));
-            }
-            catch (IllegalAccessException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        try
-        {
-            document.putProperties(properties);
-        }
-        catch (CouchbaseLiteException e)
-        {
-            e.printStackTrace();
-        }
-        mDirty = false;
+        super.save(String.format("tmd_%d_%d", teamNumber, matchNumber));
     }
 
     public void load()
     {
-        Document document = Database.getInstance().getDocument(String.format("tmd_%d_%d", teamNumber, matchNumber));
-        Map<String, Object> properties = document.getProperties();
-        for(Field field: getClass().getDeclaredFields())
-        {
-            // Ignore as these were set in the constructor
-            if (field.getName() == "teamNumber" || field.getName() == "matchNumber" || field.getName() == "mDirty")
-            {
-                continue;
-            }
-            if(properties.containsKey(field.getName()))
-            {
-                Object property = properties.get(field.getName());
-                try
-                {
-                    field.set(this, property);
-                }
-                catch (IllegalAccessException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
+        super.load(String.format("tmd_%d_%d", teamNumber, matchNumber), Arrays.asList("teamNumber", "matchNumber"));
+
     }
     //endregion
 }

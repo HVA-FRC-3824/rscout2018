@@ -5,7 +5,7 @@
 
         <variable
             name="tcd"
-            type="frc3824.rscout2018.data_models.TeamCalculatedData"/>
+            type="frc3824.rscout2018.database.data_models.TeamCalculatedData"/>
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

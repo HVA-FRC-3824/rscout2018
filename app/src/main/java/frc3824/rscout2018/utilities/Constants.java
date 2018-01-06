@@ -45,8 +45,8 @@ public interface Constants
             String MATCH_SCOUTING = "match_scouting";
             String PIT_SCOUTING = "pit_scouting";
             String SUPER_SCOUTING = "super_scouting";
-            String TEAM_VIEW = "team_view";
-            String MATCH_VIEW = "match_view";
+            String TEAM_STATS = "team_stats";
+            String MATCH_PREVIEW = "match_preview";
         }
     }
 
@@ -66,10 +66,29 @@ public interface Constants
     interface MatchScouting
     {
         String[] TABS = {"Auto", "Teleop", "Endgame", "Fouls", "Misc"};
-        int[] LAYOUTS = {R.layout.fragment_match_auto,
-                         R.layout.fragment_match_teleop,
-                         R.layout.fragment_match_endgame,
-                         R.layout.fragment_match_fouls,
-                         R.layout.fragment_match_misc};
+        int[] LAYOUTS = {
+                R.layout.fragment_match_auto,
+                R.layout.fragment_match_teleop,
+                R.layout.fragment_match_endgame,
+                R.layout.fragment_match_fouls,
+                R.layout.fragment_match_misc
+        };
+    }
+
+    interface  PitScouting
+    {
+        String[] TABS = {"Robot Pic", "Dimensions", "Misc"};
+        int[] LAYOUTS = {
+                R.layout.fragment_pit_picture,
+                R.layout.fragment_pit_dimensions,
+                R.layout.fragment_pit_misc
+        };
+    }
+
+    interface SuperScouting
+    {
+        String[] TABS = {};
+        int[] LAYOUTS = {
+        };
     }
 }

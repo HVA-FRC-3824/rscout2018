@@ -80,7 +80,7 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
         // If there are pictures then display the default image
         if(mTeamPitData.numberOfPictures() > 0)
         {
-            mPictureFilepaths = mTeamPitData.getmPictureFilepaths();
+            mPictureFilepaths = mTeamPitData.getPictureFilepaths();
             String defaultFilepath = mTeamPitData.getDefaultPictureFilepath();
 
             if(!defaultFilepath.isEmpty())

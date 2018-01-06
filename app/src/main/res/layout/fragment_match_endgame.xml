@@ -5,7 +5,7 @@
 
         <variable
             name = "tmd"
-            type = "frc3824.rscout2018.data_models.TeamMatchData" />
+            type = "frc3824.rscout2018.database.data_models.TeamMatchData" />
     </data>
 
     <LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"

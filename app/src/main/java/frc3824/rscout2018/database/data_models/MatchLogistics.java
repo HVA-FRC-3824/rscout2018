@@ -1,14 +1,12 @@
 package frc3824.rscout2018.database.data_models;
 
-import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 
-import com.android.databinding.library.baseAdapters.BR;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
 
 import frc3824.rscout2018.database.Database;
@@ -16,10 +14,8 @@ import frc3824.rscout2018.database.Database;
 /**
  * Data model containing the logistics information for a specific match
  */
-public class MatchLogistics extends BaseObservable
+public class MatchLogistics extends DataModel
 {
-
-
     //region Match Number
     int matchNumber;
 
@@ -31,7 +27,7 @@ public class MatchLogistics extends BaseObservable
     public void setMatchNumber(int matchNumber)
     {
         this.matchNumber = matchNumber;
-        notifyPropertyChanged(BR.matchNumber);
+        notifyChange();
     }
     //endregion
 
@@ -44,16 +40,23 @@ public class MatchLogistics extends BaseObservable
         return teamNumbers.get(position);
     }
 
+    /**
+     * Getter function for the numbers of the teams in a given match
+     */
+    @Bindable
     public ArrayList<Integer> getTeamNumbers()
     {
         return teamNumbers;
     }
 
+    /**
+     * Setter function for the numbers of the teams in a given match
+     */
     public void setTeamNumbers(ArrayList<Integer> teamNumbers)
     {
         assert(teamNumbers.size() == 6);
         this.teamNumbers = teamNumbers;
-        notifyPropertyChanged(BR.teamNumbers);
+        notifyChange();
     }
     //endregion
 
@@ -80,53 +83,12 @@ public class MatchLogistics extends BaseObservable
     //region Database
     public void save()
     {
-        Document document = Database.getInstance().getDocument(String.format("ml_%d", matchNumber));
-        Map<String, Object> properties = new HashMap<>();
-        for(Field field: getClass().getDeclaredFields())
-        {
-            try
-            {
-                properties.put(field.getName(), field.get(this));
-            }
-            catch (IllegalAccessException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        try
-        {
-            document.putProperties(properties);
-        }
-        catch (CouchbaseLiteException e)
-        {
-            e.printStackTrace();
-        }
+        super.save(String.format("ml_%d", matchNumber));
     }
 
     public void load()
     {
-        Document document = Database.getInstance().getDocument(String.format("ml_%d", matchNumber));
-        Map<String, Object> properties = document.getProperties();
-        for(Field field: getClass().getDeclaredFields())
-        {
-            // Ignore as this was set in the constructor
-            if (field.getName() == "matchNumber")
-            {
-                continue;
-            }
-            if(properties.containsKey(field.getName()))
-            {
-                Object property = properties.get(field.getName());
-                try
-                {
-                    field.set(this, property);
-                }
-                catch (IllegalAccessException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
+        super.load(String.format("ml_%d", matchNumber), Arrays.asList("matchNumber"));
     }
     //endregion
 }

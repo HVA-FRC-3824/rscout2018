@@ -177,12 +177,12 @@ public class HomeActivity extends Activity implements View.OnClickListener
             // Go to the match list for match preview
             case R.id.match_preview_button:
                 MatchListActivityStarter.start(this,
-                                               Constants.IntentExtras.NextPageOptions.MATCH_VIEW);
+                                               Constants.IntentExtras.NextPageOptions.MATCH_PREVIEW);
                 break;
             // Go to the team list for team stats
             case R.id.team_stats_button:
                 TeamListActivityStarter.start(this,
-                                              Constants.IntentExtras.NextPageOptions.TEAM_VIEW);
+                                              Constants.IntentExtras.NextPageOptions.TEAM_STATS);
                 break;
             // Go to the event charts
             case R.id.event_charts_button:
