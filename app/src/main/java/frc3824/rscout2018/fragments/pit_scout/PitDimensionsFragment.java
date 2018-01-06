@@ -23,7 +23,6 @@ public class PitDimensionsFragment extends Fragment
 
     /**
      * Sets the data model for binding
-     * @param teamPitData
      */
     public void setData(TeamPitData teamPitData)
     {

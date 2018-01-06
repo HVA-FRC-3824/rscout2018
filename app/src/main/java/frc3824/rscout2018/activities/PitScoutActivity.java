@@ -20,6 +20,8 @@ import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.TeamPitData;
+import frc3824.rscout2018.fragments.pit_scout.PitDimensionsFragment;
+import frc3824.rscout2018.fragments.pit_scout.PitMiscFragment;
 import frc3824.rscout2018.fragments.pit_scout.PitPictureFragment;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.ScoutHeader;
@@ -222,7 +224,6 @@ public class PitScoutActivity extends Activity
     {
         static final String TAG = "MatchScoutFragmentPagerAdapter";
 
-        String[] mTitles = {"Picture"}; //{ "Picture", "Dimensions", "Misc"};
         TeamPitData mTeamPitData;
 
 
@@ -240,8 +241,7 @@ public class PitScoutActivity extends Activity
         @Override
         public Fragment getItem(int position)
         {
-            assert (position >= 0 && position < mTitles.length);
-            Fragment f;
+            assert (position >= 0 && position < Constants.PitScouting.TABS.length);
             switch (position)
             {
                 case 0:
@@ -249,13 +249,13 @@ public class PitScoutActivity extends Activity
                     ppf.setData(mTeamPitData);
                     return ppf;
                 case 1:
-                    break;
+                    PitDimensionsFragment pdf = new PitDimensionsFragment();
+                    pdf.setData(mTeamPitData);
+                    return pdf;
                 case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
+                    PitMiscFragment pmf = new PitMiscFragment();
+                    pmf.setData(mTeamPitData);
+                    return pmf;
                 default:
                     assert (false);
             }
@@ -268,7 +268,7 @@ public class PitScoutActivity extends Activity
         @Override
         public int getCount()
         {
-            return mTitles.length;
+            return Constants.PitScouting.TABS.length;
         }
 
         /**
@@ -281,8 +281,8 @@ public class PitScoutActivity extends Activity
         @Override
         public String getPageTitle(int position)
         {
-            assert (position >= 0 && position < mTitles.length);
-            return mTitles[position];
+            assert (position >= 0 && position < Constants.PitScouting.TABS.length);
+            return Constants.PitScouting.TABS[position];
         }
     }
 

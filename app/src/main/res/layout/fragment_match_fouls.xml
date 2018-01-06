@@ -18,25 +18,25 @@
         <frc3824.rscout2018.views.SavableCounter
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
-            app:label = "Fouls"
+            app:label = "Fouls:"
             app:count = "@{tmd.fouls}" />
 
         <frc3824.rscout2018.views.SavableCounter
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
-            app:label = "Tech Fouls"
+            app:label = "Tech Fouls:"
             app:count = "@{tmd.techFouls}" />
 
         <frc3824.rscout2018.views.SavableSwitch
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
-            app:label = "Yellow Card"
+            app:label = "Yellow Card:"
             app:bool = "@{tmd.yellowCard}" />
 
         <frc3824.rscout2018.views.SavableSwitch
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
-            app:label = "Red Card"
+            app:label = "Red Card:"
             app:bool = "@{tmd.redCard}" />
 
     </LinearLayout>

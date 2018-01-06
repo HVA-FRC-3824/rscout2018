@@ -237,7 +237,6 @@ public class MatchScoutActivity extends Activity
     {
         static final String TAG = "MatchScoutFragmentPagerAdapter";
 
-        String[] mTitles = { "Auto", "Teleop", "Endgame", "Fouls", "Misc"};
         TeamMatchData mTeamMatchData;
 
 
@@ -256,7 +255,7 @@ public class MatchScoutActivity extends Activity
         @Override
         public Fragment getItem(int position)
         {
-            assert(position >= 0 && position < mTitles.length);
+            assert(position >= 0 && position < Constants.MatchScouting.TABS.length);
             switch (position)
             {
                 case 0:
@@ -291,7 +290,7 @@ public class MatchScoutActivity extends Activity
         @Override
         public int getCount()
         {
-            return mTitles.length;
+            return Constants.MatchScouting.TABS.length;
         }
 
         /**
@@ -303,8 +302,8 @@ public class MatchScoutActivity extends Activity
         @Override
         public String getPageTitle(int position)
         {
-            assert(position >= 0 && position < mTitles.length);
-            return mTitles[position];
+            assert(position >= 0 && position < Constants.MatchScouting.TABS.length);
+            return Constants.MatchScouting.TABS[position];
         }
     }
 }

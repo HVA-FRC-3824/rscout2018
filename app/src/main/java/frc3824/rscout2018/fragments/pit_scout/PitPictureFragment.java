@@ -162,6 +162,11 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    /**
+     * todo Document
+     * @param position
+     * @param imageView
+     */
     @Override
     public void setImageForPosition(int position, ImageView imageView)
     {
@@ -175,6 +180,7 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    // todo Document
     private class CameraListener extends com.flurgle.camerakit.CameraListener
     {
         @Override

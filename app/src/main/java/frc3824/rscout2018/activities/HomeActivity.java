@@ -186,7 +186,14 @@ public class HomeActivity extends Activity implements View.OnClickListener
                 break;
             // Go to the event charts
             case R.id.event_charts_button:
+                EventChartsActivityStarter.start(this);
                 break;
+
+            // Go to the pick list
+            case R.id.pick_list_button:
+                PickListActivityStarter.start(this);
+                break;
+
             // Go to the settings
             case R.id.settings_button:
                 SettingsActivityStarter.start(this);
