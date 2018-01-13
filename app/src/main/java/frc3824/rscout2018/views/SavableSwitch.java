@@ -10,6 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import frc3824.rscout2018.R;
+import frc3824.rscout2018.databinding.SavableSwitchBinding;
 
 /**
  * @class SavableSwitch
@@ -17,6 +18,7 @@ import frc3824.rscout2018.R;
  */
 public class SavableSwitch extends LinearLayout
 {
+    SavableSwitchBinding mBinding;
     Switch mSwitch;
 
     /**
@@ -29,7 +31,7 @@ public class SavableSwitch extends LinearLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.savable_switch, this);
+        mBinding = SavableSwitchBinding.inflate(inflater);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 
@@ -37,7 +39,7 @@ public class SavableSwitch extends LinearLayout
         TextView label = findViewById(R.id.label);
         label.setText(typedArray.getString(R.styleable.SavableView_label));
 
-        mSwitch = findViewById(R.id.switch_);
+        mSwitch = findViewById(R.id.switch1);
     }
 
     /**

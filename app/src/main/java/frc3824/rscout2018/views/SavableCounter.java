@@ -2,16 +2,15 @@ package frc3824.rscout2018.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.databinding.ObservableInt;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import frc3824.rscout2018.R;
+import frc3824.rscout2018.databinding.SavableCounterBinding;
 
 /**
  * @class SavableCounter
@@ -19,6 +18,7 @@ import frc3824.rscout2018.R;
  */
 public class SavableCounter extends LinearLayout implements View.OnClickListener, View.OnLongClickListener
 {
+    SavableCounterBinding mBinding;
     Button mButton;
     Integer mCount;
     int mMax;
@@ -29,7 +29,7 @@ public class SavableCounter extends LinearLayout implements View.OnClickListener
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.savable_counter, this);
+        mBinding = SavableCounterBinding.inflate(inflater);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 

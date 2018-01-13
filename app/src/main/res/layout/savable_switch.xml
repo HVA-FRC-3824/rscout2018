@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
-                android:layout_width = "match_parent"
-                android:layout_height = "wrap_content"
-                android:layout_margin = "2dp"
-                android:background = "@color/White"
-                android:padding = "4dp">
+<layout>
 
-    <TextView
-        android:id = "@+id/label"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
-        android:layout_alignParentLeft = "true"
-        android:layout_centerVertical = "true"
-        android:textColor = "@color/Black"
-        android:textSize = "20sp" />
+    <data>
 
-    <Switch
-        android:id = "@+id/switch_"
-        android:layout_width = "fill_parent"
-        android:layout_height = "wrap_content"
-        android:layout_alignParentRight = "true"
-        android:layout_centerVertical = "true"
-        android:layout_toRightOf = "@+id/label" />
-</RelativeLayout>
+        <variable
+            name="data"
+            type="boolean"/>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:background="@color/White"
+                    android:padding="4dp">
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:textColor="@color/Black"
+            android:textSize="20sp"/>
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/label"
+            android:checked="@{data}"/>
+    </RelativeLayout>
+</layout>

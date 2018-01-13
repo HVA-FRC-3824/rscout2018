@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import frc3824.rscout2018.R;
+import frc3824.rscout2018.databinding.SavableAutocompletetextviewBinding;
 
 /**
  * @class SavableAutoCompleteTextView
@@ -18,6 +19,7 @@ import frc3824.rscout2018.R;
  */
 public class SavableAutoCompleteTextView extends LinearLayout
 {
+    SavableAutocompletetextviewBinding mBinding;
     AutoCompleteTextView mAutoCompleteTextView;
 
     /**
@@ -30,7 +32,7 @@ public class SavableAutoCompleteTextView extends LinearLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.savable_autocompletetextview, this);
+        mBinding = SavableAutocompletetextviewBinding.inflate(inflater);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 

@@ -12,9 +12,8 @@ import android.widget.TextView;
 import frc3824.rscout2018.R;
 
 /**
- * Created by andrew on 9/17/17.
+ * A view that can be used to bind a decimal number to a data model
  */
-
 public class SavableNumeric extends LinearLayout
 {
     EditText mEditText;
