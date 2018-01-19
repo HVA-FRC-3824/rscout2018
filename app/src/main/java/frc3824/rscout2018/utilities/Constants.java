@@ -66,6 +66,17 @@ public interface Constants
     interface MatchScouting
     {
         String[] TABS = {"Auto", "Teleop", "Endgame", "Fouls", "Misc"};
+
+        interface EndGame
+        {
+            String NO_CLIMB_ATTEMPT = "No climb attempt";
+            String PARKED_ON_PLATFORM = "Parked on platform";
+            String DID_NOT_FINISH_IN_TIME = "Did not finish in time";
+            String ROBOT_FELL = "Robot fell";
+            String SUCCESSFUL = "Successful";
+
+            String[] CLIMB_STATE_OPTIONS = {NO_CLIMB_ATTEMPT, PARKED_ON_PLATFORM, DID_NOT_FINISH_IN_TIME, ROBOT_FELL, SUCCESSFUL};
+        }
     }
 
     interface  PitScouting

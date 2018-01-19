@@ -63,4 +63,9 @@ public class SavableRadioButtons extends LinearLayout {
     {
         return mResourceStrings[mRadioButtons.getCheckedRadioButtonId()];
     }
+
+    public void setOnCheckChange(RadioGroup.OnCheckedChangeListener value)
+    {
+        mRadioButtons.setOnCheckedChangeListener(value);
+    }
 }

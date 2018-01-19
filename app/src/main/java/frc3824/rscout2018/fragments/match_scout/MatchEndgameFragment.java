@@ -6,20 +6,29 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
+
+import java.util.Arrays;
 
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.databinding.FragmentMatchEndgameBinding;
 import frc3824.rscout2018.utilities.Utilities;
+import frc3824.rscout2018.utilities.Constants;
+import frc3824.rscout2018.views.SavableRadioButtons;
+
+import static frc3824.rscout2018.utilities.Constants.MatchScouting.EndGame.CLIMB_STATE_OPTIONS;
 
 /**
  * @class MatchEndgameFragment
  * @brief Fragment used to record information about how a team performed during the end game
  */
-public class MatchEndgameFragment extends Fragment
+public class MatchEndgameFragment extends Fragment implements RadioGroup.OnCheckedChangeListener
 {
     FragmentMatchEndgameBinding mBinding;
     TeamMatchData mTeamMatchData;
+
+    SavableRadioButtons mClimbingMethod;
 
     /**
      * Sets the data model for binding
@@ -41,9 +50,23 @@ public class MatchEndgameFragment extends Fragment
         mBinding.setTmd(mTeamMatchData);
         View view = mBinding.getRoot();
 
+        SavableRadioButtons climbingState = view.findViewById(R.id.endgame_climb_state);
+        climbingState.setOnCheckChange(this);
+
+        mClimbingMethod = view.findViewById(R.id.endgame_climb_method);
+
         // Add touch listeners
         Utilities.setupUi(getActivity(), view);
 
         return view;
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, int i) {
+        if(i == Arrays.asList(CLIMB_STATE_OPTIONS).indexOf("Successful")) {
+            mClimbingMethod.setVisibility(View.VISIBLE);
+        } else {
+            mClimbingMethod.setVisibility(View.GONE);
+        }
     }
 }
