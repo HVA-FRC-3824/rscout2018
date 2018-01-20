@@ -75,6 +75,44 @@ public interface Constants
 
     interface SuperScouting
     {
-        String[] TABS = {""};
+        String[] TABS = {"Power Ups", "Misc"};
+    }
+
+    interface PickList
+    {
+        String POWER_CUBES = "Power Cubes";
+        String CLIMB = "Climb";
+        String FOULS = "Fouls";
+        String[] MAIN_SORTING = {
+                POWER_CUBES,
+                CLIMB,
+                FOULS
+        };
+
+        interface PowerCubes
+        {
+            String ALL = "All";
+            String NEAR_SWITCH = "Near Switch";
+            String SCALE = "Scale";
+            String FAR_SWITCH = "Far Switch";
+            String EXCHANGE_STATION = "Exchange Station";
+            String DROP = "Drop";
+            String INCORRECT_SIDE = "Incorrect Side";
+            String[] OPTIONS = {
+                    ALL,
+                    NEAR_SWITCH,
+                    SCALE,
+                    FAR_SWITCH,
+                    EXCHANGE_STATION,
+                    DROP,
+                    INCORRECT_SIDE
+            };
+        }
+
+        interface CLIMB
+        {
+
+        }
+
     }
 }

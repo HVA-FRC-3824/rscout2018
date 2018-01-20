@@ -3,13 +3,19 @@ package frc3824.rscout2018.database.data_models.powered_up;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
-public class SwitchScaleData extends BaseObservable
+public class DropData extends BaseObservable
 {
     //region Location
     private String location;
 
     /**
-     * Returns which scale/switch (near, center, far)
+     * Returns where the cube was dropped
+     * Options:
+     * Near Switch
+     * Far Switch
+     * Scale
+     * Exchange Station
+     * Ground
      */
     @Bindable
     public String getLocation()
@@ -18,8 +24,9 @@ public class SwitchScaleData extends BaseObservable
     }
 
     /**
-     * Sets which scale/switch (near, center, far)
-     * @param location
+     * Sets where the cube was dropped
+     *
+     * Same options as above
      */
     public void setLocation(String location)
     {
@@ -29,16 +36,24 @@ public class SwitchScaleData extends BaseObservable
     //endregion
 
     //region Correct
-    private boolean correct;
+    private boolean correctSide;
 
-    public boolean isCorrect()
+    /**
+     * Returns whether the cube was placed on the
+     * correct side if placed on the switch or scale
+     */
+    public boolean isCorrectSide()
     {
-        return correct;
+        return correctSide;
     }
 
-    public void setCorrect(boolean correct)
+    /**
+     * Sets whether the cube was place on the correct
+     * side if place on the switch of scale
+     */
+    public void setCorrectSide(boolean correct)
     {
-        this.correct = correct;
+        this.correctSide = correct;
         notifyChange();
     }
     //endregion

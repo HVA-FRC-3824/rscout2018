@@ -32,5 +32,4 @@
         <attr name="min"/>
         <attr name="max"/>
     </declare-styleable>
-
 </resources>

@@ -6,11 +6,13 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
 import frc3824.rscout2018.BR;
 import frc3824.rscout2018.database.Database;
+import frc3824.rscout2018.database.data_models.powered_up.DropData;
 
 /**
  * Data Model for a single team in a single match
@@ -264,21 +266,39 @@ public class TeamMatchData extends DataModel
 
     //region Game Specific
     //region Autonomous
-    //region Test
-    String test;
+    //region Cross Auto Line
+    private boolean crossAutoLine;
 
     @Bindable
-    public String getTest()
+    public boolean getCrossAutoLine()
     {
-        return test;
+        return crossAutoLine;
     }
 
-    public void setTest(String test)
+    public void setCrossAutoLine(boolean crossAutoLine)
     {
-        this.test = test;
+        this.crossAutoLine = crossAutoLine;
         notifyChange();
     }
     //endregion
+    //region Auto Drops
+    private ArrayList<DropData> autoDrops;
+
+    /**
+     * Returns information on what was done with power cubes
+     */
+    @Bindable
+    public ArrayList<DropData> getAutoDrops()
+    {
+        return autoDrops;
+    }
+
+    public void setAutoDrops(ArrayList<DropData> drops)
+    {
+        autoDrops = drops;
+        notifyChange();
+    }
+
     //endregion
     //region Teleop
     //endregion
