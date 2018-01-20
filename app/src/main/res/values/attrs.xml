@@ -33,4 +33,9 @@
         <attr name="max"/>
     </declare-styleable>
 
+    <declare-styleable name="SavableRadioButtons" parent="SavableView">
+        <attr name="radio_values" format="reference"/>
+        <attr name="selected" format="string"/>
+    </declare-styleable>
+
 </resources>

@@ -260,23 +260,23 @@ public class MatchScoutActivity extends Activity
             {
                 case 0:
                     MatchAutoFragment maf = new MatchAutoFragment();
-                    maf.setData(mTeamMatchData);
+                    maf.setTeamMatchData(mTeamMatchData);
                     return maf;
                 case 1:
                     MatchTeleopFragment mtf = new MatchTeleopFragment();
-                    mtf.setData(mTeamMatchData);
+                    mtf.setTeamMatchData(mTeamMatchData);
                     return mtf;
                 case 2:
                     MatchEndgameFragment mef = new MatchEndgameFragment();
-                    mef.setData(mTeamMatchData);
+                    mef.setTeamMatchData(mTeamMatchData);
                     return mef;
                 case 3:
                     MatchFoulsFragment mff = new MatchFoulsFragment();
-                    mff.setData(mTeamMatchData);
+                    mff.setTeamMatchData(mTeamMatchData);
                     return mff;
                 case 4:
                     MatchMiscFragment mmf = new MatchMiscFragment();
-                    mmf.setData(mTeamMatchData);
+                    mmf.setTeamMatchData(mTeamMatchData);
                     return mmf;
                 default:
                     assert(false);
