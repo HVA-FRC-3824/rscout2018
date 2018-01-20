@@ -14,7 +14,6 @@ import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.databinding.FragmentMatchEndgameBinding;
 import frc3824.rscout2018.utilities.Utilities;
-import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.SavableRadioButtons;
 
 import static frc3824.rscout2018.utilities.Constants.MatchScouting.EndGame.CLIMB_STATE_OPTIONS;
@@ -25,8 +24,8 @@ import static frc3824.rscout2018.utilities.Constants.MatchScouting.EndGame.CLIMB
  */
 public class MatchEndgameFragment extends Fragment implements RadioGroup.OnCheckedChangeListener
 {
-    FragmentMatchEndgameBinding mBinding;
-    TeamMatchData mTeamMatchData;
+    FragmentMatchEndgameBinding mBinding = null;
+    TeamMatchData mTeamMatchData = null;
 
     SavableRadioButtons mClimbingMethod;
 
@@ -34,9 +33,13 @@ public class MatchEndgameFragment extends Fragment implements RadioGroup.OnCheck
      * Sets the data model for binding
      * @param teamMatchData The data model for how a team performed in a specific match
      */
-    public void setData(TeamMatchData teamMatchData)
+    public void setTeamMatchData(TeamMatchData teamMatchData)
     {
         mTeamMatchData = teamMatchData;
+        if(mBinding != null)
+        {
+            mBinding.setTmd(mTeamMatchData);
+        }
     }
 
     /**
@@ -47,7 +50,10 @@ public class MatchEndgameFragment extends Fragment implements RadioGroup.OnCheck
     {
         // Inflate layout and bind the realm object
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_match_endgame, container, false);
-        mBinding.setTmd(mTeamMatchData);
+        if(mTeamMatchData != null)
+        {
+            mBinding.setTmd(mTeamMatchData);
+        }
         View view = mBinding.getRoot();
 
         SavableRadioButtons climbingState = view.findViewById(R.id.endgame_climb_state);

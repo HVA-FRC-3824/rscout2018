@@ -42,6 +42,9 @@ public class SavableCounter extends LinearLayout implements View.OnClickListener
         mMax = typedArray.getInt(R.styleable.SavableCounter_max, Integer.MAX_VALUE);
 
         mButton = findViewById(R.id.button);
+
+        mCount = 0;
+        mButton.setText(mCount.toString());
     }
 
     public void setCount(int count)

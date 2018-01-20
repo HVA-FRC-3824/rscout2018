@@ -4,32 +4,34 @@
     <data>
 
         <variable
-            name = "tmd"
-            type = "frc3824.rscout2018.database.data_models.TeamMatchData" />
+            name="tmd"
+            type="frc3824.rscout2018.database.data_models.TeamMatchData"/>
     </data>
 
-    <LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"
-                  xmlns:app = "http://schemas.android.com/apk/res-auto"
-                  android:layout_width = "match_parent"
-                  android:layout_height = "match_parent"
-                  android:orientation = "vertical">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical">
 
-            <frc3824.rscout2018.views.SavableRadioButtons
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <frc3824.rscout2018.views.SavableRadioButtons
             android:id="@+id/endgame_climb_state"
-            app:label="Climbing State"
-            app:radio_values="@array/endgame_climb_state_options"/>
-
-            <frc3824.rscout2018.views.SavableRadioButtons
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/endgame_climb_method"
-            android:visibility= "invisible"
-            app:label="Climbing method"
-            app:radio_values="@array/endgame_climb_method_options"/>
+            app:label="Climbing State"
+            app:radio_values="@array/endgame_climb_state_options"
+            app:selected="@{tmd.climbStatus}"/>
 
-            <TextView
+        <frc3824.rscout2018.views.SavableRadioButtons
+            android:id="@+id/endgame_climb_method"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:label="Climbing method"
+            app:radio_values="@array/endgame_climb_method_options"
+            app:selected="@{tmd.climbMethod}"/>
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="If a robot is getting points for climbing/sitting on platform, click successful and provide more detail"

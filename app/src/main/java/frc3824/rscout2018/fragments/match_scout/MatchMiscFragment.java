@@ -18,16 +18,20 @@ import frc3824.rscout2018.utilities.Utilities;
  */
 public class MatchMiscFragment extends Fragment
 {
-    FragmentMatchMiscBinding mBinding;
-    TeamMatchData mTeamMatchData;
+    FragmentMatchMiscBinding mBinding = null;
+    TeamMatchData mTeamMatchData = null;
 
     /**
      * Sets the data model for binding
      * @param teamMatchData The data model for how a team performed in a specific match
      */
-    public void setData(TeamMatchData teamMatchData)
+    public void setTeamMatchData(TeamMatchData teamMatchData)
     {
         mTeamMatchData = teamMatchData;
+        if(mBinding != null)
+        {
+            mBinding.setTmd(mTeamMatchData);
+        }
     }
 
     /**
@@ -38,7 +42,10 @@ public class MatchMiscFragment extends Fragment
     {
         // Inflate layout and bind the realm object
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_match_misc, container, false);
-        mBinding.setTmd(mTeamMatchData);
+        if(mTeamMatchData != null)
+        {
+            mBinding.setTmd(mTeamMatchData);
+        }
         View view = mBinding.getRoot();
 
         // Add touch listeners

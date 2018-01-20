@@ -8,7 +8,7 @@
     android:textAlignment="center"
     android:textColor="@color/White"
     android:textSize="20sp"
-    app:buttonColor="@color/Navy"
+    app:fButtonColor="@color/Navy"
     app:cornerRadius="5dp"
     app:shadowEnabled="true"
     app:shadowHeight="5dp"/>

@@ -10,40 +10,45 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.Arrays;
+
 import frc3824.rscout2018.R;
+
 import android.widget.LinearLayout;
 
 /**
  * Created by Steven on 1/13/2018.
  */
 
-public class SavableRadioButtons extends LinearLayout {
+public class SavableRadioButtons extends LinearLayout
+{
 
     private final static String TAG = "CustomRadioButtons";
 
     private String[] mResourceStrings;
     private RadioGroup mRadioButtons;
 
-    public SavableRadioButtons(Context context, AttributeSet attrs) {
+    public SavableRadioButtons(Context context, AttributeSet attrs)
+    {
         super(context, attrs);
 
         LayoutInflater inflater = LayoutInflater.from(context);
         inflater.inflate(R.layout.savable_radio_buttons, this);
 
         // Setup label and get key
-        TextView label = (TextView) findViewById(R.id.label);
+        TextView label = findViewById(R.id.label);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
         label.setText(typedArray.getString(R.styleable.SavableView_label));
         typedArray.recycle();
 
         // Get RadioButtons
         typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableRadioButtons);
-        int radioValuesId = typedArray.getResourceId(R.styleable.SavableRadioButtons_radio_values, 0);
+        int radioValuesId = typedArray.getResourceId(R.styleable.SavableRadioButtons_radio_values,
+                                                     0);
         mResourceStrings = context.getResources().getStringArray(radioValuesId);
 
-        mRadioButtons = (RadioGroup) findViewById(R.id.radiobuttons);
+        mRadioButtons = findViewById(R.id.radiobuttons);
 
-        for(int i = 0; i < mResourceStrings.length; i++)
+        for (int i = 0; i < mResourceStrings.length; i++)
         {
             RadioButton radioButton = new RadioButton(context, attrs);
             radioButton.setText(mResourceStrings[i]);
@@ -53,13 +58,13 @@ public class SavableRadioButtons extends LinearLayout {
         mRadioButtons.check(0);
     }
 
-    public void setRadioValues(String radio_values)
+    public void setSelected(String radio_values)
     {
         int mRadioSelected = Arrays.asList(mResourceStrings).indexOf(radio_values);
         mRadioButtons.check(mRadioSelected);
     }
 
-    public String getRadioValues()
+    public String getSelected()
     {
         return mResourceStrings[mRadioButtons.getCheckedRadioButtonId()];
     }

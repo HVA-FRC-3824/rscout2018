@@ -264,25 +264,57 @@ public class TeamMatchData extends DataModel
 
     //region Game Specific
     //region Autonomous
-    //region Test
-    String test;
 
-    @Bindable
-    public String getTest()
-    {
-        return test;
-    }
-
-    public void setTest(String test)
-    {
-        this.test = test;
-        notifyChange();
-    }
-    //endregion
     //endregion
     //region Teleop
     //endregion
     //region Endgame
+    //region Climb Status
+    String climbStatus;
+
+    /**
+     * Returns the status of the climb (whether or not
+     * it was successful and if not then why)
+     */
+    @Bindable
+    public String getClimbStatus()
+    {
+        return climbStatus;
+    }
+
+    /**
+     * Set the status of the climb (whether or not
+     * it was successful and if not then why)
+     */
+    public void setClimbStatus(String climbStatus)
+    {
+        this.climbStatus = climbStatus;
+        notifyChange();
+    }
+    //endregion
+    //region Climb Method
+    String climbMethod;
+
+    /**
+     * Returns the method of the climb upon a
+     * successful climb
+     */
+    @Bindable
+    public String getClimbMethod()
+    {
+        return climbMethod;
+    }
+
+    /**
+     * Set the method of the climb upon a
+     * successful climb
+     */
+    public void setClimbMethod(String climbMethod)
+    {
+        this.climbMethod = climbMethod;
+        notifyChange();
+    }
+    //endregion
     //endregion
     //endregion
 

@@ -12,7 +12,7 @@
         android:shadowColor="@color/Black"
         android:text="Practice Team"
         android:textColor="@color/Navy"
-        app:buttonColor="@color/ColumbiaBlue"
+        app:fButtonColor="@color/ColumbiaBlue"
         app:cornerRadius="5dp"
         app:shadowEnabled="true"
         app:shadowHeight="5dp"/>
