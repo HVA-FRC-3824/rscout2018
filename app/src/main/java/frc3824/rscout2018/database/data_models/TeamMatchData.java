@@ -266,43 +266,57 @@ public class TeamMatchData extends DataModel
 
     //region Game Specific
     //region Autonomous
-    //region Cross Auto Line
-    private boolean crossAutoLine;
-
-    @Bindable
-    public boolean getCrossAutoLine()
-    {
-        return crossAutoLine;
-    }
-
-    public void setCrossAutoLine(boolean crossAutoLine)
-    {
-        this.crossAutoLine = crossAutoLine;
-        notifyChange();
-    }
-    //endregion
-    //region Auto Drops
-    private ArrayList<DropData> autoDrops;
-
-    /**
-     * Returns information on what was done with power cubes
-     */
-    @Bindable
-    public ArrayList<DropData> getAutoDrops()
-    {
-        return autoDrops;
-    }
-
-    public void setAutoDrops(ArrayList<DropData> drops)
-    {
-        autoDrops = drops;
-        notifyChange();
-    }
 
     //endregion
     //region Teleop
     //endregion
     //region Endgame
+    //region Climb Status
+    String climbStatus;
+
+    /**
+     * Returns the status of the climb (whether or not
+     * it was successful and if not then why)
+     */
+    @Bindable
+    public String getClimbStatus()
+    {
+        return climbStatus;
+    }
+
+    /**
+     * Set the status of the climb (whether or not
+     * it was successful and if not then why)
+     */
+    public void setClimbStatus(String climbStatus)
+    {
+        this.climbStatus = climbStatus;
+        notifyChange();
+    }
+    //endregion
+    //region Climb Method
+    String climbMethod;
+
+    /**
+     * Returns the method of the climb upon a
+     * successful climb
+     */
+    @Bindable
+    public String getClimbMethod()
+    {
+        return climbMethod;
+    }
+
+    /**
+     * Set the method of the climb upon a
+     * successful climb
+     */
+    public void setClimbMethod(String climbMethod)
+    {
+        this.climbMethod = climbMethod;
+        notifyChange();
+    }
+    //endregion
     //endregion
     //endregion
 

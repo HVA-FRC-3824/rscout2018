@@ -37,7 +37,7 @@ dependencies {
     compile 'com.android.support:design:26.0.2'
     compile 'com.android.support:support-v13:26.0.2'
 
-    compile 'info.hoang8f:fbutton:1.0.5'
+    compile 'com.github.jd-alexander:android-flat-button:v1.1'
 
     compile 'com.marcinmoskala.activitystarter:activitystarter:1.00'
     annotationProcessor 'com.github.marcinmoskala.activitystarter:activitystarter-compiler:1.00'

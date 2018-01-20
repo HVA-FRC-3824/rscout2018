@@ -18,8 +18,8 @@ import frc3824.rscout2018.utilities.Utilities;
  */
 public class PitMiscFragment extends Fragment
 {
-    FragmentPitMiscBinding mBinding;
-    TeamPitData mTeamPitData;
+    FragmentPitMiscBinding mBinding = null;
+    TeamPitData mTeamPitData = null;
 
     /**
      * Sets the data model for binding
@@ -28,6 +28,10 @@ public class PitMiscFragment extends Fragment
     public void setData(TeamPitData teamPitData)
     {
         mTeamPitData = teamPitData;
+        if(mBinding != null)
+        {
+            mBinding.setTpd(mTeamPitData);
+        }
     }
 
     /**
@@ -38,7 +42,10 @@ public class PitMiscFragment extends Fragment
     {
         // Inflate layout and bind the realm object
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_match_auto, container, false);
-        mBinding.setTpd(mTeamPitData);
+        if(mTeamPitData != null)
+        {
+            mBinding.setTpd(mTeamPitData);
+        }
         View view = mBinding.getRoot();
 
         // Add touch listeners
