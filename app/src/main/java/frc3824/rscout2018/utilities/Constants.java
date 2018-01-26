@@ -77,6 +77,16 @@ public interface Constants
 
             String[] CLIMB_STATE_OPTIONS = {NO_CLIMB_ATTEMPT, PARKED_ON_PLATFORM, DID_NOT_FINISH_IN_TIME, ROBOT_FELL, SUCCESSFUL};
         }
+
+        interface Custom {
+            interface Cubes{
+                String ALLIANCE_SWITCH = "Alliance Switch";
+                String SCALE = "Scale";
+                String OPPONENT_SWITCH = "Opponent Switch";
+                String EXCHANGE = "Exchange";
+                String[] LOCATIONS = {ALLIANCE_SWITCH, SCALE, OPPONENT_SWITCH, EXCHANGE};
+            }
+        }
     }
 
     interface  PitScouting
