@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import frc3824.rscout2018.database.data_models.MatchLogistics;
+import frc3824.rscout2018.utilities.Constants;
+
 /**
  *
  */
@@ -107,7 +110,7 @@ public class Database
 
     public ArrayList<Integer> getTeamNumbers()
     {
-         View teams = m_database.getView("teams");
+        View teams = m_database.getView("teams");
         teams.setMapReduce(new Mapper()
         {
             @Override
@@ -140,4 +143,28 @@ public class Database
         QueryRow row = result.next();
         return (ArrayList<Integer>) row.getValue();
     }
+    /*
+    //region Super Scouting Data
+    public void setSuperMatchData(SuperMatchData superMatchData) {
+        superMatchData.last_modified = System.currentTimeMillis();
+        mReferences.get(constants.Database_Lists.indices.SUPER).child(String.valueOf(superMatchData.match_number)).setValue(superMatchData);
+    }
+
+    public SuperMatchData getSuperMatchData(int match_number) {
+        DataSnapshot d = mMaps.get(constants.Database_Lists.indices.SUPER).get(String.valueOf(match_number));
+        if(d == null){
+            return null;
+        }
+        return d.getValue(SuperMatchData.class);
+    }
+
+    public ArrayList<SuperMatchData> getAllSuperMatchData() {
+        ArrayList<SuperMatchData> supers = new ArrayList<>();
+        for(Map.Entry<String, DataSnapshot> entry: mMaps.get(Constants.Database_Lists.indices.SUPER).entrySet()){
+            supers.add(entry.getValue().getValue(SuperMatchData.class));
+        }
+        return supers;
+    }
+    //endregion
+    */
 }

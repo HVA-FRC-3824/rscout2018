@@ -18,6 +18,7 @@ public class MatchLogistics extends DataModel
 {
     //region Match Number
     int matchNumber;
+    public long lastModified;
 
     public int getMatchNumber()
     {
