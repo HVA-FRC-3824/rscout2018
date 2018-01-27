@@ -67,6 +67,12 @@ public interface Constants
     {
         String[] TABS = {"Auto", "Teleop", "Endgame", "Fouls", "Misc"};
 
+        interface Auto
+        {
+            String  AUTO_START_POSITION = "auto_start_position";
+            String AUTO_BASELINE = "auto_baseline";
+        }
+
         interface EndGame
         {
             String NO_CLIMB_ATTEMPT = "No climb attempt";
@@ -82,10 +88,49 @@ public interface Constants
     interface  PitScouting
     {
         String[] TABS = {"Robot Pic", "Dimensions", "Misc"};
+
+        String SCOUT_NAME = "scout_name";
+        String ROBOT_PICTURE_DEFAULT = "robot_picture_default";
+        String ROBOT_PICTURES = "robot_pictures";
+
+        interface Dimensions {
+            String WIDTH = "width";
+            String LENGTH = "length";
+            String HEIGHT = "height";
+            String WEIGHT = "weight";
+        }
+
+        interface Miscellaneous {
+            String PROGRAMMING_LANGUAGE = "programming_language";
+            interface Programming_Languages {
+                String CPP = "C++";
+                String JAVA = "Java";
+                String LABVIEW = "Labview";
+                String PYTHON = "Python";
+                String CSHARP = "C#";
+
+                String [] PROGRAMMING_LANGUAGES = {CPP, JAVA, LABVIEW, PYTHON, CSHARP};
+            }
+            String DRIVE_TRAIN = "drive_train";
+            interface Drive_Trains {
+                String TANK_4_WHEEL = "Tank (4 wheels)";
+                String TANK_6_WHEEL = "Tank (6 wheels)";
+                String TANK_8_WHEEL = "Tank (8 wheels)";
+                String TANK_TREAD = "Tank (tread)";
+                String MECANUM = "Mecanum";
+                String SWERVE = "Swerve";
+
+                String [] DRIVE_TRAINS = {TANK_4_WHEEL, TANK_6_WHEEL, TANK_8_WHEEL, TANK_TREAD, MECANUM, SWERVE};
+                }
+                String CIMS = "cims";
+            }
+        }
+
+        String NOTES = "pit_notes";
     }
 
     interface SuperScouting
     {
         String[] TABS = {""};
     }
-}
+
