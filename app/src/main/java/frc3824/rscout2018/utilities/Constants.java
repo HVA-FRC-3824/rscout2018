@@ -107,7 +107,7 @@ public interface Constants
 
     interface SuperScouting
     {
-        String[] TABS = {""};
+        String[] TABS = {"Qualitative", "Notes", "Powerups"};
 
         String SCOUT_NAME = "scout_name";
 

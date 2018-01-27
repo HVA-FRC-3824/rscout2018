@@ -5,6 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <frc3824.rscout2018.views.SavableCounter
+        android:id="@+id/powerup_force"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:min = "0"
+        app:max = "3"
+        app:label="Cubes in Force" />
 
+    <frc3824.rscout2018.views.SavableCounter
+        android:id="@+id/powerup_levitate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:min = "0"
+        app:max = "3"
+        app:label="Cubes in Levitate" />
+
+    <frc3824.rscout2018.views.SavableCounter
+        android:id="@+id/powerup_boost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:min = "0"
+        app:max = "3"
+        app:label="Cubes in Boost" />
 
 </LinearLayout>

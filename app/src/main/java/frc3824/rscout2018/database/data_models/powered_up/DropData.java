@@ -3,7 +3,7 @@ package frc3824.rscout2018.database.data_models.powered_up;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
-public class SwitchScaleData extends BaseObservable
+public class DropData extends BaseObservable
 {
     //region Location
     private String location;
