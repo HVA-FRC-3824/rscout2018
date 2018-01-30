@@ -1,9 +1,10 @@
 package frc3824.rscout2018.database.data_models;
 
+import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
 
-public class TeamLLDItem
+public class TeamLLDItem extends BaseObservable
 {
     //region Constructor
     public TeamLLDItem(int teamNumber, double min, double max, double average, double std)

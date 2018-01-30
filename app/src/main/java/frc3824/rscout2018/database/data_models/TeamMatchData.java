@@ -266,7 +266,28 @@ public class TeamMatchData extends DataModel
 
     //region Game Specific
     //region Autonomous
+    //region Crossed Auto Line
+    boolean crossedAutoLine;
 
+    /**
+     * Returns whether the team crossed the auto line
+     * @return
+     */
+    @Bindable
+    public boolean getCrossedAutoLine()
+    {
+        return  crossedAutoLine;
+    }
+
+    /**
+     * Sets whether the team crossed the auto line
+     */
+    public void setCrossedAutoLine(boolean crossedAutoLine)
+    {
+        this.crossedAutoLine = crossedAutoLine;
+        notifyChange();
+    }
+    //endregion
     //endregion
     //region Teleop
     //endregion

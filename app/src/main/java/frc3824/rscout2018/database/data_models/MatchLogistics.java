@@ -72,6 +72,43 @@ public class MatchLogistics extends DataModel
         return false;
     }
 
+    public int getBlue1()
+    {
+        // todo
+        return -1;
+    }
+
+    public int getBlue2()
+    {
+        // todo
+        return -1;
+    }
+
+    public int getBlue3()
+    {
+        // todo
+        return -1;
+    }
+
+    public int getRed1()
+    {
+        // todo
+        return -1;
+    }
+
+    public int getRed2()
+    {
+        // todo
+        return -1;
+    }
+
+    public int getRed3()
+    {
+        // todo
+        return -1;
+    }
+
+
     //region Constructors
     public MatchLogistics(int matchNumber)
     {

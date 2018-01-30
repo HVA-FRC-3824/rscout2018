@@ -1,7 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-</LinearLayout>
+    <!-- Cubes -->
+    <com.github.mikephil.charting.charts.RadarChart
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cube_pickup_radar_chart"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/cube_placement_radar_chart"/>
+
+    <com.github.mikephil.charting.charts.RadarChart
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cube_placement_radar_chart"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/cube_pickup_radar_chart"/>
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cube_line_chart"
+        app:layout_constraintTop_toBottomOf="@id/cube_pickup_radar_chart"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/climb_radio_group"
+        app:layout_constraintRight_toLeftOf="@+id/cube_radio_group"/>
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cube_radio_group"
+        app:layout_constraintLeft_toRightOf="@id/cube_line_chart"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/climb_line_chart"
+        app:layout_constraintBottom_toBottomOf="@id/cube_line_chart">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/auto_place"
+            android:text="Auto"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/auto_switch_place"
+            android:text="Auto Switch"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/auto_scale_place"
+            android:text="Scale Place"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/teleop_place"
+            android:text="Teleop"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/teleop_switch_place"
+            android:text="Teleop Switch"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/teleop_scale_place"
+            android:text="Teleop Scale"/>
+
+    </RadioGroup>
+
+    <!-- Climbing -->
+    <com.github.mikephil.charting.charts.LineChart
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/climb_line_chart"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cube_line_chart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/climb_radio_group"/>
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/climb_radio_group"
+        app:layout_constraintTop_toTopOf="@id/climb_line_chart"
+        app:layout_constraintLeft_toRightOf="@id/climb_line_chart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/no_climb"
+            android:text="Did not climb"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/parked_platform"
+            android:text="Parked on platform"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/did_not_finish"
+            android:text="Did not finish in time"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fell"
+            android:text="Fell"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/climbed_by_self"
+            android:text="Climbed the rung"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/climb_lift_one_other"
+            android:text="Climbed the rung while lifting another"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/climb_lift_two_others"
+            android:text="Climbed the rung while lifting two others"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/climb_on_other"
+            android:text="Climb on another robot's rung"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/climb_on_ramp"
+            android:text="Climb on another robot's ramp"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/climb_support_other"
+            android:text="Supported other robot through ramp"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/climb_support_two"
+            android:text="Supported two other robots through ramp"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/credit_through_foul"
+            android:text="Credited through foul"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/credit_through_levitate"
+            android:text="Credited through levitate without supporting other robot"/>
+    </RadioGroup>
+
+</android.support.constraint.ConstraintLayout>
