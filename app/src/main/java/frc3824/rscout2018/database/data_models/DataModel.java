@@ -10,9 +10,6 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -20,9 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cz.msebera.android.httpclient.Header;
 import frc3824.rscout2018.database.Database;
-import frc3824.rscout2018.database.SyncService;
 
 /**
  * The base Data Model class
@@ -183,48 +178,15 @@ public class DataModel extends BaseObservable implements ExclusionStrategy, Docu
     }
 
     /**
-     * Sends a copy of this data model to the server
+     * Converts this data model to string
      */
-    public void sync()
+    public String toString()
     {
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
         GsonBuilder builder = new GsonBuilder();
         builder.addSerializationExclusionStrategy(this);
         Gson gson = builder.create();
-        final String json = gson.toJson(this);
+        String json = gson.toJson(getProperties());
         Log.d(getClass().getName(), json);
-
-        params.put("data", json);
-        client.post("127.0.0.1:38240/", params, new AsyncHttpResponseHandler()
-        {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody)
-            {
-                Log.d(DataModel.this.getClass().getName(), "Successful transfer");
-            }
-
-            @Override
-            public void onFailure(int statusCode,
-                                  Header[] headers,
-                                  byte[] responseBody,
-                                  Throwable error)
-            {
-                SyncService.add(json);
-                if(statusCode == 404)
-                {
-
-                }
-                else if(statusCode == 500)
-                {
-
-                }
-                else
-                {
-
-                }
-            }
-        });
-
+        return json;
     }
 }

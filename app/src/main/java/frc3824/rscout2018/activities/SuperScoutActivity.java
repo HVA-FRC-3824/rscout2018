@@ -3,51 +3,34 @@ package frc3824.rscout2018.activities;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.sdsmdg.tastytoast.TastyToast;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
-import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.MatchLogistics;
-import frc3824.rscout2018.database.data_models.TeamMatchData;
-import frc3824.rscout2018.fragments.match_scout.MatchAutoFragment;
-import frc3824.rscout2018.fragments.match_scout.MatchEndgameFragment;
-import frc3824.rscout2018.fragments.match_scout.MatchFoulsFragment;
-import frc3824.rscout2018.fragments.match_scout.MatchMiscFragment;
-import frc3824.rscout2018.fragments.match_scout.MatchTeleopFragment;
-import frc3824.rscout2018.services.CommunicationService;
+import frc3824.rscout2018.database.data_models.SuperMatchData;
+import frc3824.rscout2018.fragments.super_scout.SuperNotesFragment;
+import frc3824.rscout2018.fragments.super_scout.SuperPowerUpFragment;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.ScoutHeader;
 import frc3824.rscout2018.views.ScoutHeaderInterface;
 
-/**
- * @class MatchScoutActivity
- * @brief The page for scouting an individual team in a single match
- */
-@MakeActivityStarter
-public class MatchScoutActivity extends Activity
-{
-    private final static String TAG = "MatchScoutActivity";
 
-    private int mTeamNumber = -1;
+public class SuperScoutActivity extends Activity
+{
     @Arg
     protected int mMatchNumber = -1;
     private boolean mPractice = false;
+    SuperScoutFragmentPagerAdapter mFPA;
 
-    private MatchScoutFragmentPagerAdapter mFPA;
-    private TeamMatchData mTMD;
+    private SuperMatchData mSMD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -56,25 +39,16 @@ public class MatchScoutActivity extends Activity
         setContentView(R.layout.activity_scout);
         ActivityStarter.fill(this);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int position = Integer.parseInt(sharedPreferences.getString(Constants.Settings.MATCH_SCOUT_POSITION, "-1"));
-        if (position == -1)
-        {
-            Log.e(TAG, "Error: impossible match scout position");
-            return;
-        }
 
         ScoutHeader header = findViewById(R.id.header);
-        header.setInterface(new MatchScoutHeader());
+        header.setInterface(new SuperScoutActivity.SuperScoutHeader());
 
         // Normal match
         if (mMatchNumber > 0)
         {
             MatchLogistics m = new MatchLogistics(mMatchNumber);
-            mTeamNumber = m.getTeamNumber(position);
-            header.setTitle(String.format("Match Number: %d Team Number: %d",
-                                          mMatchNumber,
-                                          mTeamNumber));
+            header.setTitle(String.format("Match Number: %d",
+                                          mMatchNumber));
 
             // If on the first match then the previous button should be hidden
             if (mMatchNumber == 1)
@@ -88,14 +62,14 @@ public class MatchScoutActivity extends Activity
                 header.removeNext();
             }
 
-            mTMD = new TeamMatchData(mTeamNumber, mMatchNumber);
+            mSMD = new SuperMatchData(mMatchNumber);
         }
         // Practice Match
         else
         {
             mPractice = true;
             header.setTitle("Practice Match");
-            mTMD = new TeamMatchData(-1, -1);
+            mSMD = new SuperMatchData( -1);
             header.removeSave();
         }
 
@@ -103,8 +77,8 @@ public class MatchScoutActivity extends Activity
         findViewById(android.R.id.content).setKeepScreenOn(true);
 
         // Setup the TABS and fragment pages
-        mFPA = new MatchScoutFragmentPagerAdapter(getFragmentManager(),
-                                                  mTMD);
+        mFPA = new SuperScoutActivity.SuperScoutFragmentPagerAdapter(getFragmentManager(),
+                                                                     mSMD);
 
         // Setup view pager
         ViewPager viewPager = findViewById(R.id.view_pager);
@@ -112,21 +86,13 @@ public class MatchScoutActivity extends Activity
         viewPager.setOffscreenPageLimit(mFPA.getCount());
 
         SmartTabLayout tabLayout = findViewById(R.id.tab_layout);
-        if (position < 3)
-        {
-            tabLayout.setBackgroundColor(Color.BLUE);
-        }
-        else
-        {
-            tabLayout.setBackgroundColor(Color.RED);
-        }
         tabLayout.setViewPager(viewPager);
     }
 
     /**
      * Inner class that handles pressing the buttons on the header
      */
-    private class MatchScoutHeader implements ScoutHeaderInterface
+    private class SuperScoutHeader implements ScoutHeaderInterface
     {
 
         /**
@@ -136,17 +102,17 @@ public class MatchScoutActivity extends Activity
         {
             if (mPractice) // Don't need to worry about saving for practice
             {
-                MatchScoutActivityStarter.start(MatchScoutActivity.this, -1);
+                MatchScoutActivityStarter.start(SuperScoutActivity.this, -1);
             }
             else
             {
-                if (mTMD.isDirty())
+                if (mSMD.isDirty())
                 {
                     // todo: Save dialog
                 }
                 else
                 {
-                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber - 1);
+                    MatchScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber - 1);
                 }
             }
         }
@@ -158,17 +124,17 @@ public class MatchScoutActivity extends Activity
         {
             if (mPractice) // Don't need to worry about saving for practice
             {
-                MatchScoutActivityStarter.start(MatchScoutActivity.this, -1);
+                MatchScoutActivityStarter.start(SuperScoutActivity.this, -1);
             }
             else
             {
-                if (mTMD.isDirty())
+                if (mSMD.isDirty())
                 {
                     // todo: Save dialog
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
-                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber + 1);
+                    MatchScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber + 1);
                 }
             }
         }
@@ -180,17 +146,17 @@ public class MatchScoutActivity extends Activity
         {
             if (mPractice) // Don't need to worry about saving for practice
             {
-                HomeActivityStarter.start(MatchScoutActivity.this);
+                HomeActivityStarter.start(SuperScoutActivity.this);
             }
             else
             {
-                if (mTMD.isDirty())
+                if (mSMD.isDirty())
                 {
                     // todo: Save dialog
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
-                    HomeActivityStarter.start(MatchScoutActivity.this);
+                    HomeActivityStarter.start(SuperScoutActivity.this);
                 }
             }
         }
@@ -202,17 +168,17 @@ public class MatchScoutActivity extends Activity
         {
             if (mPractice) // Don't need to worry about saving for practice
             {
-                MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
+                MatchListActivityStarter.start(SuperScoutActivity.this, Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING);
             }
             else
             {
-                if (mTMD.isDirty())
+                if (mSMD.isDirty())
                 {
                     // todo: Save dialog
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
-                    MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
+                    MatchListActivityStarter.start(SuperScoutActivity.this, Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING);
                 }
             }
         }
@@ -222,12 +188,10 @@ public class MatchScoutActivity extends Activity
          */
         public void save()
         {
-            if(!mPractice && mTMD.isDirty()) // Don't need to worry about saving for practice or if there is nothing new
+            if(!mPractice) // Don't need to worry about saving for practice
             {
-                Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
-                intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, mTMD.toString());
-                startService(intent);
-                // TastyToast.makeText(MatchScoutActivity.this, "Saved", TastyToast.LENGTH_SHORT, TastyToast.SUCCESS);
+
+                TastyToast.makeText(SuperScoutActivity.this, "Saved", TastyToast.LENGTH_SHORT, TastyToast.SUCCESS);
             }
         }
     }
@@ -237,17 +201,17 @@ public class MatchScoutActivity extends Activity
      *
      * Creates multiple fragments based for the match scout activity
      */
-    private class MatchScoutFragmentPagerAdapter extends FragmentPagerAdapter
+    private class SuperScoutFragmentPagerAdapter extends FragmentPagerAdapter
     {
         static final String TAG = "MatchScoutFragmentPagerAdapter";
 
-        TeamMatchData mTeamMatchData;
+        SuperMatchData mSuperMatchData;
 
 
-        public MatchScoutFragmentPagerAdapter(FragmentManager fm, TeamMatchData teamMatchData)
+        public SuperScoutFragmentPagerAdapter(FragmentManager fm, SuperMatchData superMatchData)
         {
             super(fm);
-            mTeamMatchData = teamMatchData;
+            mSuperMatchData = superMatchData;
         }
 
         /**
@@ -263,25 +227,13 @@ public class MatchScoutActivity extends Activity
             switch (position)
             {
                 case 0:
-                    MatchAutoFragment maf = new MatchAutoFragment();
-                    maf.setTeamMatchData(mTeamMatchData);
-                    return maf;
+                    SuperPowerUpFragment spuf = new SuperPowerUpFragment();
+                    spuf.setSuperMatchData(mSuperMatchData);
+                    return spuf;
                 case 1:
-                    MatchTeleopFragment mtf = new MatchTeleopFragment();
-                    mtf.setTeamMatchData(mTeamMatchData);
-                    return mtf;
-                case 2:
-                    MatchEndgameFragment mef = new MatchEndgameFragment();
-                    mef.setTeamMatchData(mTeamMatchData);
-                    return mef;
-                case 3:
-                    MatchFoulsFragment mff = new MatchFoulsFragment();
-                    mff.setTeamMatchData(mTeamMatchData);
-                    return mff;
-                case 4:
-                    MatchMiscFragment mmf = new MatchMiscFragment();
-                    mmf.setTeamMatchData(mTeamMatchData);
-                    return mmf;
+                    SuperNotesFragment snf = new SuperNotesFragment();
+                    snf.setSuperMatchData(mSuperMatchData);
+                    return snf;
                 default:
                     assert(false);
             }
@@ -294,7 +246,7 @@ public class MatchScoutActivity extends Activity
         @Override
         public int getCount()
         {
-            return Constants.MatchScouting.TABS.length;
+            return Constants.SuperScouting.TABS.length;
         }
 
         /**
@@ -306,8 +258,8 @@ public class MatchScoutActivity extends Activity
         @Override
         public String getPageTitle(int position)
         {
-            assert(position >= 0 && position < Constants.MatchScouting.TABS.length);
-            return Constants.MatchScouting.TABS[position];
+            assert(position >= 0 && position < Constants.SuperScouting.TABS.length);
+            return Constants.SuperScouting.TABS[position];
         }
     }
 }

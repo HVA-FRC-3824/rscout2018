@@ -43,10 +43,13 @@ public interface Constants
         String EVENT_KEY = "event_key";
 
         String[] SUPER_SCOUTS_LIST = {
-                "Evan Boswell",
                 "Abigail Bradfield",
                 "Steven Busby"
         };
+
+        String[] MATCH_SCOUTS_LIST = {};
+
+        String[] PIT_SCOUTS_LIST = {};
     }
 
     interface IntentExtras
@@ -69,6 +72,8 @@ public interface Constants
         String TEAM_VIEWING = "team_viewing";
         String MATCH_PLAN_NAME = "match_plan_name";
         String SCOUTER = "scouter";
+
+        String IP_MODIFIED = "ip_modified";
     }
 
     interface Database
@@ -107,36 +112,11 @@ public interface Constants
 
     interface SuperScouting
     {
-        String[] TABS = {""};
+        String[] TABS = {"Power Ups", "Notes"};
 
-        String SCOUT_NAME = "scout_name";
-
-        // GAME SPECIFIC
-        interface Qualitative {
-            String BLUE_SPEED = "blue_speed";
-            String RED_SPEED = "red_speed";
-
-            String BLUE_TORQUE = "blue_torque";
-            String RED_TORQUE = "red_torque";
-
-            String BLUE_CONTROL = "blue_control";
-            String RED_CONTROL = "red_control";
-
-            String BLUE_DEFENSE = "blue_defense";
-            String RED_DEFENSE = "red_defense";
-        }
-
-        String NOTES = "super_notes";
     }
 
-    interface Notifications {
-        int MATCH_RECIEVED = 1;
-        int SUPER_RECIEVED = 2;
-        int UPLOAD_STRATEGIES = 3;
-        int DOWNLOAD_STRATEGIES = 4;
-        int UPLOAD_ROBOT_PICTURES = 5;
-        int DOWNLOAD_ROBOT_PICTURES = 6;
-        int DATA_TRANSFER_SUCCESS = 7;
-        int DATA_TRANSFER_FAILURE = 8;
+    interface Notifications
+    {
     }
 }

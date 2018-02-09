@@ -43,9 +43,21 @@
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".activities.SuperScoutActivity"
+            android:label="Super Scouting"
+            android:screenOrientation="landscape"/>
+        <activity
             android:name=".activities.TeamListActivity"
             android:label="Team List"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activities.TeamStatsActivity"
+            android:label="Team Stats"
+            android:screenOrientation="landscape"/>
+        <service
+            android:name=".services.CommunicationService"
+            android:label="Comms Service"
+            />
     </application>
 
 </manifest>

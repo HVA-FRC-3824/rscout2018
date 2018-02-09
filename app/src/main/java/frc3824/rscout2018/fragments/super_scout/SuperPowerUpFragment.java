@@ -9,20 +9,19 @@ import android.view.ViewGroup;
 
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.SuperMatchData;
-import frc3824.rscout2018.databinding.FragmentSuperNotesBinding;
+import frc3824.rscout2018.databinding.FragmentSuperPowerupsBinding;
 import frc3824.rscout2018.utilities.Utilities;
 
 /**
- * @author frc3824
- * Created: 8/16/16
+ * Created by frc3824.
  */
-public class SuperNotesFragment extends Fragment
+public class SuperPowerUpFragment extends Fragment
 {
-    SuperMatchData mSuperMatchData;
-    FragmentSuperNotesBinding mBinding;
+    SuperMatchData mSuperMatchData = null;
+    FragmentSuperPowerupsBinding mBinding = null;
     private final static String TAG = "SuperNotesFragment";
 
-    public SuperNotesFragment()
+    public SuperPowerUpFragment()
     {}
 
     public void setSuperMatchData(SuperMatchData superMatchData)
@@ -37,7 +36,7 @@ public class SuperNotesFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate layout and bind the realm object
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_super_notes, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_super_powerups, container, false);
         if(mSuperMatchData != null)
         {
             mBinding.setSmd(mSuperMatchData);
