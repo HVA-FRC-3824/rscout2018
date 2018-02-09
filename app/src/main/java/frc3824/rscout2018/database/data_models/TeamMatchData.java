@@ -6,11 +6,13 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
 import frc3824.rscout2018.BR;
 import frc3824.rscout2018.database.Database;
+import frc3824.rscout2018.database.data_models.powered_up.DropData;
 
 /**
  * Data Model for a single team in a single match
@@ -264,7 +266,28 @@ public class TeamMatchData extends DataModel
 
     //region Game Specific
     //region Autonomous
+    //region Crossed Auto Line
+    boolean crossedAutoLine;
 
+    /**
+     * Returns whether the team crossed the auto line
+     * @return
+     */
+    @Bindable
+    public boolean getCrossedAutoLine()
+    {
+        return  crossedAutoLine;
+    }
+
+    /**
+     * Sets whether the team crossed the auto line
+     */
+    public void setCrossedAutoLine(boolean crossedAutoLine)
+    {
+        this.crossedAutoLine = crossedAutoLine;
+        notifyChange();
+    }
+    //endregion
     //endregion
     //region Teleop
     //endregion

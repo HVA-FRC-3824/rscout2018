@@ -5,7 +5,7 @@
 
         <variable
             name="data"
-            type="boolean"/>
+            type="Boolean"/>
     </data>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"

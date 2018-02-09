@@ -75,6 +75,6 @@
         <item>Supported another robot on platform</item>
         <item>Supported 2 other robots on platform</item>
         <item>Credited through foul</item>
-        <item>Credited through levitate</item>
+        <item>Credited through levitate, but not supporting other robots</item>
     </string-array>
 </resources>

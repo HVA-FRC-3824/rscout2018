@@ -3,6 +3,10 @@ package frc3824.rscout2018.database.data_models;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
+
+/**
+ * Data model for a team's placement in the pick list
+ */
 public class TeamPickListItem extends BaseObservable
 {
     //region Team Number
@@ -52,6 +56,10 @@ public class TeamPickListItem extends BaseObservable
     //region Picked
     boolean picked;
 
+
+    /**
+     * Getter function for if the team has been picked
+     */
     @Bindable
     public boolean isPicked()
     {
@@ -61,6 +69,7 @@ public class TeamPickListItem extends BaseObservable
     public void setPicked(boolean picked)
     {
         this.picked = picked;
+        notifyChange();
     }
     //endregion
     //region Sort Value
@@ -75,6 +84,7 @@ public class TeamPickListItem extends BaseObservable
     public void setSortValue(float sortValue)
     {
         this.sortValue = sortValue;
+        notifyChange();
     }
     //endregion
 }

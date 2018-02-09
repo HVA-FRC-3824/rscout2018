@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
-            name = "tmd"
-            type = "frc3824.rscout2018.database.data_models.TeamMatchData" />
+            name="tmd"
+            type="frc3824.rscout2018.database.data_models.TeamMatchData"/>
     </data>
+
 
     <LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"
                   android:layout_width = "match_parent"
                   android:layout_height = "match_parent"
                   android:orientation = "vertical">
+
+        <frc3824.rscout2018.views.SavableSwitch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:bool="@{tmd.crossedAutoLine}"
+            app:label="Crossed Auto Line:"/>
 
     </LinearLayout>
 </layout>
