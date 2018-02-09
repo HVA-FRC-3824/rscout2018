@@ -113,7 +113,6 @@ public interface Constants
     interface SuperScouting
     {
         String[] TABS = {"Power Ups", "Notes"};
-
     }
 
     interface Notifications
