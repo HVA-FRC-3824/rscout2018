@@ -1,13 +1,12 @@
-
-
 /*
 TO INTERACT WITH DB, USE FORMATS BELOW
 
 Ping Server:
 localhost:3824/?action=ping
+Returns pong
 
 Get All Data for event:
-localhost:3824/?action=getMatchData&eventKey=******
+localhost:3824/?action=getFullDB&eventKey=******
 
 Get Match Data:
 localhost:3824/?action=getMatchData&eventKey=******&matchKey=******&teamNumber=******
@@ -29,7 +28,7 @@ yellowCard boolean
 redCard boolean
 notes varchar(511)
 EXAMPLE:
-http://localhost:3824/?action=insertMatchData&eventKey=2017tnkn&data={%20%22teamNumber%22:1287,%20%22matchKey%22:%22qm1%22,%20%22autoCrossed%22:1,%20%22autoCrossed%22:1,%20%22autoCubes%22:%22CUBES%20PLACEHOLDER%22,%20%22teleopCubes%22:%22CUBES%20PLACEHOLDER%22,%20%22climbingState%22:%22No%20Attempt%22,%20%22climbingMethod%22:null,%20%22fouls%22:1,%20%22techFouls%22:8,%20%22yellowCard%22:1,%20%22redCard%22:0,%20%22notes%22:%22notes%22}
+http://localhost:3824/?action=insertMatchData&eventKey=2017scmb&data={%20%22teamNumber%22:1287,%20%22matchKey%22:%22qm1%22,%20%22autoCrossed%22:1,%20%22autoCrossed%22:1,%20%22autoCubes%22:%22CUBES%20PLACEHOLDER%22,%20%22teleopCubes%22:%22CUBES%20PLACEHOLDER%22,%20%22climbingState%22:%22No%20climb%20attempt%22,%20%22climbingMethod%22:null,%20%22fouls%22:1,%20%22techFouls%22:8,%20%22yellowCard%22:1,%20%22redCard%22:0,%20%22notes%22:%22notes%22}
 */
 
 //Define things for NodeJS
@@ -51,39 +50,45 @@ var request;
 
 //Loads HTML file
 app.get('/', function(req, res){
-	res.sendFile(__dirname + '/index.html');
 	if (url.parse(req.url, true).query != null) {
 		request = url.parse(req.url, true).query;
 		console.log(request);
 		switch(request.action) {
 			case null:
+				res.sendFile(__dirname + '/index.html');
 				break;
 			case 'ping':
 				res.send('pong');
 				break;
 			case 'getFullDB':
-				var result = {matchData:'', matchSchedule:'', pitData:'', teamStats:''};
+				var fullDB = {matchData:'', matchSchedule:'', pitData:'', teamStats:'', supermatchdata:''};
 				var sql = "SELECT * FROM " + request.eventKey + "matchdata";
 				con.query(sql, function (err, result) {
 					if (err) { throw err;};
-					JSONresult = JSON.stringify(result[0]);
-					result.matchData = JSONresult;
+					JSONresult = JSON.stringify(result);
+					fullDB.matchData = JSONresult;
 					var sql = "SELECT * FROM " + request.eventKey + "matchschedule";
 					con.query(sql, function (err, result) {
 						if (err) { throw err;};
-						JSONresult = JSON.stringify(result[0]);
-						result.matchSchedule = JSONresult;
+						JSONresult = JSON.stringify(result);
+						fullDB.matchSchedule = JSONresult;
 						var sql = "SELECT * FROM " + request.eventKey + "pitdata";
 						con.query(sql, function (err, result) {
 							if (err) { throw err;};
-							JSONresult = JSON.stringify(result[0]);
-							result.pitdata = JSONresult;
+							JSONresult = JSON.stringify(result);
+							fullDB.pitdata = JSONresult;
 							var sql = "SELECT * FROM " + request.eventKey + "teamstats";
 							con.query(sql, function (err, result) {
 								if (err) { throw err;};
-								JSONresult = JSON.stringify(result[0]);
-								result.teamstats = JSONresult;
-								res.send(result);
+								JSONresult = JSON.stringify(result);
+								fullDB.teamstats = JSONresult;
+								var sql = "SELECT * FROM " + request.eventKey + "supermatchdata";
+								con.query(sql, function (err, result) {
+									if (err) { throw err;};
+									JSONresult = JSON.stringify(result);
+									fullDB.supermatchdata = JSONresult;
+									res.send(fullDB);
+								});
 							});
 						});
 					});
@@ -123,6 +128,7 @@ app.get('/', function(req, res){
 				break;
 			default:
 				console.log('Error! Command not recognized');
+				res.sendFile(__dirname + '/index.html');
 				break;
 		}
 	}
@@ -177,6 +183,9 @@ function addMatchData(eventKey, teamNumber, matchKey, autoCrossed, autoCubes, te
 			var sql = "SELECT * FROM " + eventKey + "teamstats WHERE teamNumber = '" + teamNumber + "'";
 			con.query(sql, function (err, result1) {
 				if (err) throw err;
+
+				var newNumMatches = result1[0].matchesPlayed + 1;
+
 				if (yellowCard) {
 					var yellowCards = 1;
 				} else {
@@ -189,8 +198,70 @@ function addMatchData(eventKey, teamNumber, matchKey, autoCrossed, autoCubes, te
 					var redCards = 0;
 				}
 
+				var newAutoCrossedTotal = (result1[0].autoCrossedTotal + autoCrossed);
+				var newFoulTotal = (result1[0].foulTotal + fouls);
+				var newTechFoulTotal = (result1[0].techFoulTotal + techFouls);
+				var newYellowCardTotal = (result1[0].yellowCardTotal + yellowCards);
+				var newRedCardTotal = (result1[0].redCardTotal + redCards);
+
+				var climbStateObject = JSON.parse(result1[0].climbingStateTotals);
+
+				console.log(climbingState);
+				switch (climbingState) {
+					case "No climb attempt":
+						climbStateObject.noAttempt++;
+						break;
+					case "Parked on platform":
+						climbStateObject.parkedOnPlatform++;
+						break;
+					case "Did not finish in time":
+						climbStateObject.didNotFinishInTime++;
+						break;
+					case "Robot fell":
+						climbStateObject.robotFell++;
+						break;
+					case "Successful":
+						climbStateObject.successful++;
+						break;
+					default:
+						break;
+				}
+
+				var climbMethodObject = JSON.parse(result1[0].climbingMethodTotals);
+				switch (climbingMethod) {
+					case "Climbed on rung, not supporting another robot":
+						climbMethodObject.climbOnRung++;
+						break;
+					case "Climbed on rung, supporting another robot":
+						climbMethodObject.climbOnRungWithOne++;
+						break;
+					case "Climbed on rung, supporting 2 other robots":
+						climbMethodObject.climbOnRungWithTwo++;
+						break;
+					case "Climbed on a rung on another robot":
+						climbMethodObject.climbOnRungOfOtherBot++;
+						break;
+					case "Climbed on platform of another robot":
+						climbMethodObject.climbOnPlatformOfOtherBot++;
+						break;
+					case "Supported another robot on platform":
+						climbMethodObject.supportOneOnPlatform++;
+						break;
+					case "Supported 2 other robots on platform":
+						climbMethodObject.supportTwoOnPlatform++;
+						break;
+					case "Credited through foul":
+						climbMethodObject.creditThroughFoul++;
+						break;
+					case "Credited through levitate, but not supporting other robots":
+						climbMethodObject.creditThroughLevitate++;
+						break;
+					default:
+						break;
+				}
+
 				console.log(result1);
-				var sql = "UPDATE " + eventKey + "teamstats SET matchesPlayed = '" + (result1[0].matchesPlayed + 1) + "', autoCrossedTotal = '" + (result1[0].autoCrossedTotal + autoCrossed) + "', autoCubesTotals = 'CUBES PLACEHOLDER', teleopCubesTotals = 'CUBES PLACEHOLDER', climbingStateTotals = 'CLIMBING PLACEHOLDER', climbingMethodTotals = 'CLIMBING PLACEHOLDER', foulTotal = '" + (result1[0].foulTotal + fouls) + "', techFoulTotal = '" + (result1[0].techFoulTotal + techFouls) + "', yellowCardTotal = '" + (result1[0].yellowCardTotal + yellowCards) + "', redCardTotal = '" + (result1[0].redCardTotal + redCards) + "' WHERE teamNumber = '" + teamNumber + "';";
+				var sql = "UPDATE " + eventKey + "teamstats SET matchesPlayed = '" + newNumMatches + "', autoCrossedTotal = '" + newAutoCrossedTotal + "', autoCrossedAverage = '" + (newAutoCrossedTotal/newNumMatches) + "', autoCubesTotals = 'CUBES PLACEHOLDER', teleopCubesTotals = 'CUBES PLACEHOLDER', climbingStateTotals = '" + JSON.stringify(climbStateObject) + "', climbingMethodTotals = '" + JSON.stringify(climbMethodObject) + "', foulTotal = '" + newFoulTotal + "', foulAverage = '" + ( newFoulTotal/newNumMatches) + "', techFoulTotal = '" + newTechFoulTotal + "', techFoulAverage = '" + (newTechFoulTotal/newNumMatches) + "', yellowCardTotal = '" + newYellowCardTotal + "', yellowCardAverage = '" + ( newYellowCardTotal/newNumMatches) + "', redCardTotal = '" + newRedCardTotal + "', redCardAverage = '" + ( newRedCardTotal/newNumMatches) + "' WHERE teamNumber = '" + teamNumber + "';";
 				con.query(sql, function (err, result) {
 					if (err) throw err;
 					console.log("1 team record updated");
@@ -282,7 +353,7 @@ io.on('connection', function(socket){
 
 	//Create empty tables for event
 	socket.on('addEvent', function(eventKey) {
-		var sql = "CREATE TABLE " + eventKey + "teamstats (teamNumber int, name varchar(255), matchesPlayed int, autoCrossedTotal int, autoCubesTotals varchar(511), teleopCubesTotals varchar(511), climbingStateTotals varchar(511), climbingMethodTotals varchar(511), foulTotal int, techFoulTotal int, yellowCardTotal int, redCardTotal int)";
+		var sql = "CREATE TABLE " + eventKey + "teamstats (teamNumber int, name varchar(255), matchesPlayed int, autoCrossedTotal int, autoCrossedAverage double, autoCubesTotals varchar(511), teleopCubesTotals varchar(511), climbingStateTotals varchar(511), climbingMethodTotals varchar(511), foulTotal int, foulAverage double, techFoulTotal int, techFoulAverage double, yellowCardTotal int, yellowCardAverage double, redCardTotal int, redCardAverage double)";
 		con.query(sql, function (err, result) {
 			if (err) throw err;
 			console.log("Created Team Table for event " + eventKey);
@@ -302,7 +373,7 @@ io.on('connection', function(socket){
 			if (err) throw err;
 			console.log("Created Match Data Table for event " + eventKey);
 		});
-		var sql = "CREATE TABLE " + eventKey + "supermatchdata (matchKey varchar(255), boostCubes int, forceCubes int, levitateCubes int, notes(255))";
+		var sql = "CREATE TABLE " + eventKey + "supermatchdata (matchKey varchar(255), boostCubes int, forceCubes int, levitateCubes int, notes varchar(255))";
 		con.query(sql, function (err, result) {
 			if (err) throw err;
 			console.log("Created Super Match Data Table for event " + eventKey);
@@ -312,7 +383,7 @@ io.on('connection', function(socket){
 	//Fill teams table
 	socket.on('addTeam', function(teamInfo, eventKey) {
 		var climbingStateTotalsObject = {};
-		var sql = "INSERT INTO " + eventKey + "teamstats (teamNumber, name, matchesPlayed, autoCrossedTotal, autoCubesTotals, teleopCubesTotals, climbingStateTotals, climbingMethodTotals, foulTotal, techFoulTotal, yellowCardTotal, redCardTotal) VALUES ('" + teamInfo.team_number + "', '" + mysql_real_escape_string(teamInfo.nickname) + "', '0', '0', '', '', '', '', '0', '0', '0', '0')";
+		var sql = "INSERT INTO " + eventKey + "teamstats (teamNumber, name, matchesPlayed, autoCrossedTotal, autoCrossedAverage, autoCubesTotals, teleopCubesTotals, climbingStateTotals, climbingMethodTotals, foulTotal, foulAverage, techFoulTotal, techFoulAverage, yellowCardTotal, yellowCardAverage, redCardTotal, redCardAverage) VALUES ('" + teamInfo.team_number + "', '" + mysql_real_escape_string(teamInfo.nickname) + "', '0', '0', '0', '', '', '" + JSON.stringify({noAttempt: 0, parkedOnPlatform: 0, didNotFinishInTime: 0, robotFell: 0, successful: 0}) + "', '" + JSON.stringify({climbOnRung: 0, climbOnRungWithOne: 0, climbOnRungWithTwo: 0, climbOnRungOfOtherBot: 0, climbOnPlatformOfOtherBot: 0, supportOneOnPlatform: 0, supportTwoOnPlatform: 0, creditThroughFoul: 0, creditThroughLevitate: 0}) + "', '0', '0', '0', '0', '0', '0', '0', '0')";
 		con.query(sql, function (err, result) {
 			if (err) throw err;
 			console.log("1 team record inserted");
