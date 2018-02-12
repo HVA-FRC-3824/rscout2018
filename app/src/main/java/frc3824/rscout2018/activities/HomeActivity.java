@@ -61,6 +61,10 @@ public class HomeActivity extends Activity implements View.OnClickListener
         button.setEnabled(enableStrategist);
         button.setOnClickListener(this);
 
+        button = findViewById(R.id.pick_list_button);
+        button.setEnabled(enableStrategist);
+        button.setOnClickListener(this);
+
         // Inflate the settings button
         findViewById(R.id.settings_button).setOnClickListener(this);
 
@@ -73,7 +77,7 @@ public class HomeActivity extends Activity implements View.OnClickListener
             {
                 mEventKey = temp;
                 String ip = sharedPreferences.getString(Constants.Settings.SERVER_IP, "");
-                int port = sharedPreferences.getInt(Constants.Settings.SERVER_PORT, -1);
+                int port = Integer.parseInt(sharedPreferences.getString(Constants.Settings.SERVER_PORT, ""));
                 // todo: Something when ip is empty or port is -1
 
                 Database.getInstance().setEventKey(mEventKey);
@@ -130,6 +134,10 @@ public class HomeActivity extends Activity implements View.OnClickListener
         button = findViewById(R.id.event_charts_button);
         button.setEnabled(enableStrategist);
 
+        // Reset pick list button
+        button = findViewById(R.id.pick_list_button);
+        button.setEnabled(enableStrategist);
+
         // Setup database
         if (sharedPreferences.contains(Constants.Settings.EVENT_KEY))
         {
@@ -139,7 +147,7 @@ public class HomeActivity extends Activity implements View.OnClickListener
             {
                 mEventKey = temp;
                 String ip = sharedPreferences.getString(Constants.Settings.SERVER_IP, "");
-                int port = sharedPreferences.getInt(Constants.Settings.SERVER_PORT, -1);
+                int port = Integer.parseInt(sharedPreferences.getString(Constants.Settings.SERVER_PORT, ""));
                 // todo: Something when ip is empty or port is -1
 
                 Database.getInstance().setEventKey(mEventKey);

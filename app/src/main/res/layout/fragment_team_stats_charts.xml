@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/auto_place"
-            android:text="Auto"/>
+            android:text="Auto Place"/>
 
         <RadioButton
             android:layout_width="wrap_content"
@@ -56,25 +56,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/auto_scale_place"
-            android:text="Scale Place"/>
+            android:text="Auto Scale Place"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/teleop_place"
-            android:text="Teleop"/>
+            android:text="Teleop Place"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/teleop_switch_place"
-            android:text="Teleop Switch"/>
+            android:id="@+id/teleop_near_switch_place"
+            android:text="Teleop Near Switch Place"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/teleop_scale_place"
-            android:text="Teleop Scale"/>
+            android:text="Teleop Scale Place"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/teleop_far_switch_place"
+            android:text="Teleop Far Switch Place"/>
 
     </RadioGroup>
 

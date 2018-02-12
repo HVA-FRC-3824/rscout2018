@@ -31,7 +31,7 @@ public class SavableSwitch extends LinearLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mBinding = SavableSwitchBinding.inflate(inflater);
+        mBinding = SavableSwitchBinding.inflate(inflater, this, true);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 

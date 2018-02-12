@@ -32,7 +32,7 @@ public class SavableAutoCompleteTextView extends LinearLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mBinding = SavableAutocompletetextviewBinding.inflate(inflater);
+        mBinding = SavableAutocompletetextviewBinding.inflate(inflater, this, true);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 

@@ -20,5 +20,11 @@
             app:bool="@{tmd.crossedAutoLine}"
             app:label="Crossed Auto Line:"/>
 
+        <frc3824.rscout2018.views.powered_up.SavableCubes
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:data="@{tmd}"
+            android:id="@+id/cubes"/>
+
     </LinearLayout>
 </layout>

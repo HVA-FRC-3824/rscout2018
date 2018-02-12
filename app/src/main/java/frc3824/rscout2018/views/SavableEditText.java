@@ -32,7 +32,7 @@ public class SavableEditText extends LinearLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mBinding = SavableEdittextBinding.inflate(inflater);
+        mBinding = SavableEdittextBinding.inflate(inflater, this, true);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 

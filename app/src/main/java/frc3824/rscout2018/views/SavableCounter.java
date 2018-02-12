@@ -29,7 +29,7 @@ public class SavableCounter extends LinearLayout implements View.OnClickListener
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mBinding = SavableCounterBinding.inflate(inflater);
+        mBinding = SavableCounterBinding.inflate(inflater, this, true);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 

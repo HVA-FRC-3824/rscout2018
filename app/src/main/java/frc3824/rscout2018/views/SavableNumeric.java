@@ -31,7 +31,7 @@ public class SavableNumeric extends LinearLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.savable_edittext, this);
+        inflater.inflate(R.layout.savable_edittext, this, true);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 

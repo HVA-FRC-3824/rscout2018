@@ -1,5 +1,7 @@
 package frc3824.rscout2018.utilities;
 
+import android.app.LauncherActivity;
+
 /**
  * @author frc3824
  */
@@ -58,6 +60,7 @@ public interface Constants
             String TEAM_STATS = "team_stats";
             String MATCH_PREVIEW = "match_preview";
         }
+
         String TEAM_NUMBER = "team_number";
         String MATCH_NUMBER = "match_number";
         String LAST_MODIFIED = "last_modified";
@@ -70,6 +73,8 @@ public interface Constants
         String SCOUTER = "scouter";
 
         String IP_MODIFIED = "ip_modified";
+        String LOAD_DATA = "load_data";
+        String PING = "ping";
     }
 
     interface Database
@@ -87,7 +92,34 @@ public interface Constants
 
     interface MatchScouting
     {
-        String[] TABS = {"Auto", "Teleop", "Endgame", "Fouls", "Misc"};
+        String[] TABS = {"Start", "Auto", "Teleop", "Endgame", "Fouls", "Misc"};
+
+        interface CubeEvents
+        {
+            String PICK_UP = "Picked Up";
+            String PLACED = "Placed";
+            String DROPPED = "Dropped";
+            String LAUNCH_SUCCESS = "Launch Success";
+            String LAUNCH_FAILURE = "Launch Failure";
+
+            String[] EVENT_OPTIONS = {
+                    // PICK_UP,
+                    PLACED,
+                    DROPPED,
+                    LAUNCH_SUCCESS,
+                    LAUNCH_FAILURE
+            };
+
+            float NEAR_SWITCH_X = 0.0f;
+            float NEAR_SWITCH_Y = 0.0f;
+            float SCALE_X = 0.0f;
+            float SCALE_Y = 0.0f;
+            float FAR_SWITCH_X = 0.0f;
+            float FAR_SWITCH_Y = 0.0f;
+            float EXCHANGE_STATION_X = 0.0f;
+            float EXCHANGE_STATION_Y = 0.0f;
+
+        }
 
         interface EndGame
         {
@@ -97,11 +129,15 @@ public interface Constants
             String ROBOT_FELL = "Robot fell";
             String SUCCESSFUL = "Successful";
 
-            String[] CLIMB_STATE_OPTIONS = {NO_CLIMB_ATTEMPT, PARKED_ON_PLATFORM, DID_NOT_FINISH_IN_TIME, ROBOT_FELL, SUCCESSFUL};
+            String[] CLIMB_STATE_OPTIONS = {NO_CLIMB_ATTEMPT,
+                                            PARKED_ON_PLATFORM,
+                                            DID_NOT_FINISH_IN_TIME,
+                                            ROBOT_FELL,
+                                            SUCCESSFUL};
         }
     }
 
-    interface  PitScouting
+    interface PitScouting
     {
         String[] TABS = {"Robot Pic", "Dimensions", "Misc"};
     }
@@ -109,6 +145,11 @@ public interface Constants
     interface SuperScouting
     {
         String[] TABS = {"Power Ups", "Notes"};
+    }
+
+    interface TeamStats
+    {
+        String[] TABS = {"Charts", "Match Data", "Pit Data", "Notes", "Schedule"};
     }
 
     interface Notifications

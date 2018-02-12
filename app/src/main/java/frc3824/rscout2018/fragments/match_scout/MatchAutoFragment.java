@@ -12,6 +12,7 @@ import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.databinding.FragmentMatchAutoBinding;
 import frc3824.rscout2018.utilities.Utilities;
+import frc3824.rscout2018.views.powered_up.SavableCubes;
 
 /**
  * @class MatchAutoFragment
@@ -21,6 +22,8 @@ public class MatchAutoFragment extends Fragment
 {
     FragmentMatchAutoBinding mBinding = null;
     TeamMatchData mTeamMatchData = null;
+    SavableCubes mCubes;
+    boolean mStart = false;
 
     /**
      * Sets the data model for binding
@@ -33,6 +36,16 @@ public class MatchAutoFragment extends Fragment
         {
             mBinding.setTmd(mTeamMatchData);
         }
+    }
+
+    public void start()
+    {
+        mStart = true;
+    }
+
+    public void stop()
+    {
+        mCubes.stop();
     }
 
     /**
@@ -48,6 +61,13 @@ public class MatchAutoFragment extends Fragment
             mBinding.setTmd(mTeamMatchData);
         }
         View view = mBinding.getRoot();
+        mCubes = view.findViewById(R.id.cubes);
+        mCubes.setAuto(true);
+        if(mStart)
+        {
+            mCubes.start();
+            mStart = false;
+        }
 
         // Add touch listeners
         Utilities.setupUi(getActivity(), view);

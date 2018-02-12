@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.mikephil.charting.charts.RadarChart;
+
 import activitystarter.Arg;
 import frc3824.rscout2018.R;
 

@@ -31,7 +31,7 @@ public class SavableCheckbox extends LinearLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mBinding = SavableCheckboxBinding.inflate(inflater);
+        mBinding = SavableCheckboxBinding.inflate(inflater, this, true);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 

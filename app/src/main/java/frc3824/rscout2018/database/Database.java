@@ -54,7 +54,10 @@ public class Database
         {
             try
             {
-                m_database = m_manager.getDatabase(event_key);
+                // The name must consist only of lowercase ASCII letters, digits, and
+                // the special characters _$()+-/. It must also be less than 240 bytes
+                // and start with a lower case letter.
+                m_database = m_manager.getDatabase("frc_" + event_key);
             }
             catch (CouchbaseLiteException e)
             {
@@ -71,12 +74,17 @@ public class Database
 
     public int numberOfMatches()
     {
+        // Create Data View
         View matches = m_database.getView("matches");
+
+        // Setup Map Reduce
         matches.setMapReduce(new Mapper()
                              {
                                  @Override
                                  public void map(Map<String, Object> document, Emitter emitter)
                                  {
+                                     // The map creates a list of all documents that are of type
+                                     // MatchLogistics
                                     if(document.get("type") == "MatchLogistics")
                                     {
                                         emitter.emit(document.get("matchNumber"), 1);
@@ -90,11 +98,14 @@ public class Database
                                                       List<Object> values,
                                                       boolean rereduce)
                                  {
+                                     // The reduce returns the number of them
                                      return values.size();
                                  }
                              }, "2");
+
+        // Make the query
         Query query = matches.createQuery();
-        QueryEnumerator result = null;
+        QueryEnumerator result;
         try
         {
             result = query.run();
@@ -105,6 +116,10 @@ public class Database
             return 0;
         }
         QueryRow row = result.next();
+        if(row == null)
+        {
+            return 0;
+        }
         return (int) row.getValue();
     }
 

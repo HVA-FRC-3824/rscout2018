@@ -11,6 +11,7 @@ import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.databinding.FragmentMatchTeleopBinding;
 import frc3824.rscout2018.utilities.Utilities;
+import frc3824.rscout2018.views.powered_up.SavableCubes;
 
 /**
  * @class MatchTeleopFragment
@@ -20,6 +21,7 @@ public class MatchTeleopFragment extends Fragment
 {
     FragmentMatchTeleopBinding mBinding = null;
     TeamMatchData mTeamMatchData = null;
+    SavableCubes mCubes;
 
     /**
      * Sets the data model for binding
@@ -32,6 +34,16 @@ public class MatchTeleopFragment extends Fragment
         {
             mBinding.setTmd(mTeamMatchData);
         }
+    }
+
+    public void start()
+    {
+        mCubes.start();
+    }
+
+    public void stop()
+    {
+        mCubes.stop();
     }
 
     /**
@@ -47,6 +59,8 @@ public class MatchTeleopFragment extends Fragment
             mBinding.setTmd(mTeamMatchData);
         }
         View view = mBinding.getRoot();
+        mCubes = view.findViewById(R.id.cubes);
+        mCubes.setAuto(false);
 
         // Add touch listeners
         Utilities.setupUi(getActivity(), view);

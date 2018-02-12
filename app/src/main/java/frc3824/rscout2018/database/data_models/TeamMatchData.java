@@ -12,6 +12,7 @@ import java.util.Map;
 
 import frc3824.rscout2018.BR;
 import frc3824.rscout2018.database.Database;
+import frc3824.rscout2018.database.data_models.powered_up.CubeEvent;
 import frc3824.rscout2018.database.data_models.powered_up.DropData;
 
 /**
@@ -288,8 +289,80 @@ public class TeamMatchData extends DataModel
         notifyChange();
     }
     //endregion
+    //region Start Location X
+    float startLocationX;
+
+    /**
+     * Returns the start location x as a percentage of the width of the field
+     */
+    @Bindable
+    public float getStartLocationX()
+    {
+        return startLocationX;
+    }
+
+    /**
+     * Sets the start location x as a percentage of the width of the field
+     */
+    public void setStartLocationX(float startLocationX)
+    {
+        this.startLocationX = startLocationX;
+        notifyChange();
+    }
+    //endregion
+    //region Start Location Y
+    float startLocationY;
+
+    /**
+     * Returns the start location y as a percentage of the depth of the field
+     */
+    @Bindable
+    public float getStartLocationY()
+    {
+        return startLocationY;
+    }
+
+    /**
+     * Sets the start location y as a percentage of the depth of the field
+     */
+    public void setStartLocationY(float startLocationY)
+    {
+        this.startLocationY = startLocationY;
+        notifyChange();
+    }
+    //endregion
+    //region Cube Events
+    ArrayList<CubeEvent> autoCubeEvents;
+
+    @Bindable
+    public ArrayList<CubeEvent> getAutoCubeEvents()
+    {
+        return autoCubeEvents;
+    }
+
+    public void setAutoCubeEvents(ArrayList<CubeEvent> autoCubeEvents)
+    {
+        this.autoCubeEvents = autoCubeEvents;
+        notifyChange();
+    }
+    //endregion
     //endregion
     //region Teleop
+    //region Cube Events
+    ArrayList<CubeEvent> teleopCubeEvents;
+
+    @Bindable
+    public ArrayList<CubeEvent> getTeleopCubeEvents()
+    {
+        return teleopCubeEvents;
+    }
+
+    public void setTeleopCubeEvents(ArrayList<CubeEvent> teleopCubeEvents)
+    {
+        this.teleopCubeEvents = teleopCubeEvents;
+        notifyChange();
+    }
+    //endregion
     //endregion
     //region Endgame
     //region Climb Status
