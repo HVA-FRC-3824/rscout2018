@@ -22,8 +22,7 @@ public class MatchAutoFragment extends Fragment
 {
     FragmentMatchAutoBinding mBinding = null;
     TeamMatchData mTeamMatchData = null;
-    SavableCubes mCubes;
-    boolean mStart = false;
+    SavableCubes mCubes = null;
 
     /**
      * Sets the data model for binding
@@ -36,16 +35,6 @@ public class MatchAutoFragment extends Fragment
         {
             mBinding.setTmd(mTeamMatchData);
         }
-    }
-
-    public void start()
-    {
-        mStart = true;
-    }
-
-    public void stop()
-    {
-        mCubes.stop();
     }
 
     /**
@@ -63,11 +52,7 @@ public class MatchAutoFragment extends Fragment
         View view = mBinding.getRoot();
         mCubes = view.findViewById(R.id.cubes);
         mCubes.setAuto(true);
-        if(mStart)
-        {
-            mCubes.start();
-            mStart = false;
-        }
+        mCubes.start();
 
         // Add touch listeners
         Utilities.setupUi(getActivity(), view);

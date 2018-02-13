@@ -19,17 +19,14 @@ import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.database.data_models.TeamPitData;
 import frc3824.rscout2018.databinding.FragmentMatchStartBinding;
 import frc3824.rscout2018.utilities.Utilities;
-import info.hoang8f.widget.FButton;
 
 /**
  * @author frc3824
  */
-public class MatchStartFragment extends Fragment implements View.OnClickListener, ImageListener
+public class MatchStartFragment extends Fragment implements ImageListener
 {
     private TeamMatchData mTeamMatchData = null;
     private FragmentMatchStartBinding mBinding = null;
-    private View.OnClickListener mStartListener;
-    private FButton mStartButton;
     private CarouselView mCarouselView;
     private ArrayList<String> mPictureFilepaths;
 
@@ -43,11 +40,6 @@ public class MatchStartFragment extends Fragment implements View.OnClickListener
         }
         TeamPitData tpd = new TeamPitData(mTeamMatchData.getTeamNumber());
         mPictureFilepaths = tpd.getPictureFilepaths();
-    }
-
-    public void setStartListener(View.OnClickListener listener)
-    {
-        mStartListener = listener;
     }
 
     /**
@@ -71,17 +63,7 @@ public class MatchStartFragment extends Fragment implements View.OnClickListener
         // Add touch listeners
         Utilities.setupUi(getActivity(), view);
 
-        mStartButton = view.findViewById(R.id.start_button);
-        mStartButton.setOnClickListener(this);
-
         return view;
-    }
-
-    @Override
-    public void onClick(View v)
-    {
-        mStartButton.setEnabled(false);
-        mStartListener.onClick(mStartButton);
     }
 
     @Override

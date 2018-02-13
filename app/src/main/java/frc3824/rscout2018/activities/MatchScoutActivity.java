@@ -57,9 +57,6 @@ public class MatchScoutActivity extends Activity
     private ViewPager mViewPager;
     private TeamMatchData mTMD;
 
-    private Timer mTimer;
-    private Handler mAutoEndHandler;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -283,7 +280,6 @@ public class MatchScoutActivity extends Activity
                 case 0:
                     MatchStartFragment msf = new MatchStartFragment();
                     msf.setData(mTeamMatchData);
-                    msf.setStartListener(new StartListener());
                     mFragments.put(0, msf);
                     return msf;
                 case 1:
@@ -339,42 +335,4 @@ public class MatchScoutActivity extends Activity
             return Constants.MatchScouting.TABS[position];
         }
     }
-
-    private class StartListener implements View.OnClickListener
-    {
-        @Override
-        public void onClick(View v)
-        {
-            mAutoEndHandler = new Handler();
-            // Set timer to switch to teleop
-            mTimer = new Timer();
-            mTimer.schedule(new AutoEndTask(), 15 * 1000);
-            // Switch to auto
-            mViewPager.setCurrentItem(1);
-            ((MatchAutoFragment)mFPA.getItem(1)).start();
-        }
-    }
-
-    private class AutoEndRunnable implements Runnable
-    {
-
-        @Override
-        public void run()
-        {
-            // Switch to teleop
-            ((MatchAutoFragment)mFPA.getItem(1)).stop();
-            ((MatchTeleopFragment)mFPA.getItem(2)).start();
-            mViewPager.setCurrentItem(2);
-        }
-    }
-
-    private class AutoEndTask extends TimerTask
-    {
-        @Override
-        public void run()
-        {
-            mAutoEndHandler.post(new AutoEndRunnable());
-        }
-    }
-
 }

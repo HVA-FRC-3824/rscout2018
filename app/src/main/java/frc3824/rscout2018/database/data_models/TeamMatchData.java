@@ -332,7 +332,7 @@ public class TeamMatchData extends DataModel
     }
     //endregion
     //region Cube Events
-    ArrayList<CubeEvent> autoCubeEvents;
+    ArrayList<CubeEvent> autoCubeEvents = new ArrayList<>();
 
     @Bindable
     public ArrayList<CubeEvent> getAutoCubeEvents()
@@ -349,7 +349,7 @@ public class TeamMatchData extends DataModel
     //endregion
     //region Teleop
     //region Cube Events
-    ArrayList<CubeEvent> teleopCubeEvents;
+    ArrayList<CubeEvent> teleopCubeEvents = new ArrayList<>();
 
     @Bindable
     public ArrayList<CubeEvent> getTeleopCubeEvents()

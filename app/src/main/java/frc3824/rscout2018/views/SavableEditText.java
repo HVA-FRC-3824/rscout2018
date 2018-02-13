@@ -2,12 +2,10 @@ package frc3824.rscout2018.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-// import android.databinding.DataBindingUtil;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import frc3824.rscout2018.R;
@@ -21,6 +19,7 @@ public class SavableEditText extends LinearLayout
 {
     SavableEdittextBinding mBinding;
     EditText mEditText;
+    String mText;
 
     /**
      * Constructor
@@ -33,9 +32,9 @@ public class SavableEditText extends LinearLayout
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mBinding = SavableEdittextBinding.inflate(inflater, this, true);
+        mBinding.setText(mText);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
-
         // Set label
         TextView label = findViewById(R.id.label);
         label.setText(typedArray.getString(R.styleable.SavableView_label));
@@ -43,13 +42,15 @@ public class SavableEditText extends LinearLayout
         mEditText = findViewById(R.id.edittext);
     }
 
+
     /**
      * Setter function for the data binding
      * @param text The text to set for the {@link EditText}
      */
     public void setText(String text)
     {
-        mEditText.setText(text);
+        mText = text;
+        //mEditText.setText(text);
     }
 
     /**
@@ -58,6 +59,10 @@ public class SavableEditText extends LinearLayout
      */
     public String getText()
     {
-        return mEditText.getText().toString();
+        mText = mEditText.getText().toString();
+        return mText;
+        //return mEditText.getText().toString();
     }
+
+
 }

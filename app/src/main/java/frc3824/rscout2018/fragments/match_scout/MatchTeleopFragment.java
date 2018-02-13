@@ -36,16 +36,6 @@ public class MatchTeleopFragment extends Fragment
         }
     }
 
-    public void start()
-    {
-        mCubes.start();
-    }
-
-    public void stop()
-    {
-        mCubes.stop();
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -61,6 +51,7 @@ public class MatchTeleopFragment extends Fragment
         View view = mBinding.getRoot();
         mCubes = view.findViewById(R.id.cubes);
         mCubes.setAuto(false);
+        mCubes.start();
 
         // Add touch listeners
         Utilities.setupUi(getActivity(), view);
