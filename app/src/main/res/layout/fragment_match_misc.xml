@@ -18,19 +18,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:label = "DQ:"
-            app:bool="@{tmd.dq}"/>
+            app:bool="@{tmd.dq}"
+            app:boolAttrChanged="@{tmd.dqListener}"/>
 
         <frc3824.rscout2018.views.SavableSwitch
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:label = "No Show:"
-            app:bool="@{tmd.noShow}"/>
+            app:bool="@{tmd.noShow}"
+            app:boolAttrChanged="@{tmd.noShowListener}"/>
 
         <frc3824.rscout2018.views.SavableEditText
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
             app:label = "Notes:"
-            app:text = "@{tmd.notes}" />
+            app:text = "@{tmd.notes}"
+            app:textAttrChanged="@{tmd.notesWatcher}"/>
 
     </LinearLayout>
 </layout>

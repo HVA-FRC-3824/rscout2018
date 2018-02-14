@@ -23,6 +23,7 @@ public interface Constants
     {
         String ENABLE_MATCH_SCOUT = "enable_match_scout";
         String MATCH_SCOUT_POSITION = "match_scout_position";
+        String BLUE_LEFT = "blue_left";
 
         String ENABLE_PIT_SCOUT = "enable_pit_scout";
         String PIT_SCOUT_POSITION = "pit_scout_position";
@@ -74,6 +75,7 @@ public interface Constants
 
         String IP_MODIFIED = "ip_modified";
         String LOAD_DATA = "load_data";
+        String PULL_MATCHES = "pull_matches";
         String PING = "ping";
     }
 

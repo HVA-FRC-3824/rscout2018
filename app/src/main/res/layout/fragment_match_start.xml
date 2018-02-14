@@ -14,32 +14,38 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.synnapps.carouselview.CarouselView
-            android:id="@+id/carousel"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            app:autoPlay="false"
-            app:disableAutoPlayOnUserInteraction="true"
-            app:fillColor="@color/Black"
-            app:pageColor="@color/White"
-            app:radius="6dp"
-            app:strokeColor="@color/White"
-            app:strokeWidth="2dp"
-            />
+            android:orientation="horizontal">
+            <com.synnapps.carouselview.CarouselView
+                android:id="@+id/carousel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:autoPlay="false"
+                app:disableAutoPlayOnUserInteraction="true"
+                app:fillColor="@color/Black"
+                app:pageColor="@color/White"
+                app:radius="6dp"
+                app:strokeColor="@color/White"
+                app:strokeWidth="2dp"
+                />
+
+            <frc3824.rscout2018.views.powered_up.SavableStartLocation
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:data="@{tmd}"/>
+        </LinearLayout>
 
         <frc3824.rscout2018.views.SavableEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:label="Name"
-            app:text="@={tmd.scoutName}"
+            app:label="Your Name"
+            app:text="@{tmd.scoutName}"
             app:textAttrChanged="@{tmd.scoutNameWatcher}"/>
-
-        <frc3824.rscout2018.views.powered_up.SavableStartLocation
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            app:data="@{tmd}"/>
 
     </LinearLayout>
 </layout>

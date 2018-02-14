@@ -1,8 +1,10 @@
 package frc3824.rscout2018.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -216,7 +218,40 @@ public class MatchScoutActivity extends Activity
             {
                 if (mTMD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MatchScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    mTMD.save();
+
+                                    Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
+                                    intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, mTMD.toString());
+                                    startService(intent);
+
+                                    MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
@@ -232,10 +267,10 @@ public class MatchScoutActivity extends Activity
         {
             if(!mPractice && mTMD.isDirty()) // Don't need to worry about saving for practice or if there is nothing new
             {
+                mTMD.save();
                 Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
                 intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, mTMD.toString());
                 startService(intent);
-                // TastyToast.makeText(MatchScoutActivity.this, "Saved", TastyToast.LENGTH_SHORT, TastyToast.SUCCESS);
             }
         }
     }

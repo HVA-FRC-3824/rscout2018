@@ -2,6 +2,9 @@ package frc3824.rscout2018.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.databinding.BindingAdapter;
+import android.databinding.InverseBindingAdapter;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.EditText;
@@ -75,5 +78,39 @@ public class SavableNumeric extends LinearLayout
     public double getNumber()
     {
         return mValue;
+    }
+
+    public void addListener(TextWatcher textWatcher)
+    {
+        mEditText.addTextChangedListener(textWatcher);
+    }
+
+    public void removeListener(TextWatcher textWatcher)
+    {
+        mEditText.removeTextChangedListener(textWatcher);
+    }
+
+    @BindingAdapter("number")
+    public static void setNumber(SavableNumeric savableNumeric, double value)
+    {
+        savableNumeric.setNumber(value);
+    }
+
+    @InverseBindingAdapter(attribute = "number")
+    public static double getNumber(SavableNumeric savableNumeric)
+    {
+        return savableNumeric.getNumber();
+    }
+
+    public static void setListener(SavableNumeric savableNumeric, TextWatcher oldListener, TextWatcher newListener)
+    {
+        if(oldListener != null)
+        {
+            savableNumeric.removeListener(oldListener);
+        }
+        if(newListener != null)
+        {
+            savableNumeric.addListener(newListener);
+        }
     }
 }

@@ -2,16 +2,16 @@ package frc3824.rscout2018.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.databinding.BindingAdapter;
+import android.databinding.InverseBindingAdapter;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.databinding.SavableAutocompletetextviewBinding;
 
 /**
  * @class SavableAutoCompleteTextView
@@ -19,7 +19,6 @@ import frc3824.rscout2018.databinding.SavableAutocompletetextviewBinding;
  */
 public class SavableAutoCompleteTextView extends LinearLayout
 {
-    SavableAutocompletetextviewBinding mBinding;
     AutoCompleteTextView mAutoCompleteTextView;
 
     /**
@@ -32,7 +31,7 @@ public class SavableAutoCompleteTextView extends LinearLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mBinding = SavableAutocompletetextviewBinding.inflate(inflater, this, true);
+        inflater.inflate(R.layout.savable_autocompletetextview, this, true);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 
@@ -59,5 +58,62 @@ public class SavableAutoCompleteTextView extends LinearLayout
     public String getText()
     {
         return mAutoCompleteTextView.getText().toString();
+    }
+
+
+    /**
+     * Adds a watcher that detects the text being editted
+     * in the internal EditText
+     */
+    public void addListener(TextWatcher textWatcher)
+    {
+        mAutoCompleteTextView.addTextChangedListener(textWatcher);
+    }
+
+    /**
+     * Removes the specified watcher
+     */
+    public void removeListener(TextWatcher textWatcher)
+    {
+        mAutoCompleteTextView.removeTextChangedListener(textWatcher);
+    }
+
+    /**
+     * Needed for the data binding
+     */
+    @InverseBindingAdapter(attribute = "text", event = "textAttrChanged")
+    public static String getText(SavableAutoCompleteTextView savableAutoCompleteTextView)
+    {
+        return savableAutoCompleteTextView.getText();
+    }
+
+    /**
+     * Needed for the data binding
+     */
+    @BindingAdapter("text")
+    public static void setText(SavableAutoCompleteTextView savableAutoCompleteTextView, String text)
+    {
+        savableAutoCompleteTextView.setText(text);
+    }
+
+    /**
+     * Binds the "textAttrChanged" attribute value to the edit text
+     *
+     * In short it binds the listener for the specific value to the internal edit text
+     * so it will update the variable in the data model.
+     */
+    @BindingAdapter(value = {"textAttrChanged"})
+    public static void setTextWatcher(SavableAutoCompleteTextView savableAutoCompleteTextView,
+                                      TextWatcher oldListener,
+                                      TextWatcher newListener)
+    {
+        if (oldListener != null)
+        {
+            savableAutoCompleteTextView.removeListener(oldListener);
+        }
+        if (newListener != null)
+        {
+            savableAutoCompleteTextView.addListener(newListener);
+        }
     }
 }

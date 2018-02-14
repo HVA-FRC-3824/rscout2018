@@ -154,7 +154,7 @@ public class SavableCubes extends View
     @Override
     public boolean onTouchEvent(MotionEvent e)
     {
-        if (e.getAction() == MotionEvent.ACTION_DOWN)
+        if (e.getAction() == MotionEvent.ACTION_UP)
         {
             float x = e.getX();
             float y = e.getY();
@@ -180,8 +180,7 @@ public class SavableCubes extends View
             }
             else
             {
-                builder.setMessage("Picked Up");
-                builder.setPositiveButton("Ok", mPickUpOk);
+                builder.setItems(new String[]{Constants.MatchScouting.CubeEvents.PICK_UP}, mPickUpOk);
             }
 
             builder.create().show();

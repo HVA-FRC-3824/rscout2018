@@ -3,6 +3,7 @@ package frc3824.rscout2018.database.data_models;
 import android.databinding.Bindable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.CompoundButton;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
@@ -16,6 +17,7 @@ import frc3824.rscout2018.BR;
 import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.powered_up.CubeEvent;
 import frc3824.rscout2018.database.data_models.powered_up.DropData;
+import frc3824.rscout2018.views.SavableCounter;
 
 /**
  * Data Model for a single team in a single match
@@ -28,7 +30,6 @@ public class TeamMatchData extends DataModel
 
     /**
      * Getter function for match number
-     * @returns The match number
      */
     @Bindable
     public int getMatchNumber()
@@ -38,6 +39,7 @@ public class TeamMatchData extends DataModel
 
     /**
      * Setter function for match number
+     *
      * @param matchNumber The match number
      */
     public void setMatchNumber(int matchNumber)
@@ -45,13 +47,13 @@ public class TeamMatchData extends DataModel
         this.matchNumber = matchNumber;
         notifyChange();
     }
+
     //endregion
     //region Team Number
     int teamNumber;
 
     /**
      * Getter function for team number
-     * @returns The team number
      */
     @Bindable
     public int getTeamNumber()
@@ -61,6 +63,7 @@ public class TeamMatchData extends DataModel
 
     /**
      * Setter function for team number
+     *
      * @param teamNumber The team number
      */
     public void setTeamNumber(int teamNumber)
@@ -68,13 +71,13 @@ public class TeamMatchData extends DataModel
         this.teamNumber = teamNumber;
         notifyChange();
     }
+
     //endregion
     //region Scout Name
     String scoutName;
 
     /**
      * Getter function for scout name
-     * @returns The name of the scout who recorded the information for {@link TeamMatchData#teamNumber} in {@link TeamMatchData#matchNumber}
      */
     @Bindable
     public String getScoutName()
@@ -84,6 +87,7 @@ public class TeamMatchData extends DataModel
 
     /**
      * Setter function for scout name
+     *
      * @param scoutName The name of the scout who recorded the information for {@link TeamMatchData#teamNumber} in {@link TeamMatchData#matchNumber}
      */
     public void setScoutName(String scoutName)
@@ -93,7 +97,8 @@ public class TeamMatchData extends DataModel
     }
 
     @Bindable
-    public TextWatcher getScoutNameTextWatcher() {
+    public TextWatcher getScoutNameWatcher()
+    {
         return new TextWatcher()
         {
             @Override
@@ -124,7 +129,6 @@ public class TeamMatchData extends DataModel
 
     /**
      * Getter function for fouls
-     * @returns The number of normal fouls caused by this team in this match
      */
     @Bindable
     public int getFouls()
@@ -134,6 +138,7 @@ public class TeamMatchData extends DataModel
 
     /**
      * Setter function for fouls
+     *
      * @param fouls The number of normal fouls caused by this team in this match
      */
     public void setFouls(int fouls)
@@ -141,13 +146,25 @@ public class TeamMatchData extends DataModel
         this.fouls = fouls;
         notifyChange();
     }
+
+    @Bindable
+    public SavableCounter.CountListener getFoulsListener()
+    {
+        return new SavableCounter.CountListener()
+        {
+            @Override
+            public void onChange(int value)
+            {
+                setFouls(value);
+            }
+        };
+    }
     //endregion
     //region Tech Fouls
     int techFouls;
 
     /**
      * Getter function for tech fouls
-     * @returns The number of tech fouls caused by this team in this match
      */
     @Bindable
     public int getTechFouls()
@@ -157,6 +174,7 @@ public class TeamMatchData extends DataModel
 
     /**
      * Setter function for tech fouls
+     *
      * @param techFouls The number of tech fouls caused by this team in this match
      */
     public void setTechFouls(int techFouls)
@@ -164,15 +182,26 @@ public class TeamMatchData extends DataModel
         this.techFouls = techFouls;
         notifyChange();
     }
+
+    @Bindable
+    public SavableCounter.CountListener getTechFoulsListener()
+    {
+        return new SavableCounter.CountListener()
+        {
+            @Override
+            public void onChange(int value)
+            {
+                setTechFouls(value);
+            }
+        };
+    }
+
     //endregion
     //region Yellow Card
     boolean yellowCard;
 
     /**
      * Getter function for yellow card
-     *
-     * @note The data binding system requires the function follow javabean naming convention
-     *       and thus uses "is"
      *
      * @return Whether a yellow card was received in match {@link TeamMatchData#matchNumber} by team {@link TeamMatchData#teamNumber}
      */
@@ -184,6 +213,7 @@ public class TeamMatchData extends DataModel
 
     /**
      * Setter function for yellow card
+     *
      * @param yellowCard Whether a yellow card was received in match {@link TeamMatchData#matchNumber} by team {@link TeamMatchData#teamNumber}
      */
     public void setYellowCard(boolean yellowCard)
@@ -191,15 +221,26 @@ public class TeamMatchData extends DataModel
         this.yellowCard = yellowCard;
         notifyChange();
     }
+
+    @Bindable
+    public CompoundButton.OnCheckedChangeListener getYellowCardListener()
+    {
+        return new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                setYellowCard(isChecked);
+            }
+        };
+    }
+
     //endregion
     //region Red Card
     boolean redCard;
 
     /**
      * Getter function for red card
-     *
-     * @note The data binding system requires the function follow javabean naming convention
-     *       and thus uses "is"
      *
      * @return Whether a red card was received in match {@link TeamMatchData#matchNumber} by team {@link TeamMatchData#teamNumber}
      */
@@ -211,6 +252,7 @@ public class TeamMatchData extends DataModel
 
     /**
      * Setter function for red card
+     *
      * @param redCard Whether a red card was received in match {@link TeamMatchData#matchNumber} by team {@link TeamMatchData#teamNumber}
      */
     public void setRedCard(boolean redCard)
@@ -218,6 +260,20 @@ public class TeamMatchData extends DataModel
         this.redCard = redCard;
         notifyChange();
     }
+
+    @Bindable
+    public CompoundButton.OnCheckedChangeListener getRedCardListener()
+    {
+        return new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                setRedCard(isChecked);
+            }
+        };
+    }
+
     //endregion
     //endregion
 
@@ -227,7 +283,6 @@ public class TeamMatchData extends DataModel
 
     /**
      * Getter function for whether team {@link TeamMatchData#teamNumber} was disqualified in match {@link TeamMatchData#matchNumber}
-     * @returns Whether team {@link TeamMatchData#teamNumber} was disqualified in match {@link TeamMatchData#matchNumber}
      */
     public boolean isDq()
     {
@@ -236,6 +291,7 @@ public class TeamMatchData extends DataModel
 
     /**
      * Setter function for whether team {@link TeamMatchData#teamNumber} was disqualified in match {@link TeamMatchData#matchNumber}
+     *
      * @param dq Whether team {@link TeamMatchData#teamNumber} was disqualified in match {@link TeamMatchData#matchNumber}
      */
     public void setDq(boolean dq)
@@ -243,13 +299,26 @@ public class TeamMatchData extends DataModel
         this.dq = dq;
         notifyChange();
     }
+
+    @Bindable
+    public CompoundButton.OnCheckedChangeListener getDqListener()
+    {
+        return new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                setDq(isChecked);
+            }
+        };
+    }
+
     //endregion
     //region No Show
     boolean noShow;
 
     /**
      * Getter function for whether team {@link TeamMatchData#teamNumber} did not show up to match {@link TeamMatchData#matchNumber}
-     * @returns Whether team {@link TeamMatchData#teamNumber} did not show up to match {@link TeamMatchData#matchNumber}
      */
     public boolean isNoShow()
     {
@@ -258,6 +327,7 @@ public class TeamMatchData extends DataModel
 
     /**
      * Setter function for whether team {@link TeamMatchData#teamNumber} did not show up to match {@link TeamMatchData#matchNumber}
+     *
      * @param noShow Whether team {@link TeamMatchData#teamNumber} did not show up to match {@link TeamMatchData#matchNumber}
      */
     public void setNoShow(boolean noShow)
@@ -265,13 +335,25 @@ public class TeamMatchData extends DataModel
         this.noShow = noShow;
         notifyChange();
     }
+
+    @Bindable
+    public CompoundButton.OnCheckedChangeListener getNoShowListener()
+    {
+        return new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                setNoShow(isChecked);
+            }
+        };
+    }
     //endregion
     //region Notes
     String notes;
 
     /**
      * Getter function for notes
-     * @returns The notes taken on team {@link TeamMatchData#teamNumber} in match {@link TeamMatchData#matchNumber}
      */
     @Bindable
     public String getNotes()
@@ -281,6 +363,7 @@ public class TeamMatchData extends DataModel
 
     /**
      * Setter function for notes
+     *
      * @param notes The notes taken on team {@link TeamMatchData#teamNumber} in match {@link TeamMatchData#matchNumber}
      */
     public void setNotes(String notes)
@@ -288,6 +371,32 @@ public class TeamMatchData extends DataModel
         this.notes = notes;
         notifyChange();
     }
+
+    @Bindable
+    public TextWatcher getNotesWatcher()
+    {
+        return new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                setNotes(s.toString());
+            }
+        };
+    }
+
     //endregion
     //endregion
 
@@ -298,12 +407,13 @@ public class TeamMatchData extends DataModel
 
     /**
      * Returns whether the team crossed the auto line
+     *
      * @return
      */
     @Bindable
     public boolean getCrossedAutoLine()
     {
-        return  crossedAutoLine;
+        return crossedAutoLine;
     }
 
     /**
@@ -314,6 +424,20 @@ public class TeamMatchData extends DataModel
         this.crossedAutoLine = crossedAutoLine;
         notifyChange();
     }
+
+    @Bindable
+    public CompoundButton.OnCheckedChangeListener getCrossedAutoLineListener()
+    {
+        return new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                setCrossedAutoLine(isChecked);
+            }
+        };
+    }
+
     //endregion
     //region Start Location X
     float startLocationX;
@@ -335,6 +459,7 @@ public class TeamMatchData extends DataModel
         this.startLocationX = startLocationX;
         notifyChange();
     }
+
     //endregion
     //region Start Location Y
     float startLocationY;
@@ -356,6 +481,7 @@ public class TeamMatchData extends DataModel
         this.startLocationY = startLocationY;
         notifyChange();
     }
+
     //endregion
     //region Cube Events
     ArrayList<CubeEvent> autoCubeEvents = new ArrayList<>();
@@ -371,6 +497,7 @@ public class TeamMatchData extends DataModel
         this.autoCubeEvents = autoCubeEvents;
         notifyChange();
     }
+
     //endregion
     //endregion
     //region Teleop
@@ -388,6 +515,7 @@ public class TeamMatchData extends DataModel
         this.teleopCubeEvents = teleopCubeEvents;
         notifyChange();
     }
+
     //endregion
     //endregion
     //region Endgame
@@ -413,6 +541,7 @@ public class TeamMatchData extends DataModel
         this.climbStatus = climbStatus;
         notifyChange();
     }
+
     //endregion
     //region Climb Method
     String climbMethod;
@@ -457,7 +586,8 @@ public class TeamMatchData extends DataModel
 
     public void load()
     {
-        super.load(String.format("tmd_%d_%d", teamNumber, matchNumber), Arrays.asList("teamNumber", "matchNumber"));
+        super.load(String.format("tmd_%d_%d", teamNumber, matchNumber),
+                   Arrays.asList("teamNumber", "matchNumber"));
 
     }
     //endregion

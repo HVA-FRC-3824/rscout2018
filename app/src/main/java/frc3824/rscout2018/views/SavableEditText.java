@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.databinding.BindingAdapter;
 import android.databinding.InverseBindingAdapter;
-import android.databinding.InverseBindingMethod;
-import android.databinding.InverseBindingMethods;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -14,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.databinding.SavableEdittextBinding;
 
 /**
  * @class SavableEditText
@@ -22,7 +19,6 @@ import frc3824.rscout2018.databinding.SavableEdittextBinding;
  */
 public class SavableEditText extends LinearLayout
 {
-    SavableEdittextBinding mBinding;
     EditText mEditText;
     String mText;
 
@@ -37,8 +33,7 @@ public class SavableEditText extends LinearLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        //inflater.inflate(R.layout.savable_edittext, this, true);
-        mBinding = SavableEdittextBinding.inflate(inflater, this, true);
+        inflater.inflate(R.layout.savable_edittext, this, true);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
         // Set label
@@ -48,6 +43,10 @@ public class SavableEditText extends LinearLayout
         mEditText = findViewById(R.id.edittext);
     }
 
+    /**
+     * Sets the text in the internal EditText
+     * @param text
+     */
     public void setText(String text)
     {
         if(mText != text)
@@ -57,17 +56,68 @@ public class SavableEditText extends LinearLayout
         }
     }
 
+    /**
+     * Returns the text from the internal EditText
+     */
     public String getText()
     {
         mText = mEditText.toString();
         return mText;
     }
 
-    @InverseBindingMethods({
-            @InverseBindingMethod(type = String.class,
-            attribute = "text",
-            method = "getText")
-    })
-    public class SavableEditTextBindingAdapters {}
+    /**
+     * Adds a watcher that detects the text being editted
+     * in the internal EditText
+     */
+    public void addListener(TextWatcher textWatcher)
+    {
+        mEditText.addTextChangedListener(textWatcher);
+    }
 
+    /**
+     * Removes the specified watcher
+     */
+    public void removeListener(TextWatcher textWatcher)
+    {
+        mEditText.removeTextChangedListener(textWatcher);
+    }
+
+    /**
+     * Needed for the data binding
+     */
+    @InverseBindingAdapter(attribute = "text", event = "textAttrChanged")
+    public static String getText(SavableEditText savableEditText)
+    {
+        return savableEditText.getText();
+    }
+
+    /**
+     * Needed for the data binding
+     */
+    @BindingAdapter("text")
+    public static void setText(SavableEditText savableEditText, String text)
+    {
+        savableEditText.setText(text);
+    }
+
+    /**
+     * Binds the "textAttrChanged" attribute value to the edit text
+     *
+     * In short it binds the listener for the specific value to the internal edit text
+     * so it will update the variable in the data model.
+     */
+    @BindingAdapter(value = {"textAttrChanged"})
+    public static void setTextWatcher(SavableEditText savableEditText,
+                                      TextWatcher oldListener,
+                                      TextWatcher newListener)
+    {
+        if (oldListener != null)
+        {
+            savableEditText.removeListener(oldListener);
+        }
+        if (newListener != null)
+        {
+            savableEditText.addListener(newListener);
+        }
+    }
 }

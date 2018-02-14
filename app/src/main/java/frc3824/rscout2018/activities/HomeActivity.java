@@ -1,6 +1,7 @@
 package frc3824.rscout2018.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.Database;
+import frc3824.rscout2018.services.CommunicationService;
 import frc3824.rscout2018.utilities.Constants;
 
 @MakeActivityStarter
@@ -62,6 +64,10 @@ public class HomeActivity extends Activity implements View.OnClickListener
         button.setOnClickListener(this);
 
         button = findViewById(R.id.pick_list_button);
+        button.setEnabled(enableStrategist);
+        button.setOnClickListener(this);
+
+        button = findViewById(R.id.pull_matches);
         button.setEnabled(enableStrategist);
         button.setOnClickListener(this);
 
@@ -206,6 +212,15 @@ public class HomeActivity extends Activity implements View.OnClickListener
             case R.id.settings_button:
                 SettingsActivityStarter.start(this);
                 break;
+
+            case R.id.pull_matches:
+                Intent intent = new Intent(HomeActivity.this, CommunicationService.class);
+                intent.putExtra(Constants.IntentExtras.PULL_MATCHES, true);
+                startService(intent);
+                break;
+
+            default:
+                assert(false);
         }
     }
 }

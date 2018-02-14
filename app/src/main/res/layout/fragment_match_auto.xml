@@ -18,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:bool="@{tmd.crossedAutoLine}"
+            app:boolAttrChanged="@{tmd.crossedAutoLineListener}"
             app:label="Crossed Auto Line:"/>
 
         <frc3824.rscout2018.views.powered_up.SavableCubes

@@ -27,7 +27,7 @@ public class MatchEndgameFragment extends Fragment implements RadioGroup.OnCheck
     FragmentMatchEndgameBinding mBinding = null;
     TeamMatchData mTeamMatchData = null;
 
-    SavableRadioButtons mClimbingMethod;
+    // SavableRadioButtons mClimbingMethod;
 
     /**
      * Sets the data model for binding
@@ -56,11 +56,12 @@ public class MatchEndgameFragment extends Fragment implements RadioGroup.OnCheck
         }
         View view = mBinding.getRoot();
 
+        /*
         SavableRadioButtons climbingState = view.findViewById(R.id.endgame_climb_state);
         climbingState.setOnCheckChange(this);
 
         mClimbingMethod = view.findViewById(R.id.endgame_climb_method);
-
+        */
         // Add touch listeners
         Utilities.setupUi(getActivity(), view);
 
@@ -69,10 +70,12 @@ public class MatchEndgameFragment extends Fragment implements RadioGroup.OnCheck
 
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int i) {
+        /*
         if(i == Arrays.asList(CLIMB_STATE_OPTIONS).indexOf("Successful")) {
             mClimbingMethod.setVisibility(View.VISIBLE);
         } else {
             mClimbingMethod.setVisibility(View.GONE);
         }
+        */
     }
 }

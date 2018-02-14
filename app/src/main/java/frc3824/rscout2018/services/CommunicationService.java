@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.database.data_models.SuperMatchData;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.database.data_models.TeamPitData;
@@ -79,6 +81,10 @@ public class CommunicationService extends IntentService
         {
             handleSendingSuperMatchData(intent.getStringExtra(Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING));
         }
+        else if(intent.hasExtra(Constants.IntentExtras.PULL_MATCHES))
+        {
+            handlePullMatches();
+        }
         else if(intent.hasExtra(Constants.IntentExtras.LOAD_DATA))
         {
             handleSendingUpdateRequest();
@@ -127,7 +133,7 @@ public class CommunicationService extends IntentService
 
     private void handleSendingTeamPitData(String json)
     {
-        RequestBody body = RequestBody.create(kJSON, json);
+        // RequestBody body = RequestBody.create(kJSON, json);
 
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM);
@@ -224,7 +230,7 @@ public class CommunicationService extends IntentService
                                     TastyToast.SUCCESS).show();
 
                 Gson gson = new Gson();
-                Update update =gson.fromJson(response.body().toString(), Update.class);
+                Update update = gson.fromJson(response.body().toString(), Update.class);
                 update.save();
             }
             else
@@ -238,6 +244,42 @@ public class CommunicationService extends IntentService
         catch (IOException e)
         {
             TastyToast.makeText(this, "Update failed", TastyToast.LENGTH_LONG, TastyToast.ERROR)
+                      .show();
+        }
+    }
+
+    private void handlePullMatches()
+    {
+        RequestBody body = RequestBody.create(kTXT, "matches");
+        Request request = new Request.Builder()
+                .url(mUrl)
+                .post(body)
+                .build();
+
+        try
+        {
+            Response response = mClient.newCall(request).execute();
+            if(response.isSuccessful())
+            {
+                TastyToast.makeText(this,
+                                    "Pulling Matches",
+                                    TastyToast.LENGTH_LONG,
+                                    TastyToast.SUCCESS).show();
+
+                Gson gson = new Gson();
+
+
+
+                ArrayList<MatchLogistics> matches = gson.fromJson(response.body().toString(), new TypeToken<List<MatchLogistics>>(){}.getType());
+                for(MatchLogistics match : matches)
+                {
+                    match.save();
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            TastyToast.makeText(this, "Pull Matches Request failed", TastyToast.LENGTH_LONG, TastyToast.ERROR)
                       .show();
         }
     }

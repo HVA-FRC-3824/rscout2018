@@ -2,15 +2,16 @@ package frc3824.rscout2018.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.databinding.BindingAdapter;
+import android.databinding.InverseBindingAdapter;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.databinding.SavableCheckboxBinding;
 
 /**
  * @class SavableCheckbox
@@ -18,7 +19,6 @@ import frc3824.rscout2018.databinding.SavableCheckboxBinding;
  */
 public class SavableCheckbox extends LinearLayout
 {
-    SavableCheckboxBinding mBinding;
     CheckBox mCheckBox;
 
     /**
@@ -31,7 +31,7 @@ public class SavableCheckbox extends LinearLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mBinding = SavableCheckboxBinding.inflate(inflater, this, true);
+        inflater.inflate(R.layout.savable_checkbox, this, true);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 
@@ -58,5 +58,33 @@ public class SavableCheckbox extends LinearLayout
     public boolean getBool()
     {
         return mCheckBox.isChecked();
+    }
+
+    public void addListener(CompoundButton.OnCheckedChangeListener listener)
+    {
+        mCheckBox.setOnCheckedChangeListener(listener);
+    }
+
+    @BindingAdapter("bool")
+    public static void setBool(SavableCheckbox savableCheckbox, boolean value)
+    {
+        savableCheckbox.setBool(value);
+    }
+
+    @InverseBindingAdapter(attribute = "bool")
+    public static boolean getBool(SavableCheckbox savableCheckbox)
+    {
+        return savableCheckbox.getBool();
+    }
+
+    @BindingAdapter("boolAttrChanged")
+    public static void setListener(SavableCheckbox savableCheckbox,
+                                   CompoundButton.OnCheckedChangeListener oldListener,
+                                   CompoundButton.OnCheckedChangeListener newListener)
+    {
+        if (newListener != null)
+        {
+            savableCheckbox.addListener(newListener);
+        }
     }
 }
