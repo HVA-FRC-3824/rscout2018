@@ -1,6 +1,8 @@
 package frc3824.rscout2018.database.data_models;
 
 import android.databinding.Bindable;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
@@ -88,6 +90,30 @@ public class TeamMatchData extends DataModel
     {
         this.scoutName = scoutName;
         notifyChange();
+    }
+
+    @Bindable
+    public TextWatcher getScoutNameTextWatcher() {
+        return new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+                // Do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+                // Do nothing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                setScoutName(s.toString());
+            }
+        };
     }
     //endregion
     //endregion

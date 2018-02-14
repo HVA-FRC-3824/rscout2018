@@ -2,6 +2,11 @@ package frc3824.rscout2018.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.databinding.BindingAdapter;
+import android.databinding.InverseBindingAdapter;
+import android.databinding.InverseBindingMethod;
+import android.databinding.InverseBindingMethods;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.EditText;
@@ -23,6 +28,7 @@ public class SavableEditText extends LinearLayout
 
     /**
      * Constructor
+     *
      * @param context
      * @param attrs
      */
@@ -31,8 +37,8 @@ public class SavableEditText extends LinearLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        //inflater.inflate(R.layout.savable_edittext, this, true);
         mBinding = SavableEdittextBinding.inflate(inflater, this, true);
-        mBinding.setText(mText);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
         // Set label
@@ -42,27 +48,26 @@ public class SavableEditText extends LinearLayout
         mEditText = findViewById(R.id.edittext);
     }
 
-
-    /**
-     * Setter function for the data binding
-     * @param text The text to set for the {@link EditText}
-     */
     public void setText(String text)
     {
-        mText = text;
-        //mEditText.setText(text);
+        if(mText != text)
+        {
+            mText = text;
+            mEditText.setText(text);
+        }
     }
 
-    /**
-     * Getter function for the data binding
-     * @returns The text currently in the {@link EditText}
-     */
     public String getText()
     {
-        mText = mEditText.getText().toString();
+        mText = mEditText.toString();
         return mText;
-        //return mEditText.getText().toString();
     }
 
+    @InverseBindingMethods({
+            @InverseBindingMethod(type = String.class,
+            attribute = "text",
+            method = "getText")
+    })
+    public class SavableEditTextBindingAdapters {}
 
 }
