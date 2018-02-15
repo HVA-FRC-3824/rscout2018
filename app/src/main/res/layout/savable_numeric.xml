@@ -24,7 +24,7 @@
             android:id="@+id/edittext"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
+            android:inputType="number"
             android:textColor="@color/Black"
             android:textSize="20sp"/>
     </LinearLayout>

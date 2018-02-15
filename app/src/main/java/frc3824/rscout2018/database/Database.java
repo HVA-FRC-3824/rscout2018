@@ -145,7 +145,7 @@ public class Database
             }
         }, "2");
         Query query = teams.createQuery();
-        QueryEnumerator result = null;
+        QueryEnumerator result;
         try
         {
             result = query.run();
@@ -156,30 +156,11 @@ public class Database
             return new ArrayList<>();
         }
         QueryRow row = result.next();
+        if(row == null)
+        {
+            return new ArrayList<>();
+        }
         return (ArrayList<Integer>) row.getValue();
     }
-    /*
-    //region Super Scouting Data
-    public void setSuperMatchData(SuperMatchData superMatchData) {
-        superMatchData.last_modified = System.currentTimeMillis();
-        mReferences.get(constants.Database_Lists.indices.SUPER).child(String.valueOf(superMatchData.match_number)).setValue(superMatchData);
-    }
 
-    public SuperMatchData getSuperMatchData(int match_number) {
-        DataSnapshot d = mMaps.get(constants.Database_Lists.indices.SUPER).get(String.valueOf(match_number));
-        if(d == null){
-            return null;
-        }
-        return d.getValue(SuperMatchData.class);
-    }
-
-    public ArrayList<SuperMatchData> getAllSuperMatchData() {
-        ArrayList<SuperMatchData> supers = new ArrayList<>();
-        for(Map.Entry<String, DataSnapshot> entry: mMaps.get(Constants.Database_Lists.indices.SUPER).entrySet()){
-            supers.add(entry.getValue().getValue(SuperMatchData.class));
-        }
-        return supers;
-    }
-    //endregion
-    */
 }

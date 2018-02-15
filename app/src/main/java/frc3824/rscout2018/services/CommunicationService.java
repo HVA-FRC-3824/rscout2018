@@ -60,10 +60,13 @@ public class CommunicationService extends IntentService
 
     private void updateUrl()
     {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String url = sharedPreferences.getString(Constants.Settings.SERVER_IP, "127.0.0.1");
         String port = sharedPreferences.getString(Constants.Settings.SERVER_PORT, "38241");
-        mUrl = String.format("http://%s:%s", url, port);
+        if(!url.isEmpty() && !port.isEmpty())
+        {
+            mUrl = String.format("http://%s:%s", url, port);
+        }
     }
 
     @Override

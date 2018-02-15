@@ -1,7 +1,5 @@
 package frc3824.rscout2018.utilities;
 
-import android.app.LauncherActivity;
-
 /**
  * @author frc3824
  */
@@ -10,13 +8,6 @@ public interface Constants
 
     String APP_DATA = "appData";
 
-    /**
-     * Version number changing rules:
-     * - Right most number get changed for major changes
-     * - Middle number gets changed after events
-     * - Left most number is changed after the season
-     */
-    String VERSION = "3.0.0";
     int OUR_TEAM_NUMBER = 3824;
 
     interface Settings
@@ -32,12 +23,10 @@ public interface Constants
 
         String ENABLE_STRATEGIST = "enable_strategist";
 
-        String SERVER_TYPE = "server";
         String ENABLE_SERVER = "enable_server";
         String SERVER_IP = "server_ip";
         String SERVER_PORT = "server_port";
-        String SERVER_USB = "USB";
-        String SERVER_BLUETOOTH = "Bluetooth";
+
 
         String EVENT_KEY = "event_key";
 
@@ -123,19 +112,47 @@ public interface Constants
 
         }
 
-        interface EndGame
+        interface Climb
         {
-            String NO_CLIMB_ATTEMPT = "No climb attempt";
-            String PARKED_ON_PLATFORM = "Parked on platform";
-            String DID_NOT_FINISH_IN_TIME = "Did not finish in time";
-            String ROBOT_FELL = "Robot fell";
-            String SUCCESSFUL = "Successful";
+            interface Status
+            {
+                String NO_CLIMB_ATTEMPT = "No climb attempt";
+                String PARKED_ON_PLATFORM = "Parked on platform";
+                String DID_NOT_FINISH_IN_TIME = "Did not finish in time";
+                String ROBOT_FELL = "Robot fell";
+                String CLIMB = "Climb";
 
-            String[] CLIMB_STATE_OPTIONS = {NO_CLIMB_ATTEMPT,
-                                            PARKED_ON_PLATFORM,
-                                            DID_NOT_FINISH_IN_TIME,
-                                            ROBOT_FELL,
-                                            SUCCESSFUL};
+                String[] OPTIONS = {NO_CLIMB_ATTEMPT,
+                                    PARKED_ON_PLATFORM,
+                                    DID_NOT_FINISH_IN_TIME,
+                                    ROBOT_FELL,
+                                    CLIMB};
+            }
+
+            interface Method
+            {
+                String CLIMB_RUNG = "Climbed on rung, not supporting another robot";
+                String CLIMB_RUNG_ONE = "Climbed on rung, supporting another robot";
+                String CLIMB_RUNG_TWO = "Climbed on rung, supporting 2 other robots";
+                String CLIMB_ON_OTHER_ROBOT_RUNG = "Climbed on a rung on another robot";
+                String CLIMB_ON_OTHER_ROBOT_PLATFORM = "Climbed on platform of another robot";
+                String SUPPORT_ONE = "Supported another robot on platform";
+                String SUPPORT_TWO = "Supported 2 other robots on platform";
+                String FOUL = "Credited through foul";
+                String LEVITATE = "Credited through levitate, but not supporting other robots";
+                String[] OPTIONS = {
+                    CLIMB_RUNG,
+                    CLIMB_RUNG_ONE,
+                    CLIMB_RUNG_TWO,
+                    CLIMB_ON_OTHER_ROBOT_RUNG,
+                    CLIMB_ON_OTHER_ROBOT_PLATFORM,
+                    SUPPORT_ONE,
+                    SUPPORT_TWO,
+                    FOUL,
+                    LEVITATE
+                };
+            }
+
         }
     }
 

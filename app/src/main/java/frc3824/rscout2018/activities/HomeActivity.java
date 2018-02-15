@@ -3,6 +3,7 @@ package frc3824.rscout2018.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -100,7 +101,7 @@ public class HomeActivity extends Activity implements View.OnClickListener
 
         // Display version
         tv = findViewById(R.id.version);
-        tv.setText(String.format("Version: %s", Constants.VERSION));
+        tv.setText(String.format("Version: %s", getApplicationVersionName()));
     }
 
     @Override
@@ -222,5 +223,15 @@ public class HomeActivity extends Activity implements View.OnClickListener
             default:
                 assert(false);
         }
+    }
+
+    //Programmatically get the current version Name
+    private String getApplicationVersionName() {
+
+        try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            return packageInfo.versionName;
+        } catch(Exception ignored){}
+        return "";
     }
 }

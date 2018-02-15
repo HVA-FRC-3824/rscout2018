@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.databinding.BindingAdapter;
 import android.databinding.InverseBindingAdapter;
+import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,9 +19,11 @@ import frc3824.rscout2018.R;
  * @class SavableAutoCompleteTextView
  * @brief A savable widget that has a label and an AutoCompleteTextView
  */
-public class SavableAutoCompleteTextView extends LinearLayout
+public class SavableAutoCompleteTextView extends LinearLayout implements TextWatcher
 {
     AutoCompleteTextView mAutoCompleteTextView;
+    String[] mResourceStrings;
+    String mText;
 
     /**
      * Constructor
@@ -38,8 +42,17 @@ public class SavableAutoCompleteTextView extends LinearLayout
         // Set label
         TextView label = findViewById(R.id.label);
         label.setText(typedArray.getString(R.styleable.SavableView_label));
+        typedArray.recycle();
+
+        typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableAutoCompleteTextView);
+        int autocompleteValueId = typedArray.getResourceId(R.styleable.SavableAutoCompleteTextView_options, 0);
+        mResourceStrings = context.getResources().getStringArray(autocompleteValueId);
+        typedArray.recycle();
 
         mAutoCompleteTextView = findViewById(R.id.autocompletetextview);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, mResourceStrings);
+        mAutoCompleteTextView.setAdapter(adapter);
+        mAutoCompleteTextView.addTextChangedListener(this);
     }
 
     /**
@@ -48,7 +61,11 @@ public class SavableAutoCompleteTextView extends LinearLayout
      */
     public void setText(String text)
     {
-        mAutoCompleteTextView.setText(text);
+        if(!text.equals(mText))
+        {
+            mText = text;
+            mAutoCompleteTextView.setText(text);
+        }
     }
 
     /**
@@ -115,5 +132,23 @@ public class SavableAutoCompleteTextView extends LinearLayout
         {
             savableAutoCompleteTextView.addListener(newListener);
         }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after)
+    {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count)
+    {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s)
+    {
+        mText = s.toString();
     }
 }

@@ -3,12 +3,35 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
+
+    def versionPropsFile = file('version.properties')
+    def versionBuild
+
+    if(versionPropsFile.canRead())
+    {
+        def Properties versionProps = new Properties();
+
+        versionProps.load(new FileInputStream(versionPropsFile));
+
+        def code = versionProps['VERSION_CODE'].toInteger() + 1
+
+        versionBuild = code.toString()
+
+        versionProps['VERSION_CODE']= versionBuild
+        versionProps.store(versionPropsFile.newWriter(), null)
+    }
+    else
+    {
+        throw new GradleException("Could not read version.properties!")
+    }
+
+
     defaultConfig {
         applicationId "frc3824.rscout2018"
-        minSdkVersion 24
+        minSdkVersion 23 // Needs to stay for the Nexus 7
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
+        versionName "3.0.0." + versionBuild
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

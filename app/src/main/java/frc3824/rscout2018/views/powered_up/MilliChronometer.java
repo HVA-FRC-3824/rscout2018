@@ -102,6 +102,45 @@ public class MilliChronometer extends TextView
         updateRunning();
     }
 
+    public void setTime(long time)
+    {
+        if(!mRunning)
+        {
+            timeElapsed = time;
+
+            DecimalFormat df = new DecimalFormat("00");
+
+            int hours = (int) (timeElapsed / (3600 * 1000));
+            int remaining = (int) (timeElapsed % (3600 * 1000));
+
+            int minutes = remaining / (60 * 1000);
+            remaining = remaining % (60 * 1000);
+
+            int seconds = remaining / 1000;
+            remaining = remaining % (1000);
+
+            // We are only printing the hundred millseconds
+            int milliseconds = remaining / 100;
+
+            String text = "";
+
+            if (hours > 0)
+            {
+                text += df.format(hours) + ":";
+            }
+
+            if (minutes > 0)
+            {
+                text += df.format(minutes) + ":";
+            }
+
+            text += df.format(seconds) + ".";
+            text += Integer.toString(milliseconds);
+
+            setText(text);
+        }
+    }
+
     private synchronized void updateText(long now) {
         timeElapsed = now - mBase;
 

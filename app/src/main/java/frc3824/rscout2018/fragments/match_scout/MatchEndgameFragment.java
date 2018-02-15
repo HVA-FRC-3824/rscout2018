@@ -8,15 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 
-import java.util.Arrays;
-
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.databinding.FragmentMatchEndgameBinding;
 import frc3824.rscout2018.utilities.Utilities;
-import frc3824.rscout2018.views.SavableRadioButtons;
-
-import static frc3824.rscout2018.utilities.Constants.MatchScouting.EndGame.CLIMB_STATE_OPTIONS;
 
 /**
  * @class MatchEndgameFragment

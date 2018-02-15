@@ -3,10 +3,13 @@ package frc3824.rscout2018.views.powered_up;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
 import frc3824.rscout2018.R;
+import frc3824.rscout2018.database.data_models.TeamMatchData;
+import frc3824.rscout2018.utilities.Constants;
 
 /**
  * Created by frc3824
@@ -16,6 +19,7 @@ public class SavableClimb extends RelativeLayout implements RadioGroup.OnChecked
     Timer mTimer;
     RadioGroup mStatus;
     RadioGroup mMethod;
+    TeamMatchData mTeamMatchData;
 
     public SavableClimb(Context context, AttributeSet attrs)
     {
@@ -28,36 +32,61 @@ public class SavableClimb extends RelativeLayout implements RadioGroup.OnChecked
         mTimer.setButtonListener(new ClimbTimerButtonListener());
         mStatus = findViewById(R.id.status);
         mStatus.setOnCheckedChangeListener(this);
-        mMethod = findViewById(R.id.method);
-        for (int i = 0; i < mMethod.getChildCount(); i++)
+
+        for(int i = 0; i < Constants.MatchScouting.Climb.Status.OPTIONS.length; i++)
         {
-            mMethod.getChildAt(i).setEnabled(false);
+            RadioButton radioButton = new RadioButton(context, attrs);
+            radioButton.setText(Constants.MatchScouting.Climb.Status.OPTIONS[i]);
+            radioButton.setId(i);
+            mStatus.addView(radioButton);
         }
+
+        mMethod = findViewById(R.id.method);
+        mMethod.setOnCheckedChangeListener(this);
+        for (int i = 0; i < Constants.MatchScouting.Climb.Method.OPTIONS.length; i++)
+        {
+            RadioButton radioButton = new RadioButton(context, attrs);
+            radioButton.setText(Constants.MatchScouting.Climb.Method.OPTIONS[i]);
+            radioButton.setId( i);
+            radioButton.setEnabled(false);
+            mMethod.addView(radioButton);
+        }
+    }
+
+    public void setData(TeamMatchData teamMatchData)
+    {
+        mTeamMatchData = teamMatchData;
     }
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId)
     {
-        switch (checkedId)
+        if(group == mStatus)
         {
-            case R.id.no_attempt:
-            case R.id.on_platform:
-            case R.id.did_not_finish:
-            case R.id.fell:
+            if(checkedId > 0)
+            {
+                mTeamMatchData.setClimbStatus(Constants.MatchScouting.Climb.Status.OPTIONS[checkedId]);
+            }
+            if(checkedId < Constants.MatchScouting.Climb.Status.OPTIONS.length -1)
+            {
                 for (int i = 0; i < mMethod.getChildCount(); i++)
                 {
                     mMethod.getChildAt(i).setEnabled(false);
                 }
                 mMethod.check(-1);
-                break;
-            case R.id.climb:
+                mTeamMatchData.setClimbTime(-1);
+            }
+            else
+            {
                 for (int i = 0; i < mMethod.getChildCount(); i++)
                 {
                     mMethod.getChildAt(i).setEnabled(true);
                 }
-                break;
-            default:
-                assert (false);
+            }
+        }
+        else
+        {
+            mTeamMatchData.setClimbMethod(Constants.MatchScouting.Climb.Method.OPTIONS[checkedId]);
         }
     }
 
@@ -67,22 +96,27 @@ public class SavableClimb extends RelativeLayout implements RadioGroup.OnChecked
         @Override
         public void onStart()
         {
-            mStatus.check(R.id.climb);
+            mStatus.check(Constants.MatchScouting.Climb.Status.OPTIONS.length - 1);
             for (int i = 0; i < mStatus.getChildCount(); i++)
             {
                 mStatus.getChildAt(i).setEnabled(false);
             }
+            mTeamMatchData.setClimbStatus(Constants.MatchScouting.Climb.Status.CLIMB);
         }
 
         @Override
-        public void onStop()
+        public void onStop(long time)
         {
-
+            mTeamMatchData.setClimbTime(time);
         }
 
         @Override
         public void onReset()
         {
+            mTeamMatchData.setClimbTime(-1);
+            mTeamMatchData.setClimbStatus("");
+            mTeamMatchData.setClimbMethod("");
+
             mStatus.check(-1);
             for (int i = 0; i < mStatus.getChildCount(); i++)
             {
@@ -92,6 +126,7 @@ public class SavableClimb extends RelativeLayout implements RadioGroup.OnChecked
             {
                 mMethod.getChildAt(i).setEnabled(false);
             }
+            mMethod.check(-1);
         }
     }
 }

@@ -17,6 +17,7 @@ import frc3824.rscout2018.BR;
 import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.powered_up.CubeEvent;
 import frc3824.rscout2018.database.data_models.powered_up.DropData;
+import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.SavableCounter;
 
 /**
@@ -402,6 +403,34 @@ public class TeamMatchData extends DataModel
 
     //region Game Specific
     //region Autonomous
+    //region Started with Cube
+    boolean startedWithCube;
+
+    @Bindable
+    public boolean getStartedWithCube()
+    {
+        return startedWithCube;
+    }
+
+    public void setStartedWithCube(boolean startedWithCube)
+    {
+        this.startedWithCube = startedWithCube;
+        notifyChange();
+    }
+
+    @Bindable
+    public CompoundButton.OnCheckedChangeListener getStartedWithCubeListener()
+    {
+        return new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                setStartedWithCube(isChecked);
+            }
+        };
+    }
+    //endregion
     //region Crossed Auto Line
     boolean crossedAutoLine;
 
@@ -440,7 +469,7 @@ public class TeamMatchData extends DataModel
 
     //endregion
     //region Start Location X
-    float startLocationX;
+    float startLocationX = -1;
 
     /**
      * Returns the start location x as a percentage of the width of the field
@@ -462,7 +491,7 @@ public class TeamMatchData extends DataModel
 
     //endregion
     //region Start Location Y
-    float startLocationY;
+    float startLocationY = -1;
 
     /**
      * Returns the start location y as a percentage of the depth of the field
@@ -519,6 +548,21 @@ public class TeamMatchData extends DataModel
     //endregion
     //endregion
     //region Endgame
+    //region Climb Time
+    long climbTime;
+
+    @Bindable
+    public long getClimbTime()
+    {
+        return climbTime;
+    }
+
+    public void setClimbTime(long climbTime)
+    {
+        this.climbTime = climbTime;
+        notifyChange();
+    }
+    //endregion
     //region Climb Status
     String climbStatus;
 
@@ -591,4 +635,25 @@ public class TeamMatchData extends DataModel
 
     }
     //endregion
+
+    public String error()
+    {
+        if(scoutName.isEmpty())
+        {
+            return "No scout name";
+        }
+
+        if(climbStatus == Constants.MatchScouting.Climb.Status.CLIMB && climbMethod.isEmpty())
+        {
+            return "Climb status set to 'Climb', but no method is selected";
+        }
+
+        if(!noShow && startLocationX == 0 && startLocationY == 0)
+        {
+            return "Start location not set, but robot not marked as no show";
+        }
+
+        return "";
+    }
+
 }

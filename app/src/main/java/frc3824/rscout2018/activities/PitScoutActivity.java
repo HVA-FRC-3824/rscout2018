@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -110,6 +111,7 @@ public class PitScoutActivity extends Activity
         viewPager.setOffscreenPageLimit(mFPA.getCount());
 
         SmartTabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setBackgroundColor(Color.BLUE);
         tabLayout.setViewPager(viewPager);
     }
 

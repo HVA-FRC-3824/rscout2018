@@ -14,33 +14,9 @@
                   android:layout_height="match_parent"
                   android:orientation="vertical">
 
-        <!--
-        <frc3824.rscout2018.views.SavableRadioButtons
-            android:id="@+id/endgame_climb_state"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:label="Climbing State"
-            app:radio_values="@array/endgame_climb_state_options"
-            app:selected="@{tmd.climbStatus}"/>
-
-        <frc3824.rscout2018.views.SavableRadioButtons
-            android:id="@+id/endgame_climb_method"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            app:label="Climbing method"
-            app:radio_values="@array/endgame_climb_method_options"
-            app:selected="@{tmd.climbMethod}"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="If a robot is getting points for climbing/sitting on platform, click successful and provide more detail"
-            android:textColor="@color/Black"
-            android:textSize="20sp"/>
-        -->
         <frc3824.rscout2018.views.powered_up.SavableClimb
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            app:data="@{tmd}"/>
     </LinearLayout>
 </layout>

@@ -18,7 +18,8 @@
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
             app:label = "Programming Language:"
-            app:text = "@{tpd.notes}"
+            app:text = "@{tpd.programmingLanguage}"
+            app:textAttrChanged="@{tpd.programmingLanguageListener}"
             app:options = "@array/programming_languages"/>
 
         <frc3824.rscout2018.views.SavableAutoCompleteTextView
@@ -26,13 +27,15 @@
             android:layout_height = "wrap_content"
             app:label = "Drive Train:"
             app:text = "@{tpd.driveTrain}"
+            app:textAttrChanged="@{tpd.driveTrainListener}"
             app:options = "@array/drive_trains"/>
 
         <frc3824.rscout2018.views.SavableEditText
             android:layout_width = "match_parent"
             android:layout_height = "wrap_content"
             app:label = "Notes:"
-            app:text = "@{tpd.notes}" />
+            app:text = "@{tpd.notes}"
+            app:textAttrChanged="@{tpd.notesListener}"/>
 
     </LinearLayout>
 </layout>

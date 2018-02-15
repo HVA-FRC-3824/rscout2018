@@ -43,7 +43,7 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstance)
     {
         super.onCreate(savedInstance);
-        setContentView(R.layout.activity_match_list);
+        setContentView(R.layout.activity_list);
 
         // Fill next page
         ActivityStarter.fill(this);
@@ -57,7 +57,7 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
         }
         catch (NumberFormatException e)
         {
-            // todo error
+            e.printStackTrace();
         }
 
         findViewById(R.id.practice).setOnClickListener(this);
@@ -104,7 +104,7 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
             {
                 mTeamNumbers = new HashMap<>();
             }
-            mNumberOfMatches = (int) Database.getInstance().numberOfMatches();
+            mNumberOfMatches = Database.getInstance().numberOfMatches();
         }
 
         /**

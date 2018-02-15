@@ -39,6 +39,7 @@ public class SavableCubes extends View
     boolean mAuto;
     long mStartTime;
     static boolean mPickedUp;
+    static boolean mFirst = true;
 
     TeamMatchData mTeamMatchData;
     CubeEvent mTempCubeEvent;
@@ -67,10 +68,6 @@ public class SavableCubes extends View
     public void setAuto(boolean auto)
     {
         mAuto = auto;
-        if(mAuto)
-        {
-            mPickedUp = true;
-        }
     }
 
     public TeamMatchData getData()
@@ -164,6 +161,18 @@ public class SavableCubes extends View
                 return false;
             }
 
+            if (mFirst)
+            {
+                if (mTeamMatchData.getStartedWithCube())
+                {
+                    mPickedUp = true;
+                }
+                else
+                {
+                    mPickedUp = false;
+                }
+            }
+
             mTempCubeEvent = new CubeEvent();
             long time = Calendar.getInstance().getTimeInMillis() - mStartTime;
             mTempCubeEvent.setTime(time);
@@ -204,6 +213,8 @@ public class SavableCubes extends View
         @Override
         public void onClick(DialogInterface dialog, int which)
         {
+            mFirst = false;
+
             mTempCubeEvent.setEvent(Constants.MatchScouting.CubeEvents.EVENT_OPTIONS[which]);
             if(mAuto)
             {
@@ -224,6 +235,8 @@ public class SavableCubes extends View
         @Override
         public void onClick(DialogInterface dialog, int which)
         {
+            mFirst = false;
+
             mTempCubeEvent.setEvent(Constants.MatchScouting.CubeEvents.PICK_UP);
             if(mAuto)
             {

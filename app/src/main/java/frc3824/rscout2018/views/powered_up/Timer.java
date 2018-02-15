@@ -20,7 +20,7 @@ public class Timer extends LinearLayout implements View.OnClickListener
     public interface ButtonListener
     {
         void onStart();
-        void onStop();
+        void onStop(long time);
         void onReset();
     }
 
@@ -47,6 +47,14 @@ public class Timer extends LinearLayout implements View.OnClickListener
         mStopButton.setOnClickListener(this);
         mResetButton = findViewById(R.id.reset);
         mResetButton.setOnClickListener(this);
+    }
+
+    public void setTime(long time)
+    {
+        mTimer.setTime(time);
+        mStartButton.setVisibility(GONE);
+        mStopButton.setVisibility(GONE);
+        mResetButton.setVisibility(VISIBLE);
     }
 
     public long getTime()
@@ -78,7 +86,7 @@ public class Timer extends LinearLayout implements View.OnClickListener
                 mTimer.stop();
                 if(mListener != null)
                 {
-                    mListener.onStop();
+                    mListener.onStop(getTime());
                 }
                 mStopButton.setVisibility(GONE);
                 mResetButton.setVisibility(VISIBLE);

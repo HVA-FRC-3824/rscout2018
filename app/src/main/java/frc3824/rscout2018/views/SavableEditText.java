@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.databinding.BindingAdapter;
 import android.databinding.InverseBindingAdapter;
+import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -17,10 +18,10 @@ import frc3824.rscout2018.R;
  * @class SavableEditText
  * @brief A savable widget that has a label and an EditText
  */
-public class SavableEditText extends LinearLayout
+public class SavableEditText extends LinearLayout implements TextWatcher
 {
     EditText mEditText;
-    String mText;
+    String mText = "";
 
     /**
      * Constructor
@@ -41,6 +42,7 @@ public class SavableEditText extends LinearLayout
         label.setText(typedArray.getString(R.styleable.SavableView_label));
 
         mEditText = findViewById(R.id.edittext);
+        mEditText.addTextChangedListener(this);
     }
 
     /**
@@ -49,7 +51,7 @@ public class SavableEditText extends LinearLayout
      */
     public void setText(String text)
     {
-        if(mText != text)
+        if(!mText.equals(text))
         {
             mText = text;
             mEditText.setText(text);
@@ -119,5 +121,23 @@ public class SavableEditText extends LinearLayout
         {
             savableEditText.addListener(newListener);
         }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after)
+    {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count)
+    {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s)
+    {
+        mText = s.toString();
     }
 }

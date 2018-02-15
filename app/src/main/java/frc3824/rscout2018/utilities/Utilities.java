@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import frc3824.rscout2018.views.SavableEditText;
+import frc3824.rscout2018.views.SavableNumeric;
 
 /**
  * @class Utilities
@@ -23,7 +24,7 @@ public class Utilities {
     public static void setupUi(final Activity activity, View view)
     {
         // Setup touch listener for non-textbox views to hide the keyboard
-        if(!(view instanceof SavableEditText) /*&& !(view instanceof  SavableNumeric)*/ && !(view instanceof EditText))
+        if(!(view instanceof SavableEditText) && !(view instanceof SavableNumeric) && !(view instanceof EditText))
         {
             view.setOnTouchListener(new View.OnTouchListener() {
                 @Override
