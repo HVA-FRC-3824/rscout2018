@@ -3,6 +3,7 @@ package frc3824.rscout2018.fragments.pit_scout;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.TeamPitData;
-import id.zelory.compressor.Compressor;
 import info.hoang8f.widget.FButton;
 
 /**
@@ -33,18 +33,21 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
 {
     TeamPitData mTeamPitData;
     ArrayList<String> mPictureFilepaths;
-    int mCurrentPosition = -1;
 
     View mView;
     FButton mTakePicture;
     FButton mSetDefault;
+    FButton mDelete;
+    FButton mCancel;
     CameraView mCameraView;
     CarouselView mCarouselView;
-    Compressor mCompressor;
+    boolean mTakingPicture = false;
+    String mDir;
 
     public void setData(TeamPitData teamPitData)
     {
         mTeamPitData = teamPitData;
+        mPictureFilepaths = mTeamPitData.getPictureFilepaths();
     }
 
     @Override
@@ -60,6 +63,15 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
         mTakePicture = mView.findViewById(R.id.take_picture);
         mTakePicture.setOnClickListener(this);
 
+        // Inflate the "Delete" button
+        mDelete = mView.findViewById(R.id.delete);
+        mDelete.setOnClickListener(this);
+
+        // Inflate the "Cancel" button
+        mCancel = mView.findViewById(R.id.cancel);
+        mCancel.setOnClickListener(this);
+        mCancel.setVisibility(View.GONE);
+
         // Inflate the Camera view
         mCameraView = mView.findViewById(R.id.camera);
         mCameraView.setCameraListener(new CameraListener());
@@ -69,13 +81,7 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
         mCarouselView = mView.findViewById(R.id.carousel);
         mCarouselView.setImageListener(this);
 
-        // Setup the final destination for the images to be based on the team number (later events with
-        // the same team should be able to use earlier images)
-        mCompressor = new Compressor(getActivity())
-            .setMaxWidth(640)
-            .setMaxHeight(480)
-            .setCompressFormat(Bitmap.CompressFormat.PNG)
-            .setDestinationDirectoryPath(String.format("%s/%d/", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath(), mTeamPitData.getTeamNumber()));
+        mDir = String.format("data/data/%s/files/robots/%d/", getContext().getPackageName(), mTeamPitData.getTeamNumber() > 0 ? mTeamPitData.getTeamNumber() : 0);
 
         // If there are pictures then display the default image
         if(mTeamPitData.numberOfPictures() > 0)
@@ -83,36 +89,44 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
             mPictureFilepaths = mTeamPitData.getPictureFilepaths();
             String defaultFilepath = mTeamPitData.getDefaultPictureFilepath();
 
+            // If there is a default image
             if(!defaultFilepath.isEmpty())
             {
                 int index = mPictureFilepaths.indexOf(defaultFilepath);
                 // Show the default image
                 if(index > -1)
                 {
-                    mCurrentPosition = index;
-                    mCarouselView.setCurrentItem(mCurrentPosition);
+                    mCarouselView.setCurrentItem(index);
                 }
                 // if the default picture isn't in the list then show the first one
                 else
                 {
-                    mCurrentPosition = 0;
-                    mCarouselView.setCurrentItem(mCurrentPosition);
+                    mCarouselView.setCurrentItem(0);
                 }
             }
             // if there is no default picture then show the first one
             else
             {
-                mCurrentPosition = 0;
-                mCarouselView.setCurrentItem(mCurrentPosition);
+                mCarouselView.setCurrentItem(0);
             }
         }
-        // Otherwise hide the carousel
+        // Otherwise hide the carousel and N/A buttons
         else
         {
             mCarouselView.setVisibility(View.GONE);
+            mSetDefault.setVisibility(View.GONE);
+            mDelete.setVisibility(View.GONE);
         }
 
+        mCameraView.start();
         return mView;
+    }
+
+    @Override
+    public void onDestroyView()
+    {
+        super.onDestroyView();
+        mCameraView.stop();
     }
 
     @Override
@@ -122,41 +136,54 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
         {
             // Start the camera and  hide the carousel when taking a picture
             case R.id.take_picture:
-                mCameraView.start();
-                mCameraView.setVisibility(View.VISIBLE);
-                mCarouselView.setVisibility(View.GONE);
-                mSetDefault.setVisibility(View.GONE);
+                if(mTakingPicture)
+                {
+                    mCameraView.captureImage();
+                    mTakingPicture = false;
+                }
+                else
+                {
+                    mCancel.setVisibility(View.VISIBLE);
+                    mCameraView.setVisibility(View.VISIBLE);
+                    mCarouselView.setVisibility(View.GONE);
+                    mSetDefault.setVisibility(View.GONE);
+                    mDelete.setVisibility(View.GONE);
+                    mTakingPicture = true;
+                }
+                break;
+            // Cancel taking a picture
+            case R.id.cancel:
+                mCancel.setVisibility(View.GONE);
+                mCameraView.setVisibility(View.GONE);
+                if(mPictureFilepaths.size() > 0)
+                {
+                    mCarouselView.setVisibility(View.VISIBLE);
+                    mSetDefault.setVisibility(View.VISIBLE);
+                    mDelete.setVisibility(View.VISIBLE);
+                }
+                mTakingPicture = false;
                 break;
             // Set the current image as the default image
             case R.id.set_default:
-                mTeamPitData.setDefaultPictureFilepath(mPictureFilepaths.get(mCurrentPosition));
+                mTeamPitData.setDefaultPictureFilepath(mPictureFilepaths.get(mCarouselView.getCurrentItem()));
                 break;
             // Delete the current image
             case R.id.delete:
-                File file = new File(mPictureFilepaths.get(mCurrentPosition));
+
+                File file = new File(mPictureFilepaths.get(mCarouselView.getCurrentItem()));
                 if(file.exists())
                 {
                     file.delete();
                 }
-                mPictureFilepaths.remove(mCurrentPosition);
+                mPictureFilepaths.remove(mCarouselView.getCurrentItem());
+                mCarouselView.setPageCount(mCarouselView.getPageCount() - 1);
 
                 // Hide the carousel if there are no images
                 if(mPictureFilepaths.size() == 0)
                 {
-                    mCurrentPosition = -1;
-                    mCarouselView.setVisibility(View.INVISIBLE);
-
-                }
-                // If at the end then go to the beginning
-                else if(mCurrentPosition == mPictureFilepaths.size())
-                {
-                    mCurrentPosition = 0;
-                    mCarouselView.setCurrentItem(mCurrentPosition);
-                }
-                // Load the new image at the same position
-                else
-                {
-                    mCarouselView.setCurrentItem(mCurrentPosition);
+                    mCarouselView.setVisibility(View.GONE);
+                    mDelete.setVisibility(View.GONE);
+                    mSetDefault.setVisibility(View.GONE);
                 }
                 break;
         }
@@ -170,7 +197,7 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
     @Override
     public void setImageForPosition(int position, ImageView imageView)
     {
-        if(position > 0 && position < mPictureFilepaths.size())
+        if(position >= 0 && position < mPictureFilepaths.size())
         {
             Glide.with(this).load(mPictureFilepaths.get(position)).into(imageView);
         }
@@ -190,17 +217,28 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
 
             Bitmap result = BitmapFactory.decodeByteArray(picture, 0, picture.length);
             FileOutputStream output = null;
-            File file = new File(String.format("%s/%d/", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath(), mTeamPitData.getTeamNumber(), String.format("%d", System.currentTimeMillis())));
+            File directory = new File(mDir);
+            if(!directory.exists())
+            {
+                directory.mkdirs();
+            }
+
+            File file = new File(directory, String.format("%d.png", System.currentTimeMillis()));
 
             // todo: Replace all the print stack traces with something useful
 
             try
             {
+
+                file.createNewFile();
                 output = new FileOutputStream(file);
+
+                result = result.createScaledBitmap(result, 640, 480, false);
                 result.compress(Bitmap.CompressFormat.PNG, 100, output);
             }
             catch(Exception e)
             {
+                file.delete();
                 e.printStackTrace();
             }
             finally
@@ -209,6 +247,7 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
                 {
                     if(output != null)
                     {
+                        output.flush();
                         output.close();
                     }
                 }
@@ -218,24 +257,15 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
                 }
             }
 
-            try
-            {
-                file = mCompressor.compressToFile(file);
-            }
-            catch(IOException e)
-            {
-                e.printStackTrace();
-            }
-
             mPictureFilepaths.add(file.getAbsolutePath());
             mCarouselView.setPageCount(mPictureFilepaths.size());
-            mCurrentPosition = mPictureFilepaths.size() - 1;
-            mCarouselView.setCurrentItem(mCurrentPosition);
+            mCarouselView.setCurrentItem(mPictureFilepaths.size() - 1);
 
+            mCancel.setVisibility(View.GONE);
             mCameraView.setVisibility(View.GONE);
-            mCameraView.stop();
             mCarouselView.setVisibility(View.VISIBLE);
             mSetDefault.setVisibility(View.VISIBLE);
+            mDelete.setVisibility(View.VISIBLE);
         }
     }
 }
