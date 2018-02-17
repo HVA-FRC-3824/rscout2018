@@ -84,7 +84,7 @@ public class SavableClimb extends RelativeLayout implements RadioGroup.OnChecked
                 }
             }
         }
-        else
+        else if(checkedId >= 0)
         {
             mTeamMatchData.setClimbMethod(Constants.MatchScouting.Climb.Method.OPTIONS[checkedId]);
         }
