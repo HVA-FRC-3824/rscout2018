@@ -141,6 +141,13 @@ public class DataModel extends BaseObservable implements ExclusionStrategy, Docu
      */
     protected void setProperties(Map<String, Object> properties, List<String> ignore)
     {
+        // The data doesn't exist
+        if(properties == null)
+        {
+            return;
+        }
+
+        // Otherwise load previous data
         for(Field field: getClass().getDeclaredFields())
         {
             if(ignore.contains(field.getName()) || field.getName() == "className")

@@ -8,19 +8,13 @@ public interface Constants
 
     String APP_DATA = "appData";
 
-    /**
-     * Version number changing rules:
-     * - Right most number get changed for major changes
-     * - Middle number gets changed after events
-     * - Left most number is changed after the season
-     */
-    String VERSION = "3.0.0";
     int OUR_TEAM_NUMBER = 3824;
 
     interface Settings
     {
         String ENABLE_MATCH_SCOUT = "enable_match_scout";
         String MATCH_SCOUT_POSITION = "match_scout_position";
+        String BLUE_LEFT = "blue_left";
 
         String ENABLE_PIT_SCOUT = "enable_pit_scout";
         String PIT_SCOUT_POSITION = "pit_scout_position";
@@ -29,12 +23,10 @@ public interface Constants
 
         String ENABLE_STRATEGIST = "enable_strategist";
 
-        String SERVER_TYPE = "server";
         String ENABLE_SERVER = "enable_server";
         String SERVER_IP = "server_ip";
         String SERVER_PORT = "server_port";
-        String SERVER_USB = "USB";
-        String SERVER_BLUETOOTH = "Bluetooth";
+
 
         String EVENT_KEY = "event_key";
 
@@ -58,6 +50,7 @@ public interface Constants
             String TEAM_STATS = "team_stats";
             String MATCH_PREVIEW = "match_preview";
         }
+
         String TEAM_NUMBER = "team_number";
         String MATCH_NUMBER = "match_number";
         String LAST_MODIFIED = "last_modified";
@@ -70,6 +63,9 @@ public interface Constants
         String SCOUTER = "scouter";
 
         String IP_MODIFIED = "ip_modified";
+        String LOAD_DATA = "load_data";
+        String PULL_MATCHES = "pull_matches";
+        String PING = "ping";
     }
 
     interface Database
@@ -87,21 +83,80 @@ public interface Constants
 
     interface MatchScouting
     {
-        String[] TABS = {"Auto", "Teleop", "Endgame", "Fouls", "Misc"};
+        String[] TABS = {"Start", "Auto", "Teleop", "Endgame", "Fouls", "Misc"};
 
-        interface EndGame
+        interface CubeEvents
         {
-            String NO_CLIMB_ATTEMPT = "No climb attempt";
-            String PARKED_ON_PLATFORM = "Parked on platform";
-            String DID_NOT_FINISH_IN_TIME = "Did not finish in time";
-            String ROBOT_FELL = "Robot fell";
-            String SUCCESSFUL = "Successful";
+            String PICK_UP = "Picked Up";
+            String PLACED = "Placed";
+            String DROPPED = "Dropped";
+            String LAUNCH_SUCCESS = "Launch Success";
+            String LAUNCH_FAILURE = "Launch Failure";
 
-            String[] CLIMB_STATE_OPTIONS = {NO_CLIMB_ATTEMPT, PARKED_ON_PLATFORM, DID_NOT_FINISH_IN_TIME, ROBOT_FELL, SUCCESSFUL};
+            String[] EVENT_OPTIONS = {
+                    // PICK_UP,
+                    PLACED,
+                    DROPPED,
+                    LAUNCH_SUCCESS,
+                    LAUNCH_FAILURE
+            };
+
+            float NEAR_SWITCH_X = 0.0f;
+            float NEAR_SWITCH_Y = 0.0f;
+            float SCALE_X = 0.0f;
+            float SCALE_Y = 0.0f;
+            float FAR_SWITCH_X = 0.0f;
+            float FAR_SWITCH_Y = 0.0f;
+            float EXCHANGE_STATION_X = 0.0f;
+            float EXCHANGE_STATION_Y = 0.0f;
+
+        }
+
+        interface Climb
+        {
+            interface Status
+            {
+                String NO_CLIMB_ATTEMPT = "No climb attempt";
+                String PARKED_ON_PLATFORM = "Parked on platform";
+                String DID_NOT_FINISH_IN_TIME = "Did not finish in time";
+                String ROBOT_FELL = "Robot fell";
+                String CLIMB = "Climb";
+
+                String[] OPTIONS = {NO_CLIMB_ATTEMPT,
+                                    PARKED_ON_PLATFORM,
+                                    DID_NOT_FINISH_IN_TIME,
+                                    ROBOT_FELL,
+                                    CLIMB};
+            }
+
+            interface Method
+            {
+                String CLIMB_RUNG = "Climbed on rung, not supporting another robot";
+                String CLIMB_RUNG_ONE = "Climbed on rung, supporting another robot";
+                String CLIMB_RUNG_TWO = "Climbed on rung, supporting 2 other robots";
+                String CLIMB_ON_OTHER_ROBOT_RUNG = "Climbed on a rung on another robot";
+                String CLIMB_ON_OTHER_ROBOT_PLATFORM = "Climbed on platform of another robot";
+                String SUPPORT_ONE = "Supported another robot on platform";
+                String SUPPORT_TWO = "Supported 2 other robots on platform";
+                String FOUL = "Credited through foul";
+                String LEVITATE = "Credited through levitate, but not supporting other robots";
+                String[] OPTIONS = {
+                    CLIMB_RUNG,
+                    CLIMB_RUNG_ONE,
+                    CLIMB_RUNG_TWO,
+                    CLIMB_ON_OTHER_ROBOT_RUNG,
+                    CLIMB_ON_OTHER_ROBOT_PLATFORM,
+                    SUPPORT_ONE,
+                    SUPPORT_TWO,
+                    FOUL,
+                    LEVITATE
+                };
+            }
+
         }
     }
 
-    interface  PitScouting
+    interface PitScouting
     {
         String[] TABS = {"Robot Pic", "Dimensions", "Misc"};
     }
@@ -109,6 +164,11 @@ public interface Constants
     interface SuperScouting
     {
         String[] TABS = {"Power Ups", "Notes"};
+    }
+
+    interface TeamStats
+    {
+        String[] TABS = {"Charts", "Match Data", "Pit Data", "Notes", "Schedule"};
     }
 
     interface Notifications

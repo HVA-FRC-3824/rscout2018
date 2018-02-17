@@ -57,24 +57,4 @@
         <item>Swerve</item>
         <item>Kiwi</item>
     </string-array>
-
-    <string-array name="endgame_climb_state_options">
-        <item>No climb attempt</item>
-        <item>Parked on platform</item>
-        <item>Did not finish in time</item>
-        <item>Robot fell</item>
-        <item>Successful</item>
-    </string-array>
-
-    <string-array name="endgame_climb_method_options">
-        <item>Climbed on rung, not supporting another robot</item>
-        <item>Climbed on rung, supporting another robot</item>
-        <item>Climbed on rung, supporting 2 other robots</item>
-        <item>Climbed on a rung on another robot</item>
-        <item>Climbed on platform of another robot</item>
-        <item>Supported another robot on platform</item>
-        <item>Supported 2 other robots on platform</item>
-        <item>Credited through foul</item>
-        <item>Credited through levitate, but not supporting other robots</item>
-    </string-array>
 </resources>

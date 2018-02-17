@@ -1,7 +1,9 @@
 package frc3824.rscout2018.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.Database;
+import frc3824.rscout2018.services.CommunicationService;
 import frc3824.rscout2018.utilities.Constants;
 
 @MakeActivityStarter
@@ -61,6 +64,14 @@ public class HomeActivity extends Activity implements View.OnClickListener
         button.setEnabled(enableStrategist);
         button.setOnClickListener(this);
 
+        button = findViewById(R.id.pick_list_button);
+        button.setEnabled(enableStrategist);
+        button.setOnClickListener(this);
+
+        button = findViewById(R.id.pull_matches);
+        button.setEnabled(enableStrategist);
+        button.setOnClickListener(this);
+
         // Inflate the settings button
         findViewById(R.id.settings_button).setOnClickListener(this);
 
@@ -73,7 +84,7 @@ public class HomeActivity extends Activity implements View.OnClickListener
             {
                 mEventKey = temp;
                 String ip = sharedPreferences.getString(Constants.Settings.SERVER_IP, "");
-                int port = sharedPreferences.getInt(Constants.Settings.SERVER_PORT, -1);
+                int port = Integer.parseInt(sharedPreferences.getString(Constants.Settings.SERVER_PORT, ""));
                 // todo: Something when ip is empty or port is -1
 
                 Database.getInstance().setEventKey(mEventKey);
@@ -90,7 +101,7 @@ public class HomeActivity extends Activity implements View.OnClickListener
 
         // Display version
         tv = findViewById(R.id.version);
-        tv.setText(String.format("Version: %s", Constants.VERSION));
+        tv.setText(String.format("Version: %s", getApplicationVersionName()));
     }
 
     @Override
@@ -130,6 +141,10 @@ public class HomeActivity extends Activity implements View.OnClickListener
         button = findViewById(R.id.event_charts_button);
         button.setEnabled(enableStrategist);
 
+        // Reset pick list button
+        button = findViewById(R.id.pick_list_button);
+        button.setEnabled(enableStrategist);
+
         // Setup database
         if (sharedPreferences.contains(Constants.Settings.EVENT_KEY))
         {
@@ -139,7 +154,7 @@ public class HomeActivity extends Activity implements View.OnClickListener
             {
                 mEventKey = temp;
                 String ip = sharedPreferences.getString(Constants.Settings.SERVER_IP, "");
-                int port = sharedPreferences.getInt(Constants.Settings.SERVER_PORT, -1);
+                int port = Integer.parseInt(sharedPreferences.getString(Constants.Settings.SERVER_PORT, ""));
                 // todo: Something when ip is empty or port is -1
 
                 Database.getInstance().setEventKey(mEventKey);
@@ -198,6 +213,25 @@ public class HomeActivity extends Activity implements View.OnClickListener
             case R.id.settings_button:
                 SettingsActivityStarter.start(this);
                 break;
+
+            case R.id.pull_matches:
+                Intent intent = new Intent(HomeActivity.this, CommunicationService.class);
+                intent.putExtra(Constants.IntentExtras.PULL_MATCHES, true);
+                startService(intent);
+                break;
+
+            default:
+                assert(false);
         }
+    }
+
+    //Programmatically get the current version Name
+    private String getApplicationVersionName() {
+
+        try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            return packageInfo.versionName;
+        } catch(Exception ignored){}
+        return "";
     }
 }

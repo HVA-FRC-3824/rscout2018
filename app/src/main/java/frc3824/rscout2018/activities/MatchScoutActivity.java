@@ -1,19 +1,27 @@
 package frc3824.rscout2018.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.View;
 
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.sdsmdg.tastytoast.TastyToast;
+
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
@@ -26,6 +34,7 @@ import frc3824.rscout2018.fragments.match_scout.MatchAutoFragment;
 import frc3824.rscout2018.fragments.match_scout.MatchEndgameFragment;
 import frc3824.rscout2018.fragments.match_scout.MatchFoulsFragment;
 import frc3824.rscout2018.fragments.match_scout.MatchMiscFragment;
+import frc3824.rscout2018.fragments.match_scout.MatchStartFragment;
 import frc3824.rscout2018.fragments.match_scout.MatchTeleopFragment;
 import frc3824.rscout2018.services.CommunicationService;
 import frc3824.rscout2018.utilities.Constants;
@@ -47,6 +56,7 @@ public class MatchScoutActivity extends Activity
     private boolean mPractice = false;
 
     private MatchScoutFragmentPagerAdapter mFPA;
+    private ViewPager mViewPager;
     private TeamMatchData mTMD;
 
     @Override
@@ -107,9 +117,9 @@ public class MatchScoutActivity extends Activity
                                                   mTMD);
 
         // Setup view pager
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(mFPA);
-        viewPager.setOffscreenPageLimit(mFPA.getCount());
+        mViewPager = findViewById(R.id.view_pager);
+        mViewPager.setAdapter(mFPA);
+        mViewPager.setOffscreenPageLimit(mFPA.getCount());
 
         SmartTabLayout tabLayout = findViewById(R.id.tab_layout);
         if (position < 3)
@@ -120,7 +130,7 @@ public class MatchScoutActivity extends Activity
         {
             tabLayout.setBackgroundColor(Color.RED);
         }
-        tabLayout.setViewPager(viewPager);
+        tabLayout.setViewPager(mViewPager);
     }
 
     /**
@@ -208,7 +218,40 @@ public class MatchScoutActivity extends Activity
             {
                 if (mTMD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MatchScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    mTMD.save();
+
+                                    Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
+                                    intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, mTMD.toString());
+                                    startService(intent);
+
+                                    MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
@@ -224,10 +267,10 @@ public class MatchScoutActivity extends Activity
         {
             if(!mPractice && mTMD.isDirty()) // Don't need to worry about saving for practice or if there is nothing new
             {
+                mTMD.save();
                 Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
                 intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, mTMD.toString());
                 startService(intent);
-                // TastyToast.makeText(MatchScoutActivity.this, "Saved", TastyToast.LENGTH_SHORT, TastyToast.SUCCESS);
             }
         }
     }
@@ -242,12 +285,14 @@ public class MatchScoutActivity extends Activity
         static final String TAG = "MatchScoutFragmentPagerAdapter";
 
         TeamMatchData mTeamMatchData;
+        HashMap<Integer, Fragment> mFragments;
 
 
         public MatchScoutFragmentPagerAdapter(FragmentManager fm, TeamMatchData teamMatchData)
         {
             super(fm);
             mTeamMatchData = teamMatchData;
+            mFragments = new HashMap<>();
         }
 
         /**
@@ -260,27 +305,42 @@ public class MatchScoutActivity extends Activity
         public Fragment getItem(int position)
         {
             assert(position >= 0 && position < Constants.MatchScouting.TABS.length);
+            if(mFragments.containsKey(position))
+            {
+                return mFragments.get(position);
+            }
+
             switch (position)
             {
                 case 0:
+                    MatchStartFragment msf = new MatchStartFragment();
+                    msf.setData(mTeamMatchData);
+                    mFragments.put(0, msf);
+                    return msf;
+                case 1:
                     MatchAutoFragment maf = new MatchAutoFragment();
                     maf.setTeamMatchData(mTeamMatchData);
+                    mFragments.put(1, maf);
                     return maf;
-                case 1:
+                case 2:
                     MatchTeleopFragment mtf = new MatchTeleopFragment();
                     mtf.setTeamMatchData(mTeamMatchData);
+                    mFragments.put(2, mtf);
                     return mtf;
-                case 2:
+                case 3:
                     MatchEndgameFragment mef = new MatchEndgameFragment();
                     mef.setTeamMatchData(mTeamMatchData);
+                    mFragments.put(3, mef);
                     return mef;
-                case 3:
+                case 4:
                     MatchFoulsFragment mff = new MatchFoulsFragment();
                     mff.setTeamMatchData(mTeamMatchData);
+                    mFragments.put(4, mff);
                     return mff;
-                case 4:
+                case 5:
                     MatchMiscFragment mmf = new MatchMiscFragment();
                     mmf.setTeamMatchData(mTeamMatchData);
+                    mFragments.put(5, mmf);
                     return mmf;
                 default:
                     assert(false);

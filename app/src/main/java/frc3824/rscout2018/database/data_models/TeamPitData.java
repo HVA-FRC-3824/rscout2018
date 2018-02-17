@@ -2,6 +2,9 @@ package frc3824.rscout2018.database.data_models;
 
 
 import android.databinding.Bindable;
+import android.databinding.BindingAdapter;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
@@ -69,7 +72,7 @@ public class TeamPitData extends DataModel
     //endregion
 
     //region Picture
-    ArrayList<String> pictureFilepaths;
+    ArrayList<String> pictureFilepaths = new ArrayList<>();
 
     /**
      * Getter function for the list of picture file paths for this robot
@@ -131,7 +134,7 @@ public class TeamPitData extends DataModel
 
     //region Dimensions
     //region Robot Width
-    double robotWidth;
+    double robotWidth = 0.0;
 
     /**
      * Getter function for robotWidth
@@ -152,9 +155,34 @@ public class TeamPitData extends DataModel
         this.robotWidth = robotWidth;
         notifyChange();
     }
+
+    @Bindable
+    public TextWatcher getRobotWidthListener()
+    {
+        return new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                setRobotWidth(Double.parseDouble(s.toString()));
+            }
+        };
+    }
     //endregion
     //region Robot Length
-    double robotLength;
+    double robotLength = 0.0;
 
     /**
      * Getter function for robotLength
@@ -175,9 +203,34 @@ public class TeamPitData extends DataModel
         this.robotLength = robotLength;
         notifyChange();
     }
+
+    @Bindable
+    public TextWatcher getRobotLengthListener()
+    {
+        return new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                setRobotLength(Double.parseDouble(s.toString()));
+            }
+        };
+    }
     //endregion
     //region Robot Height
-    double robotHeight;
+    double robotHeight = 0.0;
 
     /**
      * Getter function for robotHeight
@@ -198,9 +251,34 @@ public class TeamPitData extends DataModel
         this.robotHeight = robotHeight;
         notifyChange();
     }
+
+    @Bindable
+    public TextWatcher getRobotHeightListener()
+    {
+        return new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                setRobotHeight(Double.parseDouble(s.toString()));
+            }
+        };
+    }
     //endregion
     //region Robot Weight
-    double robotWeight;
+    double robotWeight = 0.0;
 
     /**
      * Getter function for robotWeight
@@ -221,12 +299,37 @@ public class TeamPitData extends DataModel
         this.robotWeight = robotWeight;
         notifyChange();
     }
+
+    @Bindable
+    public TextWatcher getRobotWeightListener()
+    {
+        return new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                setRobotWeight(Double.parseDouble(s.toString()));
+            }
+        };
+    }
     //endregion
     //endregion
 
     //region Misc
     //region Programming Language
-    String programmingLanguage;
+    String programmingLanguage = "";
 
     /**
      * Getter function for the programming language for team (@link TeamPitData#teamNumber}
@@ -247,9 +350,34 @@ public class TeamPitData extends DataModel
         this.programmingLanguage = programmingLanguage;
         notifyChange();
     }
+
+    @Bindable
+    public TextWatcher getProgrammingLanguageListener()
+    {
+        return new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                setProgrammingLanguage(s.toString());
+            }
+        };
+    }
     //endregion
     //region Drive Train
-    String driveTrain;
+    String driveTrain = "";
 
     /**
      * Getter function for the drive train
@@ -270,9 +398,34 @@ public class TeamPitData extends DataModel
         this.driveTrain = driveTrain;
         notifyChange();
     }
+
+    @Bindable
+    public TextWatcher getDriveTrainListener()
+    {
+        return new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                setDriveTrain(s.toString());
+            }
+        };
+    }
     //endregion
     //region Notes
-    String notes;
+    String notes = "";
 
     /**
      * Getter function for notes
@@ -292,6 +445,31 @@ public class TeamPitData extends DataModel
     {
         this.notes = notes;
         notifyChange();
+    }
+
+    @Bindable
+    public TextWatcher getNotesListener()
+    {
+        return new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                setNotes(s.toString());
+            }
+        };
     }
     //endregion
     //endregion

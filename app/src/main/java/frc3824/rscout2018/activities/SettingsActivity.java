@@ -1,16 +1,15 @@
 package frc3824.rscout2018.activities;
 
 
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.SwitchPreference;
 
 import activitystarter.MakeActivityStarter;
-import frc3824.rscout2018.R;
+import frc3824.rscout2018.fragments.settings.SettingsFragment;
+import frc3824.rscout2018.utilities.Constants;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -26,71 +25,68 @@ import frc3824.rscout2018.R;
 @MakeActivityStarter
 public class SettingsActivity extends AppCompatPreferenceActivity
 {
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its new value.
-     */
-    private static Preference.OnPreferenceChangeListener mBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener()
-    {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value)
-        {
-            String stringValue = value.toString();
-
-            if (preference instanceof ListPreference)
-            {
-                ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(stringValue);
-                preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
-            }
-            else
-            {
-                preference.setSummary(stringValue);
-            }
-            return true;
-        }
-    };
-
-    /**
-     * Binds a preference's summary to its value. More specifically, when the
-     * preference's value is changed, its summary (line of text below the
-     * preference title) is updated to reflect the value. The summary is also
-     * immediately updated upon calling this method. The exact display format is
-     * dependent on the type of preference.
-     *
-     * @see #mBindPreferenceSummaryToValueListener
-     */
-    private static void bindPreferenceSummaryToValue(Preference preference, String defaultSummary) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(mBindPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        mBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                                                                 PreferenceManager
-                                                                         .getDefaultSharedPreferences(preference.getContext())
-                                                                         .getString(preference.getKey(), defaultSummary));
-    }
-
     @Override
     public void onCreate(Bundle savedInstance)
     {
         super.onCreate(savedInstance);
 
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
     }
 
-    public static class MyPreferenceFragment extends PreferenceFragment
+    public void onBackPressed()
     {
-        @Override
-        public void onCreate(final Bundle savedInstance)
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(sharedPreferences.getString(Constants.Settings.EVENT_KEY, "").isEmpty())
         {
-            super.onCreate(savedInstance);
-            addPreferencesFromResource(R.xml.preferences);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                                                   .setTitle("Error")
+                                                    .setMessage("You have not set an event id.");
+            builder.create().show();
 
-            bindPreferenceSummaryToValue(findPreference("match_scout_position"), "Which position the match scout with this tablet will be viewing (Blue 1, Blue 2, etc)");
-            bindPreferenceSummaryToValue(findPreference("pit_scout_position"), "Which position the pit scout with this tablet will has");
+            return;
         }
-    }
 
+        if(sharedPreferences.getBoolean(Constants.Settings.ENABLE_MATCH_SCOUT, false)
+                && sharedPreferences.getString(Constants.Settings.MATCH_SCOUT_POSITION, "").isEmpty())
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .setTitle("Error")
+                    .setMessage("You have not set which match scout position.");
+            builder.create().show();
+            return;
+        }
+
+        if(sharedPreferences.getBoolean(Constants.Settings.ENABLE_PIT_SCOUT, false)
+                && sharedPreferences.getString(Constants.Settings.PIT_SCOUT_POSITION, "").isEmpty())
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .setTitle("Error")
+                    .setMessage("You have not set which pit scout position.");
+            builder.create().show();
+            return;
+        }
+
+        if(sharedPreferences.getBoolean(Constants.Settings.ENABLE_SERVER, false))
+        {
+            if(sharedPreferences.getString(Constants.Settings.SERVER_IP, "").isEmpty())
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                        .setTitle("Error")
+                        .setMessage("You have not set the server's ip address.");
+                builder.create().show();
+                return;
+            }
+
+            if(sharedPreferences.getString(Constants.Settings.SERVER_PORT, "").isEmpty())
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                        .setTitle("Error")
+                        .setMessage("You have not set the server's port number.");
+                builder.create().show();
+                return;
+            }
+        }
+
+        super.onBackPressed();
+    }
 }

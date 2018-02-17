@@ -2,15 +2,16 @@ package frc3824.rscout2018.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.databinding.BindingAdapter;
+import android.databinding.InverseBindingAdapter;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.databinding.SavableSwitchBinding;
 
 /**
  * @class SavableSwitch
@@ -18,7 +19,6 @@ import frc3824.rscout2018.databinding.SavableSwitchBinding;
  */
 public class SavableSwitch extends LinearLayout
 {
-    SavableSwitchBinding mBinding;
     Switch mSwitch;
 
     /**
@@ -31,7 +31,7 @@ public class SavableSwitch extends LinearLayout
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mBinding = SavableSwitchBinding.inflate(inflater);
+        inflater.inflate(R.layout.savable_switch, this, true);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableView);
 
@@ -58,5 +58,33 @@ public class SavableSwitch extends LinearLayout
     public boolean getBool()
     {
         return mSwitch.isChecked();
+    }
+
+    public void addListener(CompoundButton.OnCheckedChangeListener listener)
+    {
+        mSwitch.setOnCheckedChangeListener(listener);
+    }
+
+    @BindingAdapter("bool")
+    public static void setBool(SavableSwitch savableSwitch, boolean value)
+    {
+        savableSwitch.setBool(value);
+    }
+
+    @InverseBindingAdapter(attribute = "bool")
+    public static boolean getBool(SavableSwitch savableSwitch)
+    {
+        return savableSwitch.getBool();
+    }
+
+    @BindingAdapter("boolAttrChanged")
+    public static void setListener(SavableSwitch savableSwitch,
+                                   CompoundButton.OnCheckedChangeListener oldListener,
+                                   CompoundButton.OnCheckedChangeListener newListener)
+    {
+        if (newListener != null)
+        {
+            savableSwitch.addListener(newListener);
+        }
     }
 }

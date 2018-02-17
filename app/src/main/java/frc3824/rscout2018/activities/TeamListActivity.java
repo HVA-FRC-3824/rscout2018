@@ -36,7 +36,7 @@ public class TeamListActivity extends ListActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
-        setContentView(R.layout.activity_team_list);
+        setContentView(R.layout.activity_list);
         ActivityStarter.fill(this);
 
         findViewById(R.id.practice).setOnClickListener(this);
@@ -173,7 +173,7 @@ public class TeamListActivity extends ListActivity implements View.OnClickListen
         @Override
         public int getViewTypeCount()
         {
-            return 0;
+            return 1;
         }
 
         /**

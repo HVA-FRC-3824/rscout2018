@@ -41,7 +41,7 @@ public class PitMiscFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate layout and bind the realm object
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_match_auto, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_pit_misc, container, false);
         if(mTeamPitData != null)
         {
             mBinding.setTpd(mTeamPitData);

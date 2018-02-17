@@ -13,6 +13,12 @@
             android:summary = "Which position the match scout with this tablet will be viewing (Blue 1, Blue 2, etc)"
             android:title = "Position" />
 
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="blue_left"
+            android:summary="Are the blue driver stations on your left"
+            android:title="Is blue left?"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title = "Pit Scout">
