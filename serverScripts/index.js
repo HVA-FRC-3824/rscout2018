@@ -4,9 +4,10 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var url = require('url');
-var io = require('socket.io')(http);
 var mysql = require('mysql');
-var winston = require('winston')
+var winston = require('winston');
+var formidable = require('formidable');
+var $ = require('jQuery');
 //}
 
 //Winston Logger Stuff
@@ -14,7 +15,7 @@ var winston = require('winston')
 // set default log level.
 var logLevel = 'info'
 
-// Set up logger
+// Set colors
 var customColors = {
   trace: 'white',
   debug: 'green',
@@ -24,6 +25,7 @@ var customColors = {
   fatal: 'red'
 }
 
+//Create logger
 var logger = new (winston.Logger)({
   colors: customColors,
   level: logLevel,
@@ -35,20 +37,24 @@ var logger = new (winston.Logger)({
     debug: 4,
     trace: 5
   },
+  
+  //Set file to write to
   transports: [
     new (winston.transports.Console)({
       colorize: true,
       timestamp: true
     }),
-    new (winston.transports.File)({ filename: 'rscout-event/logs.log' })
+    new (winston.transports.File)({ filename: 'logs.log' })
   ]
 })
 
+//Put colors with logger
 winston.addColors(customColors)
 
 // Extend logger object to properly log 'Error' types
 var origLog = logger.log
 
+// Create logger functions
 logger.log = function (level, msg) {
   if (msg instanceof Error) {
     var args = Array.prototype.slice.call(arguments)
@@ -58,15 +64,6 @@ logger.log = function (level, msg) {
     origLog.apply(logger, arguments)
   }
 }
-/* LOGGER EXAMPLES
-  
-  log.trace('testing')
-  log.debug('testing')
-  log.info('testing')
-  log.warn('testing')
-  log.crit('testing')
-  log.fatal('testing')
- */
 
 logger.info('Started Server');
  
@@ -97,7 +94,25 @@ app.get('/ping', function (req, res){
 
 //Sends back an HTML file to add an event to the DB
 app.get('/addEvent', function(req, res) {
-	res.sendFile(__dirname + '/index.html');
+	var reqEventKey = req.body.eventKey;
+	console.log('requesting event ' + reqEventKey);
+	var sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='rscout'";
+	con.query(sql, function (err, result) {
+		var alreadyExists = false;
+		if (err) {
+			logger.fatal(err);
+			throw err;
+		};
+			for (var i = 0; i < result.length; i++) {
+				console.log("Checking Table")
+				if (result[i].TABLE_NAME.includes(eventKey)) {
+					alreadyExists = true;
+				}
+			}
+		if (!alreadyExists) {
+			
+		}
+	});
 });
 
 //Resets the server's event key
@@ -568,34 +583,10 @@ var server = http.listen(3824, function(err){
 		console.log('rScout started. Listening on *:3824');
 	}
 });
-
-var socket = io.listen(server);
-
-socket.on('ping', function(){
-	io.emit('pong');
-});
 	
 //Ensures that an event is not created twice to avoid non-unique table names
-socket.on('eventRequest', function(eventKey){
-	console.log('requesting event ' + eventKey);
-	var sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='rscout'";
-	con.query(sql, function (err, result) {
-		var alreadyExists = false;
-		if (err) {
-			logger.fatal(err);
-			throw err;
-		};
-			for (var i = 0; i < result.length; i++) {
-				console.log("Checking Table")
-				if (result[i].TABLE_NAME.includes(eventKey)) {
-					alreadyExists = true;
-				}
-			}
-		io.emit("requestEvent", eventKey, alreadyExists);
-	});
-});
 //Create empty tables for event
-socket.on('addEvent', function(eventKey) {
+function addEvent(eventKey) {
 	var sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='rscout'";
 	con.query(sql, function (err, result) {
 		var alreadyExists = false;
@@ -654,9 +645,10 @@ socket.on('addEvent', function(eventKey) {
 			});
 		}
 	});
-});
+}
+
 //Fill teams table
-socket.on('addTeam', function(teamInfo, eventKey) {
+function addTeam(teamInfo, eventKey) {
 	var climbingStateTotalsObject = {};
 	var sql = "INSERT INTO " + eventKey + "teamstats (teamNumber, name, matchesPlayed, autoCrossedTotal, autoCrossedAverage, autoEventTotals, autoEventAverages, teleopEventTotals, teleopEventAverages, climbingStateTotals, climbingStateAverages, climbingMethodTotals, climbingMethodAverages, foulTotal, foulAverage, techFoulTotal, techFoulAverage, yellowCardTotal, yellowCardAverage, redCardTotal, redCardAverage, noShowTotal, noShowAverage, DQTotal, DQAverage) VALUES ('" + teamInfo.team_number + "', '" + mysql_real_escape_string(teamInfo.nickname) + "', '0', '0', '0', '" + JSON.stringify({placed: 0, dropped: 0, launchSuccess: 0, launchFailure: 0, pickedUp: 0}) + "', '" + JSON.stringify({placed: 0, dropped: 0, launchSuccess: 0, launchFailure: 0, pickedUp: 0}) + "', '" + JSON.stringify({placed: 0, dropped: 0, launchSuccess: 0, launchFailure: 0, pickedUp: 0}) + "', '" + JSON.stringify({placed: 0, dropped: 0, launchSuccess: 0, launchFailure: 0, pickedUp: 0}) + "', '" + JSON.stringify({noAttempt: 0, parkedOnPlatform: 0, didNotFinishInTime: 0, robotFell: 0, successful: 0}) + "', '" + JSON.stringify({noAttempt: 0, parkedOnPlatform: 0, didNotFinishInTime: 0, robotFell: 0, successful: 0}) + "', '" + JSON.stringify({climbOnRung: 0, climbOnRungWithOne: 0, climbOnRungWithTwo: 0, climbOnRungOfOtherBot: 0, climbOnPlatformOfOtherBot: 0, supportOneOnPlatform: 0, supportTwoOnPlatform: 0, creditThroughFoul: 0, creditThroughLevitate: 0}) + "', '" + JSON.stringify({climbOnRung: 0, climbOnRungWithOne: 0, climbOnRungWithTwo: 0, climbOnRungOfOtherBot: 0, climbOnPlatformOfOtherBot: 0, supportOneOnPlatform: 0, supportTwoOnPlatform: 0, creditThroughFoul: 0, creditThroughLevitate: 0}) + "', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0')";
 	con.query(sql, function (err, result) {
@@ -666,9 +658,9 @@ socket.on('addTeam', function(teamInfo, eventKey) {
 		};
 		console.log("1 team record inserted");
 	});
-});
+}
 //Fill matchSchedule table
-socket.on('addMatch', function(matchInfo, eventKey) {
+function addMatch(matchInfo, eventKey) {
 	
 	var matchKey = matchInfo.key.substr(eventKey.length + 1);
 	
@@ -687,4 +679,4 @@ socket.on('addMatch', function(matchInfo, eventKey) {
 		};
 		console.log("1 match inserted");
 	});
-});
+}
