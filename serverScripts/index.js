@@ -7,7 +7,7 @@ var url = require('url');
 var mysql = require('mysql');
 var winston = require('winston');
 var formidable = require('formidable');
-var $ = require('jQuery');
+//var $ = require('jQuery');
 //}
 
 //Winston Logger Stuff
