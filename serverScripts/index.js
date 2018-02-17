@@ -7,7 +7,13 @@ var url = require('url');
 var mysql = require('mysql');
 var winston = require('winston');
 var formidable = require('formidable');
-//var $ = require('jQuery');
+var jsdom = require('jsdom');
+const { JSDOM } = jsdom;
+const { window } = new JSDOM();
+const { document } = (new JSDOM('')).window;
+global.document = document;
+
+var $ = jQuery = require('jquery')(window);
 //}
 
 //Winston Logger Stuff
@@ -105,12 +111,53 @@ app.get('/addEvent', function(req, res) {
 		};
 			for (var i = 0; i < result.length; i++) {
 				console.log("Checking Table")
-				if (result[i].TABLE_NAME.includes(eventKey)) {
+				if (result[i].TABLE_NAME.includes(reqEventKey)) {
 					alreadyExists = true;
 				}
 			}
 		if (!alreadyExists) {
-			
+			addEvent(reqEventKey);
+			$.ajax({
+				url: "https://www.thebluealliance.com/api/v3/event/" + reqEventKey + "/teams/simple",
+				type: 'GET',
+				dataType: 'json',
+				headers: {
+					'X-TBA-Auth-Key': 'jFZAiivEncdZC24mwCGqWnImGrGJdwVRBP9m0djqwY25I42B1NpocGJikWZSu0CZ'
+				},
+				contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+				success: function (result) {
+					for(var i = 0; i < result.length; i++) {
+						addTeam(result[i], reqEventKey);
+					}
+				},
+				error: function (error) {
+					console.log(error);
+					logger.crit(error);
+				}
+			});
+			$.ajax({
+				url: "https://www.thebluealliance.com/api/v3/event/" + reqEventKey + "/matches/simple",
+				type: 'GET',
+				dataType: 'json',
+				headers: {
+					'X-TBA-Auth-Key': 'jFZAiivEncdZC24mwCGqWnImGrGJdwVRBP9m0djqwY25I42B1NpocGJikWZSu0CZ'
+				},
+			contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+			success: function (result) {
+				for(var i = 0; i < result.length; i++) {;
+						if (!result[i].key.substr(reqEventKey.length + 1).includes('f')) {
+							addMatch(result[i], reqEventKey);
+						}
+					}
+				},
+				error: function (error) {
+					console.log(error);
+					logger.crit(error);
+				}
+			});
+		} else {
+			console.log("Error! Event already added!");
+			logger.crit('Error! Tried to add event which ')
 		}
 	});
 });
@@ -603,7 +650,7 @@ function addEvent(eventKey) {
 		if (alreadyExists) {
 			logger.crit("Tried to create event which already exists");
 		} else {
-			var sql = "CREATE TABLE " + eventKey + "teamstats (teamNumber int, name varchar(255), matchesPlayed int, autoEventTotals varchar(511), autoEventAverages varchar(511), teleopEventTotals varchar(511), teleopEventAverages varchar(511), climbingStateTotals varchar(511), climbingMethodTotals varchar(511), foulTotal int, foulAverage double, techFoulTotal int, techFoulAverage double, yellowCardTotal int, yellowCardAverage double, redCardTotal int, redCardAverage double, noShowTotal int, noShowAverage double, DQTotal int, DQAverage double)";
+			var sql = "CREATE TABLE " + eventKey + "teamstats (teamNumber int, name varchar(255), matchesPlayed int, autoCrossedTotal int, autoCrossedAverage int, autoEventTotals varchar(511), autoEventAverages varchar(511), teleopEventTotals varchar(511), teleopEventAverages varchar(511), climbingStateTotals varchar(511), climbingStateAverages varchar(511), climbingMethodTotals varchar(511), climbingMethodAverages varchar(511), foulTotal int, foulAverage double, techFoulTotal int, techFoulAverage double, yellowCardTotal int, yellowCardAverage double, redCardTotal int, redCardAverage double, noShowTotal int, noShowAverage double, DQTotal int, DQAverage double)";
 			con.query(sql, function (err, result) {
 				if (err) {
 					logger.fatal(err);
@@ -627,7 +674,7 @@ function addEvent(eventKey) {
 				};
 				console.log("Created Pit Data Table for event " + eventKey);
 			});
-			var sql = "CREATE TABLE " + eventKey + "matchdata (teamNumber int, matchKey varchar(255), crossedAutoLine boolean, autoEvents varchar(1027), teleopEvents varchar(1027), climbingState(255), climbingMethod varchar(255), fouls int, techFouls int, yellowCard boolean, redCard boolean, notes varchar(511), DQ boolean, noShow boolean)";
+			var sql = "CREATE TABLE " + eventKey + "matchdata (teamNumber int, matchKey varchar(255), crossedAutoLine boolean, autoEvents varchar(1027), teleopEvents varchar(1027), climbingState varchar(255), climbingMethod varchar(255), fouls int, techFouls int, yellowCard boolean, redCard boolean, notes varchar(511), DQ boolean, noShow boolean)";
 			con.query(sql, function (err, result) {
 				if (err) {
 					logger.fatal(err);
