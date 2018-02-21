@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import activitystarter.Arg;
 import frc3824.rscout2018.R;
+import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.TeamPitData;
 import frc3824.rscout2018.databinding.FragmentTeamStatsPitDataBinding;
 
@@ -20,9 +21,9 @@ public class TeamStatsPitDataFragment extends Fragment
     FragmentTeamStatsPitDataBinding mBinding = null;
     TeamPitData mTeamPitData = null;
 
-    void setTeamPitData(TeamPitData teamPitData)
+    public void setTeamNumber(int teamNumber)
     {
-        mTeamPitData = teamPitData;
+        mTeamPitData = Database.getInstance().getTeamPitData(teamNumber);
         if(mBinding != null)
         {
             mBinding.setTpd(mTeamPitData);
@@ -32,7 +33,7 @@ public class TeamStatsPitDataFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_team_stats_pit_data, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_team_stats_pit_data, null, false);
         if(mTeamPitData != null)
         {
             mBinding.setTpd(mTeamPitData);

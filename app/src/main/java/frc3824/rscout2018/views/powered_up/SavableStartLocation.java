@@ -91,7 +91,7 @@ public class SavableStartLocation extends View
     protected void onDraw(Canvas canvas)
     {
         canvas.drawBitmap(mBackgroundBitmap, 0, 0, mCanvasPaint);
-        canvas.drawPoint(mTeamMatchData.getStartLocationX() * mScreenWidth, mTeamMatchData.getStartLocationY() * mScreenHeight, mPointPaint);
+        canvas.drawPoint((float)mTeamMatchData.getStartLocationX() * mScreenWidth, (float)mTeamMatchData.getStartLocationY() * mScreenHeight, mPointPaint);
     }
 
     @Override

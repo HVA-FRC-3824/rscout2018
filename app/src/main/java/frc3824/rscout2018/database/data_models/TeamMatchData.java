@@ -5,24 +5,20 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.CompoundButton;
 
-import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.Document;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
 
-import frc3824.rscout2018.BR;
-import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.powered_up.CubeEvent;
-import frc3824.rscout2018.database.data_models.powered_up.DropData;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.SavableCounter;
+
 
 /**
  * Data Model for a single team in a single match
  */
+@IgnoreExtraProperties
 public class TeamMatchData extends DataModel
 {
     //region Logistics
@@ -32,6 +28,7 @@ public class TeamMatchData extends DataModel
     /**
      * Getter function for match number
      */
+    @Exclude
     @Bindable
     public int getMatchNumber()
     {
@@ -43,6 +40,7 @@ public class TeamMatchData extends DataModel
      *
      * @param matchNumber The match number
      */
+    @Exclude
     public void setMatchNumber(int matchNumber)
     {
         this.matchNumber = matchNumber;
@@ -56,6 +54,7 @@ public class TeamMatchData extends DataModel
     /**
      * Getter function for team number
      */
+    @Exclude
     @Bindable
     public int getTeamNumber()
     {
@@ -67,6 +66,7 @@ public class TeamMatchData extends DataModel
      *
      * @param teamNumber The team number
      */
+    @Exclude
     public void setTeamNumber(int teamNumber)
     {
         this.teamNumber = teamNumber;
@@ -75,11 +75,12 @@ public class TeamMatchData extends DataModel
 
     //endregion
     //region Scout Name
-    String scoutName;
+    String scoutName = "";
 
     /**
      * Getter function for scout name
      */
+    @Exclude
     @Bindable
     public String getScoutName()
     {
@@ -91,12 +92,14 @@ public class TeamMatchData extends DataModel
      *
      * @param scoutName The name of the scout who recorded the information for {@link TeamMatchData#teamNumber} in {@link TeamMatchData#matchNumber}
      */
+    @Exclude
     public void setScoutName(String scoutName)
     {
         this.scoutName = scoutName;
         notifyChange();
     }
 
+    @Exclude
     @Bindable
     public TextWatcher getScoutNameWatcher()
     {
@@ -131,6 +134,7 @@ public class TeamMatchData extends DataModel
     /**
      * Getter function for fouls
      */
+    @Exclude
     @Bindable
     public int getFouls()
     {
@@ -142,12 +146,14 @@ public class TeamMatchData extends DataModel
      *
      * @param fouls The number of normal fouls caused by this team in this match
      */
+    @Exclude
     public void setFouls(int fouls)
     {
         this.fouls = fouls;
         notifyChange();
     }
 
+    @Exclude
     @Bindable
     public SavableCounter.CountListener getFoulsListener()
     {
@@ -167,6 +173,7 @@ public class TeamMatchData extends DataModel
     /**
      * Getter function for tech fouls
      */
+    @Exclude
     @Bindable
     public int getTechFouls()
     {
@@ -178,12 +185,14 @@ public class TeamMatchData extends DataModel
      *
      * @param techFouls The number of tech fouls caused by this team in this match
      */
+    @Exclude
     public void setTechFouls(int techFouls)
     {
         this.techFouls = techFouls;
         notifyChange();
     }
 
+    @Exclude
     @Bindable
     public SavableCounter.CountListener getTechFoulsListener()
     {
@@ -206,6 +215,7 @@ public class TeamMatchData extends DataModel
      *
      * @return Whether a yellow card was received in match {@link TeamMatchData#matchNumber} by team {@link TeamMatchData#teamNumber}
      */
+    @Exclude
     @Bindable
     public boolean isYellowCard()
     {
@@ -217,12 +227,14 @@ public class TeamMatchData extends DataModel
      *
      * @param yellowCard Whether a yellow card was received in match {@link TeamMatchData#matchNumber} by team {@link TeamMatchData#teamNumber}
      */
+    @Exclude
     public void setYellowCard(boolean yellowCard)
     {
         this.yellowCard = yellowCard;
         notifyChange();
     }
 
+    @Exclude
     @Bindable
     public CompoundButton.OnCheckedChangeListener getYellowCardListener()
     {
@@ -245,6 +257,7 @@ public class TeamMatchData extends DataModel
      *
      * @return Whether a red card was received in match {@link TeamMatchData#matchNumber} by team {@link TeamMatchData#teamNumber}
      */
+    @Exclude
     @Bindable
     public boolean isRedCard()
     {
@@ -256,12 +269,14 @@ public class TeamMatchData extends DataModel
      *
      * @param redCard Whether a red card was received in match {@link TeamMatchData#matchNumber} by team {@link TeamMatchData#teamNumber}
      */
+    @Exclude
     public void setRedCard(boolean redCard)
     {
         this.redCard = redCard;
         notifyChange();
     }
 
+    @Exclude
     @Bindable
     public CompoundButton.OnCheckedChangeListener getRedCardListener()
     {
@@ -285,6 +300,8 @@ public class TeamMatchData extends DataModel
     /**
      * Getter function for whether team {@link TeamMatchData#teamNumber} was disqualified in match {@link TeamMatchData#matchNumber}
      */
+    @Exclude
+    @Bindable
     public boolean isDq()
     {
         return dq;
@@ -295,12 +312,14 @@ public class TeamMatchData extends DataModel
      *
      * @param dq Whether team {@link TeamMatchData#teamNumber} was disqualified in match {@link TeamMatchData#matchNumber}
      */
+    @Exclude
     public void setDq(boolean dq)
     {
         this.dq = dq;
         notifyChange();
     }
 
+    @Exclude
     @Bindable
     public CompoundButton.OnCheckedChangeListener getDqListener()
     {
@@ -321,6 +340,8 @@ public class TeamMatchData extends DataModel
     /**
      * Getter function for whether team {@link TeamMatchData#teamNumber} did not show up to match {@link TeamMatchData#matchNumber}
      */
+    @Exclude
+    @Bindable
     public boolean isNoShow()
     {
         return noShow;
@@ -331,12 +352,14 @@ public class TeamMatchData extends DataModel
      *
      * @param noShow Whether team {@link TeamMatchData#teamNumber} did not show up to match {@link TeamMatchData#matchNumber}
      */
+    @Exclude
     public void setNoShow(boolean noShow)
     {
         this.noShow = noShow;
         notifyChange();
     }
 
+    @Exclude
     @Bindable
     public CompoundButton.OnCheckedChangeListener getNoShowListener()
     {
@@ -351,11 +374,12 @@ public class TeamMatchData extends DataModel
     }
     //endregion
     //region Notes
-    String notes;
+    String notes = "";
 
     /**
      * Getter function for notes
      */
+    @Exclude
     @Bindable
     public String getNotes()
     {
@@ -367,12 +391,14 @@ public class TeamMatchData extends DataModel
      *
      * @param notes The notes taken on team {@link TeamMatchData#teamNumber} in match {@link TeamMatchData#matchNumber}
      */
+    @Exclude
     public void setNotes(String notes)
     {
         this.notes = notes;
         notifyChange();
     }
 
+    @Exclude
     @Bindable
     public TextWatcher getNotesWatcher()
     {
@@ -397,7 +423,6 @@ public class TeamMatchData extends DataModel
             }
         };
     }
-
     //endregion
     //endregion
 
@@ -406,18 +431,21 @@ public class TeamMatchData extends DataModel
     //region Started with Cube
     boolean startedWithCube;
 
+    @Exclude
     @Bindable
     public boolean getStartedWithCube()
     {
         return startedWithCube;
     }
 
+    @Exclude
     public void setStartedWithCube(boolean startedWithCube)
     {
         this.startedWithCube = startedWithCube;
         notifyChange();
     }
 
+    @Exclude
     @Bindable
     public CompoundButton.OnCheckedChangeListener getStartedWithCubeListener()
     {
@@ -439,6 +467,7 @@ public class TeamMatchData extends DataModel
      *
      * @return
      */
+    @Exclude
     @Bindable
     public boolean getCrossedAutoLine()
     {
@@ -448,12 +477,14 @@ public class TeamMatchData extends DataModel
     /**
      * Sets whether the team crossed the auto line
      */
+    @Exclude
     public void setCrossedAutoLine(boolean crossedAutoLine)
     {
         this.crossedAutoLine = crossedAutoLine;
         notifyChange();
     }
 
+    @Exclude
     @Bindable
     public CompoundButton.OnCheckedChangeListener getCrossedAutoLineListener()
     {
@@ -469,13 +500,14 @@ public class TeamMatchData extends DataModel
 
     //endregion
     //region Start Location X
-    float startLocationX = -1;
+    double startLocationX = -1;
 
     /**
      * Returns the start location x as a percentage of the width of the field
      */
+    @Exclude
     @Bindable
-    public float getStartLocationX()
+    public double getStartLocationX()
     {
         return startLocationX;
     }
@@ -483,6 +515,7 @@ public class TeamMatchData extends DataModel
     /**
      * Sets the start location x as a percentage of the width of the field
      */
+    @Exclude
     public void setStartLocationX(float startLocationX)
     {
         this.startLocationX = startLocationX;
@@ -491,13 +524,14 @@ public class TeamMatchData extends DataModel
 
     //endregion
     //region Start Location Y
-    float startLocationY = -1;
+    double startLocationY = -1;
 
     /**
      * Returns the start location y as a percentage of the depth of the field
      */
+    @Exclude
     @Bindable
-    public float getStartLocationY()
+    public double getStartLocationY()
     {
         return startLocationY;
     }
@@ -505,6 +539,7 @@ public class TeamMatchData extends DataModel
     /**
      * Sets the start location y as a percentage of the depth of the field
      */
+    @Exclude
     public void setStartLocationY(float startLocationY)
     {
         this.startLocationY = startLocationY;
@@ -515,12 +550,14 @@ public class TeamMatchData extends DataModel
     //region Cube Events
     ArrayList<CubeEvent> autoCubeEvents = new ArrayList<>();
 
+    @Exclude
     @Bindable
     public ArrayList<CubeEvent> getAutoCubeEvents()
     {
         return autoCubeEvents;
     }
 
+    @Exclude
     public void setAutoCubeEvents(ArrayList<CubeEvent> autoCubeEvents)
     {
         this.autoCubeEvents = autoCubeEvents;
@@ -533,12 +570,14 @@ public class TeamMatchData extends DataModel
     //region Cube Events
     ArrayList<CubeEvent> teleopCubeEvents = new ArrayList<>();
 
+    @Exclude
     @Bindable
     public ArrayList<CubeEvent> getTeleopCubeEvents()
     {
         return teleopCubeEvents;
     }
 
+    @Exclude
     public void setTeleopCubeEvents(ArrayList<CubeEvent> teleopCubeEvents)
     {
         this.teleopCubeEvents = teleopCubeEvents;
@@ -551,12 +590,14 @@ public class TeamMatchData extends DataModel
     //region Climb Time
     long climbTime;
 
+    @Exclude
     @Bindable
     public long getClimbTime()
     {
         return climbTime;
     }
 
+    @Exclude
     public void setClimbTime(long climbTime)
     {
         this.climbTime = climbTime;
@@ -564,12 +605,13 @@ public class TeamMatchData extends DataModel
     }
     //endregion
     //region Climb Status
-    String climbStatus;
+    String climbStatus = "";
 
     /**
      * Returns the status of the climb (whether or not
      * it was successful and if not then why)
      */
+    @Exclude
     @Bindable
     public String getClimbStatus()
     {
@@ -580,6 +622,7 @@ public class TeamMatchData extends DataModel
      * Set the status of the climb (whether or not
      * it was successful and if not then why)
      */
+    @Exclude
     public void setClimbStatus(String climbStatus)
     {
         this.climbStatus = climbStatus;
@@ -588,12 +631,13 @@ public class TeamMatchData extends DataModel
 
     //endregion
     //region Climb Method
-    String climbMethod;
+    String climbMethod = "";
 
     /**
      * Returns the method of the climb upon a
      * successful climb
      */
+    @Exclude
     @Bindable
     public String getClimbMethod()
     {
@@ -604,6 +648,7 @@ public class TeamMatchData extends DataModel
      * Set the method of the climb upon a
      * successful climb
      */
+    @Exclude
     public void setClimbMethod(String climbMethod)
     {
         this.climbMethod = climbMethod;
@@ -618,24 +663,14 @@ public class TeamMatchData extends DataModel
     {
         this.teamNumber = teamNumber;
         this.matchNumber = matchNumber;
-        load();
+        mDirty = false;
     }
+
+    public TeamMatchData()
+    {}
     //endregion
 
-    //region Database
-    public void save()
-    {
-        super.save(String.format("tmd_%d_%d", teamNumber, matchNumber));
-    }
-
-    public void load()
-    {
-        super.load(String.format("tmd_%d_%d", teamNumber, matchNumber),
-                   Arrays.asList("teamNumber", "matchNumber"));
-
-    }
-    //endregion
-
+    @Exclude
     public String error()
     {
         if(scoutName.isEmpty())

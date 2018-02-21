@@ -25,16 +25,26 @@ import frc3824.rscout2018.database.data_models.TeamLogistics;
  */
 public class TeamStatsScheduleFragment extends Fragment
 {
-    @Arg
     int mTeamNumber;
+    TeamLogistics mTeamLogistics;
+
+    public void setTeamNumber(int teamNumber)
+    {
+        mTeamNumber = teamNumber;
+        mTeamLogistics = Database.getInstance().getTeamLogistics(teamNumber);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_team_stats_schedule, container);
+        View view = inflater.inflate(R.layout.fragment_team_stats_schedule, null);
 
-        TeamLogistics team = new TeamLogistics(mTeamNumber);
-        ((ListView)view.findViewById(R.id.list_view)).setAdapter(new ScheduleListAdapter(getContext(), team.getMatchNumbers()));
+        if(mTeamLogistics != null)
+        {
+            ((ListView) view.findViewById(R.id.list_view)).setAdapter(new ScheduleListAdapter(
+                    getContext(),
+                    mTeamLogistics.getMatchNumbers()));
+        }
 
         return view;
     }
@@ -57,7 +67,7 @@ public class TeamStatsScheduleFragment extends Fragment
                 convertView = inflater.inflate(R.layout.list_item_schedule, null);
             }
 
-            MatchLogistics match = new MatchLogistics(getItem(position));
+            MatchLogistics match = Database.getInstance().getMatchLogistics(getItem(position));
 
             if(match != null)
             {

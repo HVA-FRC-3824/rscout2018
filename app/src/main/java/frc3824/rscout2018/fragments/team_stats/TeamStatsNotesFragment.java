@@ -15,13 +15,17 @@ import frc3824.rscout2018.R;
  */
 public class TeamStatsNotesFragment extends Fragment
 {
-    @Arg
     int mTeamNumber;
+
+    public void setTeamNumber(int teamNumber)
+    {
+        mTeamNumber = teamNumber;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_team_stats_notes, container);
+        View view = inflater.inflate(R.layout.fragment_team_stats_notes, null);
 
         return view;
     }

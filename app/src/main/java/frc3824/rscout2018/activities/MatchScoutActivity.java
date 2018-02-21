@@ -1,6 +1,5 @@
 package frc3824.rscout2018.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -9,19 +8,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.View;
 
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
-import com.sdsmdg.tastytoast.TastyToast;
 
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
@@ -46,7 +40,7 @@ import frc3824.rscout2018.views.ScoutHeaderInterface;
  * @brief The page for scouting an individual team in a single match
  */
 @MakeActivityStarter
-public class MatchScoutActivity extends Activity
+public class MatchScoutActivity extends RScoutActivity
 {
     private final static String TAG = "MatchScoutActivity";
 
@@ -226,7 +220,7 @@ public class MatchScoutActivity extends Activity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    mTMD.save();
+                                    Database.getInstance().updateTeamMatchData(mTMD);
 
                                     Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
                                     intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, mTMD.toString());
@@ -267,7 +261,7 @@ public class MatchScoutActivity extends Activity
         {
             if(!mPractice && mTMD.isDirty()) // Don't need to worry about saving for practice or if there is nothing new
             {
-                mTMD.save();
+                Database.getInstance().updateTeamMatchData(mTMD);
                 Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
                 intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, mTMD.toString());
                 startService(intent);

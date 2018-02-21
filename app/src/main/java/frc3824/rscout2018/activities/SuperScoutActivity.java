@@ -1,6 +1,5 @@
 package frc3824.rscout2018.activities;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
@@ -23,7 +22,7 @@ import frc3824.rscout2018.views.ScoutHeader;
 import frc3824.rscout2018.views.ScoutHeaderInterface;
 
 
-public class SuperScoutActivity extends Activity
+public class SuperScoutActivity extends RScoutActivity
 {
     @Arg
     protected int mMatchNumber = -1;

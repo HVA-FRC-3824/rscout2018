@@ -31,7 +31,7 @@ public class SuperMatchData extends DataModel
     }
     //endregion
     //region Scout Name
-    String scoutName;
+    String scoutName = "";
 
     /**
      * Getter function for scout name
@@ -169,7 +169,7 @@ public class SuperMatchData extends DataModel
     }
     //endregion
     //region Blue
-    int boostBlue ;
+    int boostBlue;
 
     /**
      * Returns the number of cubes that were placed in the boost column by the blue alliance
@@ -194,7 +194,7 @@ public class SuperMatchData extends DataModel
 
     //region Misc
     //region Notes
-    String notes;
+    String notes = "";
 
     /**
      * Returns the notes taken by the super scout for this match
@@ -215,22 +215,16 @@ public class SuperMatchData extends DataModel
     //endregion
     //endregion
 
+    //region Constructors
+
     public SuperMatchData(int matchNumber)
     {
         this.matchNumber = matchNumber;
-        load();
+        mDirty = false;
     }
 
-    //region Database
-    public void save()
-    {
-        super.save(String.format("smd_%d", matchNumber));
-    }
-
-    public void load()
-    {
-        super.load(String.format("smd_%d", matchNumber), Arrays.asList("matchNumber"));
-
-    }
+    public SuperMatchData()
+    {}
+    //endregion
     //endregion
 }

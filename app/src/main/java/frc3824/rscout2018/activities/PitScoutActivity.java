@@ -1,6 +1,5 @@
 package frc3824.rscout2018.activities;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.SharedPreferences;
@@ -33,7 +32,7 @@ import frc3824.rscout2018.views.ScoutHeaderInterface;
  * @brief The page for scouting an individual team
  */
 @MakeActivityStarter
-public class PitScoutActivity extends Activity
+public class PitScoutActivity extends RScoutActivity
 {
     private final static String TAG = "MatchScoutActivity";
 
@@ -213,7 +212,7 @@ public class PitScoutActivity extends Activity
         {
             if (!mPractice && mTPD.isDirty())
             {
-                mTPD.save();
+                Database.getInstance().updateTeamPitData(mTPD);
             }
         }
     }

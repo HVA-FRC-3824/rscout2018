@@ -27,6 +27,7 @@ public interface Constants
         String SERVER_IP = "server_ip";
         String SERVER_PORT = "server_port";
 
+        String ENABLE_ADMIN = "enable_admin";
 
         String EVENT_KEY = "event_key";
 
@@ -63,8 +64,9 @@ public interface Constants
         String SCOUTER = "scouter";
 
         String IP_MODIFIED = "ip_modified";
-        String LOAD_DATA = "load_data";
-        String PULL_MATCHES = "pull_matches";
+        String DOWNLOAD_FULL_UPDATE = "load_data";
+        String DOWNLOAD_SCHEDULE = "pull_matches";
+        String DOWNLOAD_PIT_DATA = "download_pit_data";
         String PING = "ping";
     }
 

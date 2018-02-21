@@ -72,6 +72,14 @@
             android:title = "Port" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title = "Admin">
+        <SwitchPreference
+            android:defaultValue = "false"
+            android:key = "enable_admin"
+            android:summary = "Whether this tablet is being used to by an admin"
+            android:title = "Enable" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title = "Event">
         <EditTextPreference
             android:key = "event_key"

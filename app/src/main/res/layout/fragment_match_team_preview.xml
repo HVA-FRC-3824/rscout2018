@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
-
+<!--
     <data>
 
         <variable
             name="tcd"
             type="frc3824.rscout2018.database.data_models.TeamCalculatedData"/>
     </data>
-
+-->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
@@ -16,7 +16,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{tcd.teamNumber}"
             android:textAlignment="center"
             android:textColor="@color/Black"
             android:textSize="20sp"/>

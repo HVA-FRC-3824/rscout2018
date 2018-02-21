@@ -1,8 +1,8 @@
 package frc3824.rscout2018.activities;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -11,6 +11,7 @@ import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 
+import activitystarter.ActivityStarter;
 import activitystarter.Arg;
 import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
@@ -28,7 +29,7 @@ import frc3824.rscout2018.views.ScoutHeaderInterface;
  *
  */
 @MakeActivityStarter
-public class TeamStatsActivity extends Activity
+public class TeamStatsActivity extends RScoutActivity
 {
     @Arg
     protected int mTeamNumber;
@@ -38,9 +39,11 @@ public class TeamStatsActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scout);
+        ActivityStarter.fill(this);
 
         ScoutHeader header = findViewById(R.id.header);
         header.setInterface(new TeamStatsActivity.TeamStatsHeader());
+        header.setTitle(String.format("Team: %d", mTeamNumber));
         header.removeSave();
 
         // If first team then remove the previous button
@@ -67,6 +70,7 @@ public class TeamStatsActivity extends Activity
         viewPager.setOffscreenPageLimit(mFPA.getCount());
 
         SmartTabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setBackgroundColor(Color.BLUE);
         tabLayout.setViewPager(viewPager);
     }
 
@@ -135,23 +139,29 @@ public class TeamStatsActivity extends Activity
             {
                 case 0:
                     TeamStatsChartsFragment tscf = new TeamStatsChartsFragment();
+                    tscf.setTeamNumber(mTeamNumber);
                     return tscf;
                 case 1:
                     TeamStatsMatchDataFragment tsmdf = new TeamStatsMatchDataFragment();
+                    tsmdf.setTeamNumber(mTeamNumber);
                     return tsmdf;
                 case 2:
                     TeamStatsPitDataFragment tspdf = new TeamStatsPitDataFragment();
+                    tspdf.setTeamNumber(mTeamNumber);
                     return tspdf;
                 case 3:
                     TeamStatsNotesFragment tsnf = new TeamStatsNotesFragment();
+                    tsnf.setTeamNumber(mTeamNumber);
                     return tsnf;
                 case 4:
                     TeamStatsScheduleFragment tssf = new TeamStatsScheduleFragment();
+                    tssf.setTeamNumber(mTeamNumber);
                     return tssf;
                 default:
                     assert(false);
             }
             return null;
+
         }
 
         /**

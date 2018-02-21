@@ -1,6 +1,5 @@
 package frc3824.rscout2018.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import activitystarter.ActivityStarter;
@@ -9,7 +8,7 @@ import frc3824.rscout2018.R;
 
 
 @MakeActivityStarter
-public class EventChartsActivity extends Activity
+public class EventChartsActivity extends RScoutActivity
 {
     @Override
     protected void onCreate(Bundle savedInstanceState)

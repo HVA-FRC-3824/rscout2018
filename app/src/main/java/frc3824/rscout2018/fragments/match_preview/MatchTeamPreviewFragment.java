@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.database.data_models.TeamCalculatedData;
 import frc3824.rscout2018.utilities.Utilities;
 
 /**
@@ -22,17 +21,19 @@ public class MatchTeamPreviewFragment extends Fragment
 {
     @Arg
     boolean mRed;
-    TeamCalculatedData mTeam;
+    //TeamCalculatedData mTeam;
     //FragmentMatchTeamPreview mBinding;
 
     /**
      * Sets the team data for the match preview
      * @param team The team data
      */
+    /*
     public void setData(TeamCalculatedData team)
     {
         mTeam = team;
     }
+    */
 
     /**
      * {@inheritDoc}

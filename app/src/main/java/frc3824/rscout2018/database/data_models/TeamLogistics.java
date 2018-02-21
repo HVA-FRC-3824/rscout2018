@@ -1,31 +1,26 @@
 package frc3824.rscout2018.database.data_models;
 
-import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
-import com.android.databinding.library.baseAdapters.BR;
-import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.Document;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
-import frc3824.rscout2018.database.Database;
-
-
+@IgnoreExtraProperties
 public class TeamLogistics extends DataModel
 {
     //region Team Number
     int teamNumber;
 
+    @Exclude
     public int getTeamNumber()
     {
         return teamNumber;
     }
 
+    @Exclude
     public void setTeamNumber(int teamNumber)
     {
         this.teamNumber = teamNumber;
@@ -34,11 +29,12 @@ public class TeamLogistics extends DataModel
     //endregion
 
     //region Nickname
-    String nickname;
+    String nickname = "";
 
     /**
      * Getter function for {@link TeamLogistics#nickname}
      */
+    @Exclude
     @Bindable
     public String getNickname()
     {
@@ -49,6 +45,7 @@ public class TeamLogistics extends DataModel
      * Setter function for {@link TeamLogistics@nickname}
      * @param
      */
+    @Exclude
     public void setNickname(String nickname)
     {
         this.nickname = nickname;
@@ -57,11 +54,12 @@ public class TeamLogistics extends DataModel
     //endregion
 
     //region Match Numbers
-    ArrayList<Integer> matchNumbers;
+    ArrayList<Integer> matchNumbers = new ArrayList<>();
 
     /**
      * Getter for the numbers of the matches a specific team is in
      */
+    @Exclude
     @Bindable
     public ArrayList<Integer> getMatchNumbers()
     {
@@ -71,6 +69,7 @@ public class TeamLogistics extends DataModel
     /**
      * Setter for the numbers of the matches a specific team is in
      */
+    @Exclude
     public void setMatchNumbers(ArrayList<Integer> matchNumbers)
     {
         assert(matchNumbers.size() == 6);
@@ -83,19 +82,10 @@ public class TeamLogistics extends DataModel
     public TeamLogistics(int teamNumber)
     {
         this.teamNumber = teamNumber;
-        load();
-    }
-    //endregion
-
-    //region Database
-    public void save()
-    {
-        super.save(String.format("tl_%d", teamNumber));
+        mDirty = false;
     }
 
-    public void load()
-    {
-        super.load(String.format("tl_%d", teamNumber), Arrays.asList("teamNumber"));
-    }
+    public TeamLogistics()
+    {}
     //endregion
 }

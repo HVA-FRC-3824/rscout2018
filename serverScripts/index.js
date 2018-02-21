@@ -43,7 +43,7 @@ var logger = new (winston.Logger)({
     debug: 4,
     trace: 5
   },
-  
+
   //Set file to write to
   transports: [
     new (winston.transports.Console)({
@@ -72,7 +72,7 @@ logger.log = function (level, msg) {
 }
 
 logger.info('Started Server');
- 
+
 module.exports = logger
 //}
 
@@ -171,78 +171,78 @@ app.post('/setServerEventKey', function(req, res){
 //Pulls out everything in the database and returns it
 app.get('/getFullDB', function (req, res) {
 	logger.info('Recieved getFullDB request');
-	
+
 	//Create blank object
 	var fullDB = {matchData:'', matchSchedule:'', pitData:'', teamStats:'', supermatchdata:''};
-	
+
 	//SQL statements are nested to ensure they all happen in order
-	
+
 	//Pull match data table
 	var sql = "SELECT * FROM " + serverEventKey + "matchdata";
 	con.query(sql, function (err, result) {
-		
+
 		if (err) {
 			logger.fatal(err);
 			throw err;
 		};
-		
+
 		//JSON encode and add to object
 		JSONresult = JSON.stringify(result);
 		fullDB.matchData = JSONresult;
-		
+
 		//Pull match schedule table
 		var sql = "SELECT * FROM " + serverEventKey + "matchschedule";
 		con.query(sql, function (err, result) {
-			
+
 			if (err) {
 				logger.fatal(err);
 				throw err;
-			
+
 			};
-			
+
 			//JSON encode and add to object
 			JSONresult = JSON.stringify(result);
 			fullDB.matchSchedule = JSONresult;
-			
+
 			//Pull pit data table
 			var sql = "SELECT * FROM " + serverEventKey + "pitdata";
 			con.query(sql, function (err, result) {
-				
+
 				if (err) {
 					logger.fatal(err);
 					throw err;
 				};
-				
+
 				//JSON encode result and add to object
 				JSONresult = JSON.stringify(result);
 				fullDB.pitdata = JSONresult;
-				
+
 				//Pull team stats table
 				var sql = "SELECT * FROM " + serverEventKey + "teamstats";
 				con.query(sql, function (err, result) {
-					
+
 					if (err) {
 						logger.fatal(err);
 						throw err;
 					};
-					
+
 					//JSON encode and add to object
 					JSONresult = JSON.stringify(result);
 					fullDB.teamstats = JSONresult;
-					
+
 					//Pull super match data table
 					var sql = "SELECT * FROM " + serverEventKey + "supermatchdata";
 					con.query(sql, function (err, result) {
-						
+
 						if (err) {
 							logger.fatal(err);
 							throw err;
 						};
-						
+
 						//JSON encode and add to object
 						JSONresult = JSON.stringify(result);
 						fullDB.supermatchdata = JSONresult;
-						
+
 						//Send completed object
 						res.send(fullDB);
 						logger.info('Sent full database');
@@ -353,19 +353,19 @@ function mysql_real_escape_string (str) {
 
 //Insert Match Data
 function addMatchData(res, eventKey, teamNumber, matchKey, autoCrossed, autoEvents, teleopEvents, climbingState, climbingMethod, fouls, techFouls, yellowCard, redCard, notes) {
-	
+
 	//Check if the event has been created
 	var alreadyExists = false;
-	
+
 	//Pull names of all tables in DB
 	var sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='rscout'";
 	con.query(sql, function (err, result) {
-		
+
 		if (err) {
 			logger.fatal(err);
 			throw err;
 		};
-		
+
 		//Run through the results and determine if the event has been added to the DB
 		for (var i = 0; i < result.length; i++) {
 			console.log("Checking Table")
@@ -373,13 +373,13 @@ function addMatchData(res, eventKey, teamNumber, matchKey, autoCrossed, autoEven
 				alreadyExists = true;
 			}
 		}
-		
+
 		//If event has not been created, log to console. Otherwise, add stuff to DB
 		if (!alreadyExists) {
 			logger.crit("Error! Event has not been created");
 			console.log("Error! Event has not been created");
 		} else {
-			
+
 			//Insert match data
 			//{
 			var sql = "INSERT INTO " + eventKey + "matchdata (teamNumber, matchKey, autoEvents, teleopEvents, climbingState, climbingMethod, fouls, techFouls, yellowCard, redCard, notes) VALUES ('" + teamNumber + "', '" + matchKey + "', '" + autoCrossed + "','" + autoEvents + "','" + teleopEvents + "','" + climbingState + "','" + climbingMethod + "','" + fouls + "','" + techFouls + "','" + yellowCard + "','" + redCard + "','" + mysql_real_escape_string(notes) + "')";
@@ -391,39 +391,39 @@ function addMatchData(res, eventKey, teamNumber, matchKey, autoCrossed, autoEven
 				console.log("1 match data record inserted");
 			});
 			//}
-			
+
 			//Update total and average stats
 			//{
 			var sql = "SELECT * FROM " + eventKey + "teamstats WHERE teamNumber = '" + teamNumber + "'";
 			con.query(sql, function (err, result1) {
 				if (err) throw err;
-				
+
 				var newNumMatches = result1[0].matchesPlayed + 1;
-				
+
 				if (newNumMatches < 1) {
 					logger.crit("Tried to divide by zero when updating averages");
-				} else {	
-			
+				} else {
+
 				if (yellowCard) {
 					var yellowCards = 1;
 				} else {
 					var yellowCards = 0;
 				}
-				
+
 				if (redCard) {
 					var redCards = 1;
 				} else {
 					var redCards = 0;
 				}
-				
+
 				var newAutoCrossedTotal = (result1[0].autoCrossedTotal + autoCrossed);
 				var newFoulTotal = (result1[0].foulTotal + fouls);
 				var newTechFoulTotal = (result1[0].techFoulTotal + techFouls);
 				var newYellowCardTotal = (result1[0].yellowCardTotal + yellowCards);
 				var newRedCardTotal = (result1[0].redCardTotal + redCards);
-				
+
 				var climbStateObject = JSON.parse(result1[0].climbingStateTotals);
-				
+
 				console.log(climbingState);
 				switch (climbingState) {
 					case "No climb attempt":
@@ -444,7 +444,7 @@ function addMatchData(res, eventKey, teamNumber, matchKey, autoCrossed, autoEven
 					default:
 						break;
 				}
-				
+
 				var climbMethodObject = JSON.parse(result1[0].climbingMethodTotals);
 				switch (climbingMethod) {
 					case "Climbed on rung, not supporting another robot":
@@ -477,13 +477,13 @@ function addMatchData(res, eventKey, teamNumber, matchKey, autoCrossed, autoEven
 					default:
 						break;
 				}
-				
+
 				var autoEventsArray = JSON.parse(autoEvents);
 				var teleopEventsArray = JSON.parse(teleopEvents);
-				
+
 				var autoEventTotalObject = JSON.parse(result1[0].autoCubeTotals);
 				var teleopEventTotalObject = JSON.parse(result1[0].autoCubeTotals);
-				
+
 				for (var i = 0; i < autoEventsArray; i++) {
 					switch (autoEventsArray[i].name) {
 						case "Placed":
@@ -506,7 +506,7 @@ function addMatchData(res, eventKey, teamNumber, matchKey, autoCrossed, autoEven
 							break;
 					}
 				}
-				
+
 				for (var i = 0; i < teleopEventsArray; i++) {
 					switch (teleopEventsArray[i].name) {
 						case "Placed":
@@ -529,22 +529,22 @@ function addMatchData(res, eventKey, teamNumber, matchKey, autoCrossed, autoEven
 							break;
 					}
 				}
-				
+
 				var autoEventAverageObject = JSON.parse(result1[0].autoCubeAverages);
 				var teleopEventAverageObject = JSON.parse(result1[0].teleopCubeAverages);
-				
+
 				autoEventAverageObject.placed = autoEventTotalObject.placed / newNumMatches;
 				autoEventAverageObject.dropped = autoEventTotalObject.dropped / newNumMatches;
 				autoEventAverageObject.launchSuccess = autoEventTotalObject.launchSuccess / newNumMatches;
 				autoEventAverageObject.launchFailure = autoEventTotalObject.launchFailure / newNumMatches;
 				autoEventAverageObject.pickedUp = autoEventTotalObject.pickedUp / newNumMatches;
-				
+
 				teleopEventAverageObject.placed = teleopEventTotalObject.placed / newNumMatches;
 				teleopEventAverageObject.dropped = teleopEventTotalObject.dropped / newNumMatches;
 				teleopEventAverageObject.launchSuccess = teleopEventTotalObject.launchSuccess / newNumMatches;
 				teleopEventAverageObject.launchFailure = teleopEventTotalObject.launchFailure / newNumMatches;
 				teleopEventAverageObject.pickedUp = teleopEventTotalObject.pickedUp / newNumMatches;
-				
+
 				// Update with new stats
 				var sql = "UPDATE " + eventKey + "teamstats SET matchesPlayed = '" + newNumMatches + "', autoCrossedTotal = '" + newAutoCrossedTotal + "', autoCrossedAverage = '" + (newAutoCrossedTotal/newNumMatches) + "', autoEventTotals = '" + autoEventTotalObject + "', autoEventAverages = '" + autoEventAverageObject + "', teleopEventTotals = '" + teleopEventTotalObject + "', climbingStateTotals = '" + JSON.stringify(climbStateObject) + "', climbingMethodTotals = '" + JSON.stringify(climbMethodObject) + "', foulTotal = '" + newFoulTotal + "', foulAverage = '" + ( newFoulTotal/newNumMatches) + "', techFoulTotal = '" + newTechFoulTotal + "', techFoulAverage = '" + (newTechFoulTotal/newNumMatches) + "', yellowCardTotal = '" + newYellowCardTotal + "', yellowCardAverage = '" + ( newYellowCardTotal/newNumMatches) + "', redCardTotal = '" + newRedCardTotal + "', redCardAverage = '" + ( newRedCardTotal/newNumMatches) + "' WHERE teamNumber = '" + teamNumber + "';";
 				con.query(sql, function (err, result) {
@@ -552,7 +552,7 @@ function addMatchData(res, eventKey, teamNumber, matchKey, autoCrossed, autoEven
 					console.log("1 team record updated");
 					res.send("1 match added");
 				});
-				
+
 				}
 			});
 			//}
@@ -574,7 +574,7 @@ function addSuperMatchData(eventKey, matchKey, boostCubes, forceCubes, levitateC
 			if (result[i].TABLE_NAME.includes(eventKey)) {
 				alreadyExists = true;
 			}
-		}	
+		}
 		if (!alreadyExists) {
 		console.log("Error! Event has not been created");
 		} else {
@@ -604,7 +604,7 @@ function addPitData(eventKey, teamNumber, width, length, height, weight, driveTr
 			if (result[i].TABLE_NAME.includes(eventKey)) {
 				alreadyExists = true;
 			}
-		}	
+		}
 		if (!alreadyExists) {
 		console.log("Error! Event has not been created");
 		} else {
@@ -630,7 +630,7 @@ var server = http.listen(3824, function(err){
 		console.log('rScout started. Listening on *:3824');
 	}
 });
-	
+
 //Ensures that an event is not created twice to avoid non-unique table names
 //Create empty tables for event
 function addEvent(eventKey) {

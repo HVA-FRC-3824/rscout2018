@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 
 import activitystarter.ActivityStarter;
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.database.data_models.TeamCalculatedData;
 import frc3824.rscout2018.utilities.Utilities;
 
 /**
@@ -19,9 +18,10 @@ import frc3824.rscout2018.utilities.Utilities;
 public class MatchAlliancePreviewFragment extends Fragment
 {
     boolean mRed;
-    TeamCalculatedData[] mTeams;
+    //TeamCalculatedData[] mTeams;
     //AllianceCalculatedData mAlliance = null;
 
+    /*
     public void setData(TeamCalculatedData team1, TeamCalculatedData team2, TeamCalculatedData team3)
     {
         mTeams = new TeamCalculatedData[3];
@@ -30,6 +30,7 @@ public class MatchAlliancePreviewFragment extends Fragment
         mTeams[2] = team3;
         //mAlliance = new AllianceCalculatedData(mTeams);
     }
+    */
 
     /**
      * {@inheritDoc}

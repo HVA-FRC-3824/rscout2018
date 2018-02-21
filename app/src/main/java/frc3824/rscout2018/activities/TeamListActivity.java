@@ -1,11 +1,14 @@
 package frc3824.rscout2018.activities;
 
+import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,7 +28,7 @@ import frc3824.rscout2018.utilities.Constants;
  *        based on the intent extra {@link TeamListActivity#nextPage} passed to it.
  */
 @MakeActivityStarter
-public class TeamListActivity extends ListActivity implements View.OnClickListener
+public class TeamListActivity extends Activity implements View.OnClickListener
 {
     @Arg
     String nextPage;
@@ -39,10 +42,17 @@ public class TeamListActivity extends ListActivity implements View.OnClickListen
         setContentView(R.layout.activity_list);
         ActivityStarter.fill(this);
 
-        findViewById(R.id.practice).setOnClickListener(this);
+        if(nextPage.equals(Constants.IntentExtras.NextPageOptions.PIT_SCOUTING))
+        {
+            findViewById(R.id.practice).setOnClickListener(this);
+        }
+        else
+        {
+            findViewById(R.id.practice).setVisibility(View.GONE);
+        }
 
-        ListView listView = findViewById(android.R.id.list);
-        listView.setAdapter(new TeamListAdapter());
+        ListView listView = findViewById(R.id.list);
+        listView.setAdapter(new TeamListAdapter(this));
     }
 
     @Override
@@ -55,84 +65,17 @@ public class TeamListActivity extends ListActivity implements View.OnClickListen
      * @class TeamListAdapter
      * @brief The {@link ListAdapter} for showing the list of teams
      */
-    private class TeamListAdapter implements ListAdapter, View.OnClickListener
+    private class TeamListAdapter extends ArrayAdapter<Integer> implements View.OnClickListener
     {
         LayoutInflater mLayoutInflator;
-        ArrayList<Integer> mTeamNumbers;
 
         /**
          * Constructor
          */
-        TeamListAdapter()
+        TeamListAdapter(Context context)
         {
+            super(context, R.layout.list_item_fbutton, Database.getInstance().getTeamNumbers());
             mLayoutInflator = getLayoutInflater();
-            mTeamNumbers = Database.getInstance().getTeamNumbers();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean areAllItemsEnabled()
-        {
-            return true;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean isEnabled(int i)
-        {
-            return true;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void registerDataSetObserver(DataSetObserver dataSetObserver) {}
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {}
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getCount()
-        {
-            return mTeamNumbers.size();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Object getItem(int i)
-        {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public long getItemId(int i)
-        {
-            return i;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean hasStableIds()
-        {
-            return true;
         }
 
         /**
@@ -146,43 +89,14 @@ public class TeamListActivity extends ListActivity implements View.OnClickListen
                 view = mLayoutInflator.inflate(R.layout.list_item_fbutton, null);
             }
 
-
-            int teamNumber = mTeamNumbers.get(i);
-
+            int teamNumber = getItem(i);
 
             ((TextView)view).setText(String.format("Team: %d", teamNumber));
 
             view.setId(teamNumber);
             view.setOnClickListener(this);
 
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getItemViewType(int i)
-        {
-            return 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int getViewTypeCount()
-        {
-            return 1;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean isEmpty()
-        {
-            return mTeamNumbers.isEmpty();
+            return view;
         }
 
         /**
@@ -194,10 +108,10 @@ public class TeamListActivity extends ListActivity implements View.OnClickListen
             switch (nextPage)
             {
                 case Constants.IntentExtras.NextPageOptions.PIT_SCOUTING:
-                    // PitScoutActivityStarter.start(view.getId());
+                    PitScoutActivityStarter.start(TeamListActivity.this, view.getId());
                     break;
                 case Constants.IntentExtras.NextPageOptions.TEAM_STATS:
-                    // TeamViewActivityStarter.start(view.getId());
+                    TeamStatsActivityStarter.start(TeamListActivity.this, view.getId());
                     break;
                 default:
                     assert(false);
