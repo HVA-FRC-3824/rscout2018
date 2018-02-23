@@ -1,6 +1,7 @@
 package frc3824.rscout2018.fragments.team_stats;
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,26 +12,26 @@ import java.util.ArrayList;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.DataModelOnUpdate;
 import frc3824.rscout2018.database.data_models.Team;
-import frc3824.rscout2018.views.powered_up.StartLocationViewInner;
+import frc3824.rscout2018.views.powered_up.CubesView;
+import frc3824.rscout2018.views.powered_up.StartLocationView;
+import frc3824.rscout2018.views.powered_up.StartView;
 
 /**
  * A fragment for displaying chart showing the performance of a team
  */
-public class TeamStatsChartsFragment extends Fragment implements DataModelOnUpdate
+public class TeamStatsChartsFragment extends Fragment
 {
-    int mTeamNumber;
+    int mTeamNumber = -1;
 
-    Team mTeam = null;
-
-    StartLocationViewInner mStartLocationViewInner = null;
+    StartView mStartView = null;
+    CubesView mCubesView = null;
 
     public void setTeamNumber(int teamNumber)
     {
         mTeamNumber = teamNumber;
-        mTeam = new Team(mTeamNumber);
-        if(mStartLocationViewInner != null)
+        if(mStartView != null)
         {
-            update();
+            new UpdateTask().execute();
         }
     }
 
@@ -39,19 +40,31 @@ public class TeamStatsChartsFragment extends Fragment implements DataModelOnUpda
     {
         View view = inflater.inflate(R.layout.fragment_team_stats_charts, null);
 
-        mStartLocationViewInner = view.findViewById(R.id.start_location_heatmap);
+        mStartView = view.findViewById(R.id.start);
+        mCubesView = view.findViewById(R.id.cubes);
 
-        if(mTeam != null)
+        if(mTeamNumber != -1)
         {
-            update();
+            new UpdateTask().execute();
         }
 
         return view;
     }
 
-    public void update()
+    private class UpdateTask extends AsyncTask
     {
-        mStartLocationViewInner.setData(new ArrayList<>(mTeam.getMatches().values()));
-    }
 
+        @Override
+        protected Object doInBackground(Object[] objects)
+        {
+            if(mStartView != null && mTeamNumber != -1)
+            {
+                Team team = new Team(mTeamNumber);
+                mStartView.setTeam(team);
+                mCubesView.setTeam(team);
+            }
+
+            return null;
+        }
+    }
 }

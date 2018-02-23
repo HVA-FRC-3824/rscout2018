@@ -19,6 +19,7 @@ import java.util.Set;
 
 import frc3824.rscout2018.buses.ToastBus;
 import frc3824.rscout2018.buses.ToastRequest;
+import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.DataModel;
 import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.database.data_models.SuperMatchData;
@@ -350,7 +351,7 @@ public class CommunicationService extends IntentService
                 ArrayList<MatchLogistics> matches = mGson.fromJson(body.toString(), new TypeToken<List<MatchLogistics>>(){}.getType());
                 for(MatchLogistics match : matches)
                 {
-                    //match.save();
+                    Database.getInstance().updateMatchLogistics(match);
                 }
             }
             else

@@ -1,5 +1,7 @@
 package frc3824.rscout2018.utilities;
 
+import android.graphics.Color;
+
 /**
  * @author frc3824
  */
@@ -171,6 +173,35 @@ public interface Constants
     interface TeamStats
     {
         String[] TABS = {"Charts", "Match Data", "Pit Data", "Notes", "Schedule"};
+
+        interface Cubes
+        {
+            double SHORT_DISTANCE = 0.3;
+            double MEDIUM_DISTANCE = 0.7;
+        }
+
+        interface Climb
+        {
+            int[] STATUS_COLORS = new int[]{
+                    Color.BLACK,
+                    Color.BLUE,
+                    Color.YELLOW,
+                    Color.RED,
+                    Color.GREEN
+            };
+
+            int[] METHOD_COLORS = new int[]{
+                    Color.YELLOW,
+                    Color.GRAY,
+                    Color.BLUE,
+                    Color.GREEN,
+                    Color.RED,
+                    Color.BLACK,
+                    Color.CYAN,
+                    Color.WHITE,
+                    Color.MAGENTA
+            };
+        }
     }
 
     interface Notifications

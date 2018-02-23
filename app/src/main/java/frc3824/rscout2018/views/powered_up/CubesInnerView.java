@@ -4,59 +4,43 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
+import android.util.Pair;
 
 import java.util.ArrayList;
 
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.views.heatmap.HeatMap;
 import frc3824.rscout2018.views.heatmap.HeatMapMarkerCallback;
 
 /**
  * Created by frc3824
  */
-public class StartLocationViewInner extends HeatMap
+public class CubesInnerView extends HeatMap
 {
-
-    Bitmap mFieldBitmap;
+    Bitmap mFieldBitmap = null;
     Bitmap mBackgroundBitmap;
     Paint mCanvasPaint;
     int mScreenWidth;
     int mScreenHeight;
-    ArrayList<TeamMatchData> mTeamMatchData;
+    ArrayList<Pair<Float, Float>> mData;
 
-    public StartLocationViewInner(Context context, AttributeSet attrs)
+    public CubesInnerView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
-        mFieldBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.blue_top_down);
-        Matrix matrix = new Matrix();
-        matrix.postRotate(180);
-        mFieldBitmap = Bitmap.createBitmap(mFieldBitmap, 0, 0, mFieldBitmap.getWidth(), mFieldBitmap.getHeight(), matrix, true);
+        mFieldBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.field_top_down);
         setMinimum(0);
         setMaximum(100);
         setMarkerCallback(new HeatMapMarkerCallback.CircleHeatMapMarker(0xff9400D3));
+        mCanvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
-    public ArrayList<TeamMatchData> getData()
+    public void setData(ArrayList<Pair<Float, Float>> data)
     {
-        return mTeamMatchData;
-    }
-
-    public void setData(ArrayList<TeamMatchData> teamMatchData)
-    {
-        mTeamMatchData = teamMatchData;
-
-        clearData();
-
-        for(TeamMatchData tmd : mTeamMatchData)
-        {
-            addData(new HeatMap.DataPoint((float)tmd.getStartLocationX(), (float)tmd.getStartLocationY(), 100));
-        }
-        forceRefresh();
-        invalidate();
+        mData = data;
+        new CubesInnerView.UpdateTask().execute();
     }
 
     @Override
@@ -74,5 +58,34 @@ public class StartLocationViewInner extends HeatMap
     {
         canvas.drawBitmap(mBackgroundBitmap, 0, 0, mCanvasPaint);
         super.onDraw(canvas);
+    }
+
+    private class UpdateTask extends AsyncTask
+    {
+
+        @Override
+        protected Object doInBackground(Object[] objects)
+        {
+            if(mData != null)
+            {
+                clearData();
+
+                for (Pair<Float, Float> pair: mData)
+                {
+                    addData(new HeatMap.DataPoint(pair.first,
+                                                  pair.second,
+                                                  100));
+                }
+                publishProgress();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Object... objects)
+        {
+            forceRefresh();
+        }
+
     }
 }

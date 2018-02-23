@@ -22,6 +22,7 @@ import frc3824.rscout2018.buses.ToastBus;
 import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.TeamLogistics;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
+import frc3824.rscout2018.database.data_models.powered_up.CubeEvent;
 import frc3824.rscout2018.services.CommunicationService;
 import frc3824.rscout2018.utilities.Constants;
 
@@ -277,6 +278,59 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
             teamMatchData.setStartedWithCube(true);
             teamMatchData.setStartLocationX(0.05f);
             teamMatchData.setStartLocationY(0.5f);
+
+            ArrayList<CubeEvent> events = new ArrayList<>();
+            CubeEvent event = new CubeEvent();
+            event.setEvent(Constants.MatchScouting.CubeEvents.PICK_UP);
+            event.setLocationX(0.2f);
+            event.setLocationY(0.2f);
+            events.add(event);
+
+            event = new CubeEvent();
+            event.setEvent(Constants.MatchScouting.CubeEvents.PLACED);
+            event.setLocationX(0.2f);
+            event.setLocationY(0.8f);
+            events.add(event);
+
+            event = new CubeEvent();
+            event.setEvent(Constants.MatchScouting.CubeEvents.DROPPED);
+            event.setLocationX(0.8f);
+            event.setLocationY(0.2f);
+            events.add(event);
+
+            event = new CubeEvent();
+            event.setEvent(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS);
+            event.setLocationX(0.5f);
+            event.setLocationY(0.2f);
+            events.add(event);
+
+            event = new CubeEvent();
+            event.setEvent(Constants.MatchScouting.CubeEvents.LAUNCH_FAILURE);
+            event.setLocationX(0.5f);
+            event.setLocationY(0.8f);
+            events.add(event);
+
+            teamMatchData.setAutoCubeEvents(events);
+
+            events = new ArrayList<>();
+            event = new CubeEvent();
+            event.setEvent(Constants.MatchScouting.CubeEvents.PICK_UP);
+            event.setTime(0);
+            event.setLocationX(0.315f);
+            event.setLocationY(0.735f);
+            events.add(event);
+
+            event = new CubeEvent();
+            event.setEvent(Constants.MatchScouting.CubeEvents.PLACED);
+            event.setTime(5000);
+            event.setLocationX(0.5f);
+            event.setLocationY(0.8f);
+            events.add(event);
+
+            teamMatchData.setTeleopCubeEvents(events);
+
+            //teamMatchData.setClimbStatus(Constants.);
+
             Database.getInstance().updateTeamMatchData(teamMatchData);
 
             return null;

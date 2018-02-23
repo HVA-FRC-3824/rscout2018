@@ -1,5 +1,6 @@
 package frc3824.rscout2018.activities;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
@@ -29,7 +30,7 @@ import frc3824.rscout2018.utilities.Constants;
  *        based on the intent extra {@link MatchListActivity#mNextPage}passed to it.
  */
 @MakeActivityStarter
-public class MatchListActivity extends ListActivity implements View.OnClickListener
+public class MatchListActivity extends Activity implements View.OnClickListener
 {
     @Arg
     protected String mNextPage;
@@ -63,7 +64,7 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
         findViewById(R.id.practice).setOnClickListener(this);
 
         // Setup list of buttons for the individual matches
-        ListView listView = findViewById(android.R.id.list);
+        ListView listView = findViewById(R.id.list);
         listView.setAdapter(new MatchListAdapter());
     }
 

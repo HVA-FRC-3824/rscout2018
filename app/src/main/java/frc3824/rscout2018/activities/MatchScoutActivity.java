@@ -74,7 +74,7 @@ public class MatchScoutActivity extends RScoutActivity
         // Normal match
         if (mMatchNumber > 0)
         {
-            MatchLogistics m = new MatchLogistics(mMatchNumber);
+            MatchLogistics m = Database.getInstance().getMatchLogistics(mMatchNumber);
             mTeamNumber = m.getTeamNumber(position);
             header.setTitle(String.format("Match Number: %d Team Number: %d",
                                           mMatchNumber,
@@ -92,7 +92,7 @@ public class MatchScoutActivity extends RScoutActivity
                 header.removeNext();
             }
 
-            mTMD = new TeamMatchData(mTeamNumber, mMatchNumber);
+            mTMD = Database.getInstance().getTeamMatchData(mTeamNumber, mMatchNumber);
         }
         // Practice Match
         else
@@ -146,7 +146,44 @@ public class MatchScoutActivity extends RScoutActivity
             {
                 if (mTMD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MatchScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Save to local database
+                                    Database.getInstance().updateTeamMatchData(mTMD);
+
+                                    // Send to the background service to be sent to server
+                                    Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
+                                    intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, true);
+                                    intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
+                                    intent.putExtra(Constants.IntentExtras.TEAM_NUMBER, mTeamNumber);
+                                    startService(intent);
+
+                                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber - 1);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber - 1);
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else
                 {
@@ -168,7 +205,44 @@ public class MatchScoutActivity extends RScoutActivity
             {
                 if (mTMD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MatchScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Save to local database
+                                    Database.getInstance().updateTeamMatchData(mTMD);
+
+                                    // Send to the background service to be sent to server
+                                    Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
+                                    intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, true);
+                                    intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
+                                    intent.putExtra(Constants.IntentExtras.TEAM_NUMBER, mTeamNumber);
+                                    startService(intent);
+
+                                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber + 1);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber + 1);
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
@@ -190,7 +264,45 @@ public class MatchScoutActivity extends RScoutActivity
             {
                 if (mTMD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MatchScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            // Set action for clicking yes
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Save to local database
+                                    Database.getInstance().updateTeamMatchData(mTMD);
+
+                                    // Send to the background service to be sent to server
+                                    Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
+                                    intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, true);
+                                    intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
+                                    intent.putExtra(Constants.IntentExtras.TEAM_NUMBER, mTeamNumber);
+                                    startService(intent);
+
+                                    HomeActivityStarter.start(MatchScoutActivity.this);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    HomeActivityStarter.start(MatchScoutActivity.this);
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
@@ -220,10 +332,14 @@ public class MatchScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
+                                    // Save to local database
                                     Database.getInstance().updateTeamMatchData(mTMD);
 
+                                    // Send to the background service to be sent to server
                                     Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
-                                    intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, mTMD.toString());
+                                    intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, true);
+                                    intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
+                                    intent.putExtra(Constants.IntentExtras.TEAM_NUMBER, mTeamNumber);
                                     startService(intent);
 
                                     MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
@@ -261,9 +377,14 @@ public class MatchScoutActivity extends RScoutActivity
         {
             if(!mPractice && mTMD.isDirty()) // Don't need to worry about saving for practice or if there is nothing new
             {
+                // Save to local database
                 Database.getInstance().updateTeamMatchData(mTMD);
+
+                // Send to the background service to be sent to server
                 Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
-                intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, mTMD.toString());
+                intent.putExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING, true);
+                intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
+                intent.putExtra(Constants.IntentExtras.TEAM_NUMBER, mTeamNumber);
                 startService(intent);
             }
         }
