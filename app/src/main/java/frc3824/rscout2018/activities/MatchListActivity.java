@@ -292,10 +292,10 @@ public class MatchListActivity extends Activity implements View.OnClickListener
                     MatchScoutActivityStarter.start(MatchListActivity.this, view.getId());
                     break;
                 case Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING:
-                    // SuperScoutActivityStarter.start(view.getId());
+                    SuperScoutActivityStarter.start(MatchListActivity.this, view.getId());
                     break;
                 case Constants.IntentExtras.NextPageOptions.MATCH_PREVIEW:
-                    MatchPreviewActivityStarter.start(view.getId());
+                    MatchPreviewActivityStarter.start(MatchListActivity.this, view.getId());
                     break;
                 default:
                     assert (false);
