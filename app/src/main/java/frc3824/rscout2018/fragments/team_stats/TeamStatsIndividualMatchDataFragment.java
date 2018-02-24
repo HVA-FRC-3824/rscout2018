@@ -13,6 +13,7 @@ import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.views.powered_up.IndividualClimb;
 import frc3824.rscout2018.views.powered_up.IndividualCubes;
+import frc3824.rscout2018.views.powered_up.IndividualFouls;
 import frc3824.rscout2018.views.powered_up.IndividualStart;
 
 /**
@@ -28,6 +29,7 @@ public class TeamStatsIndividualMatchDataFragment extends Fragment
     IndividualStart mIndividualStart;
     IndividualCubes mIndividualCubes;
     IndividualClimb mIndividualClimb;
+    IndividualFouls mIndividualFouls;
 
 
     public void setTeamMatchNumber(int teamNumber, int matchNumber)
@@ -45,6 +47,7 @@ public class TeamStatsIndividualMatchDataFragment extends Fragment
         mIndividualStart = mView.findViewById(R.id.start);
         mIndividualCubes = mView.findViewById(R.id.cubes);
         mIndividualClimb = mView.findViewById(R.id.climb);
+        mIndividualFouls = mView.findViewById(R.id.fouls);
 
         new UpdateTask().execute();
 
@@ -61,6 +64,7 @@ public class TeamStatsIndividualMatchDataFragment extends Fragment
                 mIndividualStart.setTeamMatchData(mTeamMatchData);
                 mIndividualCubes.setTeamMatchData(mTeamMatchData);
                 mIndividualClimb.setTeamMatchData(mTeamMatchData);
+                mIndividualFouls.setTeamMatchData(mTeamMatchData);
 
                 publishProgress();
             }

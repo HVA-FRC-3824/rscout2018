@@ -160,7 +160,7 @@ public class CommunicationService extends IntentService
             return;
         }
 
-        TeamMatchData teamMatchData = new TeamMatchData(teamNumber, matchNumber);
+        TeamMatchData teamMatchData = Database.getInstance().getTeamMatchData(teamNumber, matchNumber);
         RequestBody body = RequestBody.create(kJSON, mGson.toJson(teamMatchData));
 
         Request request = new Request.Builder()
