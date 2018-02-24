@@ -180,6 +180,8 @@ public interface Constants
         {
             double SHORT_DISTANCE = 0.3;
             double MEDIUM_DISTANCE = 0.7;
+
+            double SWITCH_THRESHOlD = 0.35;
         }
 
         interface Climb

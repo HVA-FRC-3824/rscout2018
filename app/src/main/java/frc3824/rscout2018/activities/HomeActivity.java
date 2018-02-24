@@ -23,6 +23,7 @@ import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.database.data_models.TeamLogistics;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
+import frc3824.rscout2018.database.data_models.TeamPitData;
 import frc3824.rscout2018.database.data_models.powered_up.CubeEvent;
 import frc3824.rscout2018.services.CommunicationService;
 import frc3824.rscout2018.utilities.Constants;
@@ -268,15 +269,9 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
                 return;
 
             case R.id.generate_test_data:
-                TeamLogistics teamLogistics = new TeamLogistics(1);
-                teamLogistics.setNickname("The first team");
-                teamLogistics.setMatchNumbers(new ArrayList<>(Arrays.asList(1)));
-                Database.getInstance().updateTeamLogistics(teamLogistics);
-
-                TeamMatchData teamMatchData = new TeamMatchData(1, 1);
-                teamMatchData.setStartedWithCube(true);
-                teamMatchData.setStartLocationX(0.05f);
-                teamMatchData.setStartLocationY(0.5f);
+                TeamPitData tpd = new TeamPitData(1);
+                tpd.setNotes("soemthig");
+                Database.getInstance().updateTeamPitData(tpd);
 
                 new GenerateTestDataTask().execute();
                 return;
@@ -391,6 +386,8 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
             teamMatchData.setRedCard(true);
             teamMatchData.setFouls(5);
             Database.getInstance().updateTeamMatchData(teamMatchData);
+
+
 
             return null;
         }

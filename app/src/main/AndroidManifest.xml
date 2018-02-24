@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="frc3824.rscout2018">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".MyApplication"
@@ -38,6 +38,10 @@
             android:label="Pit Scouting"
             android:screenOrientation="landscape"/>
         <activity
+            android:name=".activities.PickListActivity"
+            android:label="Pick List"
+            android:screenOrientation="landscape"/>
+        <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait"/>
@@ -53,6 +57,7 @@
             android:name=".activities.TeamStatsActivity"
             android:label="Team Stats"
             android:screenOrientation="landscape"/>
+
         <service
             android:name=".services.CommunicationService"
             android:label="Comms Service"

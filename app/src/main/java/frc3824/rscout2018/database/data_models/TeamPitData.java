@@ -472,6 +472,7 @@ public class TeamPitData extends DataModel
         notifyChange();
     }
 
+    @Exclude
     @Bindable
     public TextWatcher getNotesListener()
     {

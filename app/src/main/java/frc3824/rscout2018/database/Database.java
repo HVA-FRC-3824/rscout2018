@@ -1,23 +1,20 @@
 package frc3824.rscout2018.database;
 
-import android.content.Context;
 import android.util.Log;
-
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 
 import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.database.data_models.SuperMatchData;
@@ -40,8 +37,8 @@ public class Database
     Map<String, Map<String, DataSnapshot> > mMap;
     Set<String> mEvents;
 
-    private static final String ROOT = "r";
-    private static final String EVENT = "e";
+    private static final String ROOT = "root";
+    private static final String EVENT = "events";
     private static final String MATCH_LOGISTICS = "match_logistics";
     private static final String TEAM_MATCH = "partial_matches";
     private static final String TEAM_PIT = "pit";
@@ -65,42 +62,55 @@ public class Database
 
         mDatabase = FirebaseDatabase.getInstance();
         mDatabase.setPersistenceEnabled(true);
-        mDatabase.goOnline();
-        //mDatabase.goOffline();
 
         mReferences.put(ROOT, mDatabase.getReference());
+        mReferences.get(ROOT).keepSynced(true);
         mReferences.get(ROOT).addChildEventListener(new ChildEventListener()
         {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
             {
                 mEvents.add(dataSnapshot.getKey());
+                Log.v(TAG, String.format("root.onChildAdded: %s", dataSnapshot.getKey()));
+
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s)
             {
                 mEvents.add(dataSnapshot.getKey());
+                Log.v(TAG, String.format("root.onChildChanged: %s", dataSnapshot.getKey()));
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot)
             {
                 mEvents.remove(dataSnapshot.getKey());
+                Log.v(TAG, String.format("root.onChildRemoved: %s", dataSnapshot.getKey()));
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s)
             {
-
+                Log.v(TAG, String.format("root.onChildMoved: %s", dataSnapshot.getKey()));
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError)
             {
-
+                Log.v(TAG, String.format("root.onCancelled"));
             }
         });
+    }
+
+    public void goOnline()
+    {
+        mDatabase.goOnline();
+    }
+
+    public void goOffline()
+    {
+        mDatabase.goOffline();
     }
 
     public void setEventKey(String eventKey)
@@ -130,30 +140,33 @@ public class Database
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
             {
                 mMap.get(id).put(dataSnapshot.getKey(), dataSnapshot);
+                Log.v(TAG, String.format("%s.onChildAdded: %s", id, dataSnapshot.getKey()));
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s)
             {
                 mMap.get(id).put(dataSnapshot.getKey(), dataSnapshot);
+                Log.v(TAG, String.format("%s.onChildChanged: %s", id, dataSnapshot.getKey()));
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot)
             {
                 mMap.get(id).remove(dataSnapshot.getKey());
+                Log.v(TAG, String.format("%s.onChildRemoved: %s", id, dataSnapshot.getKey()));
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s)
             {
-
+                Log.v(TAG, String.format("%s.onChildMoved: %s", id, dataSnapshot.getKey()));
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError)
             {
-
+                Log.v(TAG, String.format("%s.onCancelled", id));
             }
         });
     }
@@ -264,6 +277,8 @@ public class Database
 
     public void updateTeamPitData(TeamPitData teamPitData)
     {
+        Gson gson = new Gson();
+        String json = gson.toJson(teamPitData);
         mReferences.get(TEAM_PIT).child(String.valueOf(teamPitData.getTeamNumber())).setValue(teamPitData);
     }
     //endregion
