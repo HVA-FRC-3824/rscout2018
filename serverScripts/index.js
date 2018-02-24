@@ -256,7 +256,24 @@ app.get('/getFullDB', function (req, res) {
 	});
 });
 
-//Pulls out match schedule information about a specified match
+//Pulls out team information
+app.get('/teams', function (req, res) {
+	logger.info('Recieved teams request');
+	var sql = "SELECT * FROM " + serverEventKey + "teamstats";
+	con.query(sql, function (err, result) {
+		var alreadyExists = false;
+		if (err) {
+			logger.fatal(err);
+			throw err;
+		};
+		JSONresult = JSON.stringify(result);
+		console.log(JSONresult);
+		res.send(JSONresult);
+		logger.info('Sent teams info');
+	});
+});
+
+//Pulls out match schedule information
 app.get('/schedule', function (req, res) {
 	logger.info('Recieved getMatchSchedInfo request');
 	var sql = "SELECT * FROM " + serverEventKey + "matchschedule";
@@ -313,12 +330,23 @@ app.get('/getMatchData', function (req, res) {
 
 //Inserts match data to the DB and factors it into the averages
 app.post('/updateTeamMatchData', function (req, res) {
-	console.log(req);
+	
 	logger.info('Recieved insertMatchData');
 	var requestData = req.body;
 	console.log('InsertingMatchData');
 	console.log(requestData);
 	addMatchData(res, serverEventKey, requestData.teamNumber, "qm" + requestData.matchNumber, convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbingState, requestData.climbingMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), mysql_real_escape_string(requestData.notes));
+	res.sendStatus(200);
+});
+
+//Inserts match data to the DB and factors it into the averages
+app.post('/updateSuperMatchData', function (req, res) {
+	console.log(req);
+	logger.info('Recieved insertSuperData');
+	var requestData = req.body;
+	console.log('InsertingSuperData');
+	console.log(requestData);
+	//addMatchData(res, serverEventKey, requestData.teamNumber, "qm" + requestData.matchNumber, convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbingState, requestData.climbingMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), mysql_real_escape_string(requestData.notes));
 	res.send(200);
 });
 
@@ -354,7 +382,7 @@ app.get('/getPitData', function (req, res) {
 });
 
 //Inserts pit data to the DB
-app.post('/postPitData', function (req, res) {
+app.post('/updatePitData', function (req, res) {
 	logger.info('Recieved insertPitData');
 	//Puts in pit data
 	var requestData = req.body.data;
@@ -731,7 +759,7 @@ function addEvent(eventKey) {
 		if (alreadyExists) {
 			logger.crit("Tried to create event which already exists");
 		} else {
-			var sql = "CREATE TABLE " + eventKey + "teamstats (teamNumber int, name varchar(255), matchesPlayed int, autoCrossedTotal int, autoCrossedAverage int, autoEventTotals varchar(511), autoEventAverages varchar(511), teleopEventTotals varchar(511), teleopEventAverages varchar(511), climbingStateTotals varchar(511), climbingStateAverages varchar(511), climbingMethodTotals varchar(511), climbingMethodAverages varchar(511), foulTotal int, foulAverage double, techFoulTotal int, techFoulAverage double, yellowCardTotal int, yellowCardAverage double, redCardTotal int, redCardAverage double, noShowTotal int, noShowAverage double, DQTotal int, DQAverage double)";
+			var sql = "CREATE TABLE " + eventKey + "teamstats (teamNumber int, nickname varchar(255), matchesPlayed int, autoCrossedTotal int, autoCrossedAverage int, autoEventTotals varchar(511), autoEventAverages varchar(511), teleopEventTotals varchar(511), teleopEventAverages varchar(511), climbingStateTotals varchar(511), climbingStateAverages varchar(511), climbingMethodTotals varchar(511), climbingMethodAverages varchar(511), foulTotal int, foulAverage double, techFoulTotal int, techFoulAverage double, yellowCardTotal int, yellowCardAverage double, redCardTotal int, redCardAverage double, noShowTotal int, noShowAverage double, DQTotal int, DQAverage double)";
 			con.query(sql, function (err, result) {
 				if (err) {
 					logger.fatal(err);
@@ -786,7 +814,7 @@ function convertBool(bool) {
 //Fill teams table
 function addTeam(teamInfo, eventKey) {
 	var climbingStateTotalsObject = {};
-	var sql = "INSERT INTO " + eventKey + "teamstats (teamNumber, name, matchesPlayed, autoCrossedTotal, autoCrossedAverage, autoEventTotals, autoEventAverages, teleopEventTotals, teleopEventAverages, climbingStateTotals, climbingStateAverages, climbingMethodTotals, climbingMethodAverages, foulTotal, foulAverage, techFoulTotal, techFoulAverage, yellowCardTotal, yellowCardAverage, redCardTotal, redCardAverage, noShowTotal, noShowAverage, DQTotal, DQAverage) VALUES ('" + teamInfo.team_number + "', '" + mysql_real_escape_string(teamInfo.nickname) + "', '0', '0', '0', '" + JSON.stringify({placed: 0, dropped: 0, launchSuccess: 0, launchFailure: 0, pickedUp: 0}) + "', '" + JSON.stringify({placed: 0, dropped: 0, launchSuccess: 0, launchFailure: 0, pickedUp: 0}) + "', '" + JSON.stringify({placed: 0, dropped: 0, launchSuccess: 0, launchFailure: 0, pickedUp: 0}) + "', '" + JSON.stringify({placed: 0, dropped: 0, launchSuccess: 0, launchFailure: 0, pickedUp: 0}) + "', '" + JSON.stringify({noAttempt: 0, parkedOnPlatform: 0, didNotFinishInTime: 0, robotFell: 0, successful: 0}) + "', '" + JSON.stringify({noAttempt: 0, parkedOnPlatform: 0, didNotFinishInTime: 0, robotFell: 0, successful: 0}) + "', '" + JSON.stringify({climbOnRung: 0, climbOnRungWithOne: 0, climbOnRungWithTwo: 0, climbOnRungOfOtherBot: 0, climbOnPlatformOfOtherBot: 0, supportOneOnPlatform: 0, supportTwoOnPlatform: 0, creditThroughFoul: 0, creditThroughLevitate: 0}) + "', '" + JSON.stringify({climbOnRung: 0, climbOnRungWithOne: 0, climbOnRungWithTwo: 0, climbOnRungOfOtherBot: 0, climbOnPlatformOfOtherBot: 0, supportOneOnPlatform: 0, supportTwoOnPlatform: 0, creditThroughFoul: 0, creditThroughLevitate: 0}) + "', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0')";
+	var sql = "INSERT INTO " + eventKey + "teamstats (teamNumber, nickname, matchesPlayed, autoCrossedTotal, autoCrossedAverage, autoEventTotals, autoEventAverages, teleopEventTotals, teleopEventAverages, climbingStateTotals, climbingStateAverages, climbingMethodTotals, climbingMethodAverages, foulTotal, foulAverage, techFoulTotal, techFoulAverage, yellowCardTotal, yellowCardAverage, redCardTotal, redCardAverage, noShowTotal, noShowAverage, DQTotal, DQAverage) VALUES ('" + teamInfo.team_number + "', '" + mysql_real_escape_string(teamInfo.nickname) + "', '0', '0', '0', '" + JSON.stringify({placed: 0, dropped: 0, launchSuccess: 0, launchFailure: 0, pickedUp: 0}) + "', '" + JSON.stringify({placed: 0, dropped: 0, launchSuccess: 0, launchFailure: 0, pickedUp: 0}) + "', '" + JSON.stringify({placed: 0, dropped: 0, launchSuccess: 0, launchFailure: 0, pickedUp: 0}) + "', '" + JSON.stringify({placed: 0, dropped: 0, launchSuccess: 0, launchFailure: 0, pickedUp: 0}) + "', '" + JSON.stringify({noAttempt: 0, parkedOnPlatform: 0, didNotFinishInTime: 0, robotFell: 0, successful: 0}) + "', '" + JSON.stringify({noAttempt: 0, parkedOnPlatform: 0, didNotFinishInTime: 0, robotFell: 0, successful: 0}) + "', '" + JSON.stringify({climbOnRung: 0, climbOnRungWithOne: 0, climbOnRungWithTwo: 0, climbOnRungOfOtherBot: 0, climbOnPlatformOfOtherBot: 0, supportOneOnPlatform: 0, supportTwoOnPlatform: 0, creditThroughFoul: 0, creditThroughLevitate: 0}) + "', '" + JSON.stringify({climbOnRung: 0, climbOnRungWithOne: 0, climbOnRungWithTwo: 0, climbOnRungOfOtherBot: 0, climbOnPlatformOfOtherBot: 0, supportOneOnPlatform: 0, supportTwoOnPlatform: 0, creditThroughFoul: 0, creditThroughLevitate: 0}) + "', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0')";
 	con.query(sql, function (err, result) {
 		if (err) {
 			logger.fatal(err);

@@ -256,6 +256,13 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
                 startService(intent);
                 return;
 
+            case R.id.pull_teams_button:
+                intent = new Intent(HomeActivity.this, CommunicationService.class);
+                intent.putExtra(Constants.IntentExtras.DOWNLOAD_TEAMS, true);
+                startService(intent);
+                return;
+
+
             case R.id.pull_pit_data_button:
                 intent = new Intent(HomeActivity.this, CommunicationService.class);
                 intent.putExtra(Constants.IntentExtras.DOWNLOAD_PIT_DATA, true);

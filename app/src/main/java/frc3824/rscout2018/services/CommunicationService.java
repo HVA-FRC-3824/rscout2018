@@ -396,7 +396,7 @@ public class CommunicationService extends IntentService
                                                                 TastyToast.LENGTH_LONG,
                                                                 TastyToast.SUCCESS));
                 ResponseBody body = response.body();
-                ArrayList<TeamLogistics> teams = mGson.fromJson(body.toString(), new TypeToken<ArrayList<TeamLogistics>>(){}.getType());
+                ArrayList<TeamLogistics> teams = mGson.fromJson(body.string(), new TypeToken<ArrayList<TeamLogistics>>(){}.getType());
                 for(TeamLogistics team : teams)
                 {
                     Database.getInstance().updateTeamLogistics(team);
