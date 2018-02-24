@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -29,6 +30,8 @@ public class TeamStatsChartsFragment extends Fragment
     StartView mStartView = null;
     CubesView mCubesView = null;
     ClimbView mClimbView = null;
+    TextView mFouls;
+    TextView mTechFouls;
     View mView;
 
     public void setTeamNumber(int teamNumber)
@@ -48,6 +51,8 @@ public class TeamStatsChartsFragment extends Fragment
         mStartView = mView.findViewById(R.id.start);
         mCubesView = mView.findViewById(R.id.cubes);
         mClimbView = mView.findViewById(R.id.climb);
+        mFouls = mView.findViewById(R.id.fouls);
+        mTechFouls = mView.findViewById(R.id.tech_fouls);
 
         if(mTeamNumber != -1)
         {
@@ -61,6 +66,8 @@ public class TeamStatsChartsFragment extends Fragment
     {
         boolean red = false;
         boolean yellow = false;
+        int fouls = 0;
+        int tech_fouls = 0;
         @Override
         protected Object doInBackground(Object[] objects)
         {
@@ -76,18 +83,17 @@ public class TeamStatsChartsFragment extends Fragment
                     if(tmd.isRedCard())
                     {
                         red = true;
-                        publishProgress();
-                        return null;
                     }
                     else if(tmd.isYellowCard())
                     {
                         yellow = true;
                     }
+
+                    fouls += tmd.getFouls();
+                    tech_fouls += tmd.getTechFouls();
                 }
-                if(yellow)
-                {
-                    publishProgress();
-                }
+
+                publishProgress();
             }
 
             return null;
@@ -104,6 +110,9 @@ public class TeamStatsChartsFragment extends Fragment
             {
                 mView.setBackgroundColor(Color.YELLOW);
             }
+
+            mFouls.setText(String.valueOf(fouls));
+            mTechFouls.setText(String.valueOf(tech_fouls));
         }
     }
 }

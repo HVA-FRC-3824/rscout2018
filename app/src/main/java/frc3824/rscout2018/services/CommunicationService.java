@@ -23,6 +23,7 @@ import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.DataModel;
 import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.database.data_models.SuperMatchData;
+import frc3824.rscout2018.database.data_models.TeamLogistics;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.utilities.Constants;
 import okhttp3.MediaType;
@@ -87,7 +88,8 @@ public class CommunicationService extends IntentService
     {
         if (intent.hasExtra(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING))
         {
-            putMatchData(intent.getIntExtra(Constants.IntentExtras.MATCH_NUMBER, -1), intent.getIntExtra(Constants.IntentExtras.TEAM_NUMBER, -1));
+            putMatchData(intent.getIntExtra(Constants.IntentExtras.MATCH_NUMBER, -1),
+                         intent.getIntExtra(Constants.IntentExtras.TEAM_NUMBER, -1));
         }
         else if (intent.hasExtra(Constants.IntentExtras.NextPageOptions.PIT_SCOUTING))
         {
@@ -97,17 +99,25 @@ public class CommunicationService extends IntentService
         {
             putSuperData(intent.getIntExtra(Constants.IntentExtras.MATCH_NUMBER, -1));
         }
-        else if(intent.hasExtra(Constants.IntentExtras.DOWNLOAD_SCHEDULE))
+        else if (intent.hasExtra(Constants.IntentExtras.DOWNLOAD_SCHEDULE))
         {
             getSchedule();
         }
-        else if(intent.hasExtra(Constants.IntentExtras.DOWNLOAD_FULL_UPDATE))
+        else if (intent.hasExtra(Constants.IntentExtras.DOWNLOAD_FULL_UPDATE))
         {
             // getFullUpdate();
         }
-        else if(intent.hasExtra(Constants.IntentExtras.DOWNLOAD_PIT_DATA))
+        else if (intent.hasExtra(Constants.IntentExtras.DOWNLOAD_TEAMS))
         {
-            // getPitData();
+            getTeams();
+        }
+        else if (intent.hasExtra(Constants.IntentExtras.DOWNLOAD_PIT_DATA))
+        {
+            getPitData();
+        }
+        else if(intent.hasExtra(Constants.IntentExtras.DOWNLOAD_PICTURES))
+        {
+            getPictures();
         }
         else if (intent.hasExtra(Constants.IntentExtras.IP_MODIFIED))
         {
@@ -208,7 +218,7 @@ public class CommunicationService extends IntentService
             return;
         }
 
-        SuperMatchData superMatchData = new SuperMatchData(matchNumber);
+        SuperMatchData superMatchData = Database.getInstance().getSuperMatchData(matchNumber);
         RequestBody body = RequestBody.create(kJSON, mGson.toJson(superMatchData));
 
         Request request = new Request.Builder()
@@ -369,4 +379,82 @@ public class CommunicationService extends IntentService
         }
     }
 
+    private void getTeams()
+    {
+        Request request = new Request.Builder()
+                .url(mUrl + "/teams")
+                .get()
+                .build();
+
+        try
+        {
+            Response response = mClient.newCall(request).execute();
+            if (response.code() == 200)
+            {
+                ToastBus.getInstance().publish(new ToastRequest("Teams Received",
+                                                                TastyToast.LENGTH_LONG,
+                                                                TastyToast.SUCCESS));
+                ResponseBody body = response.body();
+                ArrayList<TeamLogistics> teams = mGson.fromJson(body.toString(), new TypeToken<ArrayList<TeamLogistics>>(){}.getType());
+                for(TeamLogistics team : teams)
+                {
+                    Database.getInstance().updateTeamLogistics(team);
+                }
+            }
+            else
+            {
+                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
+                                                                TastyToast.LENGTH_LONG,
+                                                                TastyToast.ERROR));
+            }
+        }
+        catch (IOException e)
+        {
+            ToastBus.getInstance().publish(new ToastRequest("Teams request failed",
+                                                            TastyToast.LENGTH_LONG,
+                                                            TastyToast.ERROR));
+        }
+    }
+
+    private void getPitData()
+    {
+        Request request = new Request.Builder()
+                .url(mUrl + "/pitData")
+                .get()
+                .build();
+
+        try
+        {
+            Response response = mClient.newCall(request).execute();
+            if (response.code() == 200)
+            {
+                ToastBus.getInstance().publish(new ToastRequest("Pit Data Received",
+                                                                TastyToast.LENGTH_LONG,
+                                                                TastyToast.SUCCESS));
+                ResponseBody body = response.body();
+                ArrayList<TeamLogistics> teams = mGson.fromJson(body.toString(), new TypeToken<ArrayList<TeamLogistics>>(){}.getType());
+                for(TeamLogistics team : teams)
+                {
+                    Database.getInstance().updateTeamLogistics(team);
+                }
+            }
+            else
+            {
+                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
+                                                                TastyToast.LENGTH_LONG,
+                                                                TastyToast.ERROR));
+            }
+        }
+        catch (IOException e)
+        {
+            ToastBus.getInstance().publish(new ToastRequest("Pit Data request failed",
+                                                            TastyToast.LENGTH_LONG,
+                                                            TastyToast.ERROR));
+        }
+    }
+
+    private void getPictures()
+    {
+        // todo
+    }
 }

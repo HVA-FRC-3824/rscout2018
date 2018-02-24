@@ -61,7 +61,14 @@ public class MatchListActivity extends Activity implements View.OnClickListener
             e.printStackTrace();
         }
 
-        findViewById(R.id.practice).setOnClickListener(this);
+        if(mNextPage.equals(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING) || mNextPage.equals(Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING))
+        {
+            findViewById(R.id.practice).setOnClickListener(this);
+        }
+        else
+        {
+            findViewById(R.id.practice).setVisibility(View.GONE);
+        }
 
         // Setup list of buttons for the individual matches
         ListView listView = findViewById(R.id.list);
@@ -288,7 +295,7 @@ public class MatchListActivity extends Activity implements View.OnClickListener
                     // SuperScoutActivityStarter.start(view.getId());
                     break;
                 case Constants.IntentExtras.NextPageOptions.MATCH_PREVIEW:
-                    // MatchViewActivityStarter.start(view.getId());
+                    MatchPreviewActivityStarter.start(view.getId());
                     break;
                 default:
                     assert (false);
