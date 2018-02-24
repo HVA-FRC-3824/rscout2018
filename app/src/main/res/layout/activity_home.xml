@@ -237,7 +237,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/settings_button">
+        app:layout_constraintTop_toBottomOf="@id/settings_button"
+        android:id="@+id/admin_row_1">
         <info.hoang8f.widget.FButton
             android:id="@+id/ping_button"
             android:layout_width="0dp"
@@ -269,6 +270,21 @@
             app:shadowHeight="5dp"/>
 
         <info.hoang8f.widget.FButton
+            android:id="@+id/pull_teams_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:text="Pull Teams"
+            android:textColor="@color/White"
+            android:textSize="20sp"
+            app:fButtonColor="@color/Navy"
+            app:cornerRadius="5dp"
+            app:shadowColor="@color/Black"
+            app:shadowEnabled="true"
+            app:shadowHeight="5dp"/>
+
+        <info.hoang8f.widget.FButton
             android:id="@+id/update"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -283,6 +299,82 @@
             app:shadowEnabled="true"
             app:shadowHeight="5dp"/>
 
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/admin_row_1"
+        android:id="@+id/admin_row_2">
+
+
+        <info.hoang8f.widget.FButton
+            android:id="@+id/upload_pit_data_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:text="Upload Pit Data"
+            android:textColor="@color/White"
+            android:textSize="20sp"
+            app:fButtonColor="@color/Navy"
+            app:cornerRadius="5dp"
+            app:shadowColor="@color/Black"
+            app:shadowEnabled="true"
+            app:shadowHeight="5dp"/>
+
+        <info.hoang8f.widget.FButton
+            android:id="@+id/upload_pictures_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:text="Upload Pictures"
+            android:textColor="@color/White"
+            android:textSize="20sp"
+            app:fButtonColor="@color/Navy"
+            app:cornerRadius="5dp"
+            app:shadowColor="@color/Black"
+            app:shadowEnabled="true"
+            app:shadowHeight="5dp"/>
+
+        <info.hoang8f.widget.FButton
+            android:id="@+id/pull_pit_data_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:text="Pull Pit Data"
+            android:textColor="@color/White"
+            android:textSize="20sp"
+            app:fButtonColor="@color/Navy"
+            app:cornerRadius="5dp"
+            app:shadowColor="@color/Black"
+            app:shadowEnabled="true"
+            app:shadowHeight="5dp"/>
+
+        <info.hoang8f.widget.FButton
+            android:id="@+id/pull_pictures_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:text="Pull Pictures"
+            android:textColor="@color/White"
+            android:textSize="20sp"
+            app:fButtonColor="@color/Navy"
+            app:cornerRadius="5dp"
+            app:shadowColor="@color/Black"
+            app:shadowEnabled="true"
+            app:shadowHeight="5dp"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/admin_row_2"
+        android:id="@+id/admin_row_3">
         <info.hoang8f.widget.FButton
             android:id="@+id/generate_test_data"
             android:layout_width="0dp"
@@ -298,5 +390,4 @@
             app:shadowEnabled="true"
             app:shadowHeight="5dp"/>
     </LinearLayout>
-
 </android.support.constraint.ConstraintLayout>

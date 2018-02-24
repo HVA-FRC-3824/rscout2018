@@ -1,7 +1,9 @@
 package frc3824.rscout2018.activities;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -86,7 +88,11 @@ public class PitScoutActivity extends RScoutActivity
                 header.removeNext();
             }
 
-            mTPD = new TeamPitData(mTeamNumber);
+            mTPD = Database.getInstance().getTeamPitData(mTeamNumber);
+            if(mTPD == null)
+            {
+                mTPD = new TeamPitData(mTeamNumber);
+            }
         }
         // Practice
         else
@@ -126,14 +132,44 @@ public class PitScoutActivity extends RScoutActivity
             }
             else
             {
+                final ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
+                final int index = teamNumbers.indexOf(mTeamNumber);
                 if (mTPD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PitScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Save to local database
+                                    Database.getInstance().updateTeamPitData(mTPD);
+
+                                    PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index - 1));
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index - 1));
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else
                 {
-                    ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
-                    int index = teamNumbers.indexOf(mTeamNumber);
                     if (index > 0) // If null then this function shouldn't be possible to call as the button should have been hidden
                     {
                         PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index - 1));
@@ -151,18 +187,46 @@ public class PitScoutActivity extends RScoutActivity
             }
             else
             {
+                final ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
+                final int index = teamNumbers.indexOf(mTeamNumber);
+
                 if (mTPD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PitScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Save to local database
+                                    Database.getInstance().updateTeamPitData(mTPD);
+
+                                    PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index + 1));
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index + 1));
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else
                 {
-                    ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
-                    int index = teamNumbers.indexOf(mTeamNumber);
-                    if (index < teamNumbers.size() - 1) // If null then this function shouldn't be possible to call as the button should have been hidden
-                    {
-                        PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index + 1));
-                    }
+                    PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index + 1));
                 }
             }
         }
@@ -178,7 +242,37 @@ public class PitScoutActivity extends RScoutActivity
             {
                 if (mTPD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PitScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Save to local database
+                                    Database.getInstance().updateTeamPitData(mTPD);
+
+                                    HomeActivityStarter.start(PitScoutActivity.this);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    HomeActivityStarter.start(PitScoutActivity.this);
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else
                 {
@@ -198,7 +292,37 @@ public class PitScoutActivity extends RScoutActivity
             {
                 if (mTPD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PitScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Save to local database
+                                    Database.getInstance().updateTeamPitData(mTPD);
+
+                                    TeamListActivityStarter.start(PitScoutActivity.this, Constants.IntentExtras.NextPageOptions.PIT_SCOUTING);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    TeamListActivityStarter.start(PitScoutActivity.this, Constants.IntentExtras.NextPageOptions.PIT_SCOUTING);
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else
                 {

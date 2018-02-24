@@ -19,6 +19,7 @@ import java.util.Set;
 
 
 import frc3824.rscout2018.database.data_models.MatchLogistics;
+import frc3824.rscout2018.database.data_models.SuperMatchData;
 import frc3824.rscout2018.database.data_models.TeamLogistics;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.database.data_models.TeamPitData;
@@ -44,6 +45,7 @@ public class Database
     private static final String TEAM_MATCH = "partial_matches";
     private static final String TEAM_PIT = "pit";
     private static final String TEAM_LOGISTICS = "team_logistics";
+    private static final String SUPER_MATCH = "super_match";
 
     public static Database getInstance()
     {
@@ -111,6 +113,7 @@ public class Database
             addRef(TEAM_LOGISTICS);
             addRef(TEAM_MATCH);
             addRef(TEAM_PIT);
+            addRef(SUPER_MATCH);
         }
     }
 
@@ -245,6 +248,23 @@ public class Database
     public void updateTeamPitData(TeamPitData teamPitData)
     {
         mReferences.get(TEAM_PIT).child(String.valueOf(teamPitData.getTeamNumber())).setValue(teamPitData);
+    }
+    //endregion
+
+    //region SuperMatchData
+    public void updateSuperMatchData(SuperMatchData superMatchData)
+    {
+        mReferences.get(SUPER_MATCH).child(String.valueOf(superMatchData.getMatchNumber())).setValue(superMatchData);
+    }
+
+    public SuperMatchData getSuperMatchData(int matchNumber)
+    {
+        DataSnapshot dataSnapshot = mMap.get(SUPER_MATCH).get(String.valueOf(matchNumber));
+        if(dataSnapshot == null)
+        {
+            return null;
+        }
+        return dataSnapshot.getValue(SuperMatchData.class);
     }
     //endregion
 }

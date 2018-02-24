@@ -27,18 +27,21 @@ public class IndividualFouls extends TableLayout
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.view_individual_fouls, this, true);
 
-        mFouls = findViewById(R.id.fouls);
-        mTechFouls = findViewById(R.id.tech_fouls);
-
-        if(mTeamMatchData != null)
-        {
-            mFouls.setText(String.valueOf(mTeamMatchData.getFouls()));
-            mTechFouls.setText(String.valueOf(mTeamMatchData.getTechFouls()));
-        }
+        mFouls = findViewById(R.id.inner_fouls);
+        mTechFouls = findViewById(R.id.inner_tech_fouls);
     }
 
     public void setTeamMatchData(TeamMatchData teamMatchData)
     {
         mTeamMatchData = teamMatchData;
+    }
+
+    public void update()
+    {
+        if(mTeamMatchData != null)
+        {
+            mFouls.setText(String.valueOf(mTeamMatchData.getFouls()));
+            mTechFouls.setText(String.valueOf(mTeamMatchData.getTechFouls()));
+        }
     }
 }

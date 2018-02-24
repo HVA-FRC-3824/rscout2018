@@ -122,6 +122,30 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
             button.setOnClickListener(this);
         }
 
+        // Inflate the pull teams button
+        button = findViewById(R.id.pull_teams_button);
+        button.setEnabled(enableAdmin);
+        if(first)
+        {
+            button.setOnClickListener(this);
+        }
+
+        // Inflate the pull pit data button
+        button = findViewById(R.id.pull_pit_data_button);
+        button.setEnabled(enableAdmin);
+        if(first)
+        {
+            button.setOnClickListener(this);
+        }
+
+        // Inflate the pull pictures button
+        button = findViewById(R.id.pull_pictures_button);
+        button.setEnabled(enableAdmin);
+        if(first)
+        {
+            button.setOnClickListener(this);
+        }
+
         // Inflate the update button
         button = findViewById(R.id.update);
         button.setEnabled(enableAdmin);
@@ -183,53 +207,65 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
             case R.id.match_scouting_button:
                 MatchListActivityStarter.start(this,
                                                Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
-                break;
+                return;
             // Go to the team list for pit scouting
             case R.id.pit_scouting_button:
                 TeamListActivityStarter.start(this,
                                               Constants.IntentExtras.NextPageOptions.PIT_SCOUTING);
-                break;
+                return;
             // Go to the match list for super scouting
             case R.id.super_scouting_button:
                 MatchListActivityStarter.start(this,
                                                Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING);
-                break;
+                return;
             // Go to the match list for match preview
             case R.id.match_preview_button:
                 MatchListActivityStarter.start(this,
                                                Constants.IntentExtras.NextPageOptions.MATCH_PREVIEW);
-                break;
+                return;
             // Go to the team list for team stats
             case R.id.team_stats_button:
                 TeamListActivityStarter.start(this,
                                               Constants.IntentExtras.NextPageOptions.TEAM_STATS);
-                break;
+                return;
             // Go to the event charts
             case R.id.event_charts_button:
                 EventChartsActivityStarter.start(this);
-                break;
+                return;
 
             // Go to the pick list
             case R.id.pick_list_button:
                 PickListActivityStarter.start(this);
-                break;
+                return;
 
             // Go to the settings
             case R.id.settings_button:
                 SettingsActivityStarter.start(this);
-                break;
+                return;
 
             case R.id.ping_button:
                 intent = new Intent(HomeActivity.this, CommunicationService.class);
                 intent.putExtra(Constants.IntentExtras.PING, true);
                 startService(intent);
-                break;
+                return;
 
             case R.id.pull_matches_button:
                 intent = new Intent(HomeActivity.this, CommunicationService.class);
                 intent.putExtra(Constants.IntentExtras.DOWNLOAD_SCHEDULE, true);
                 startService(intent);
-                break;
+                return;
+
+            case R.id.pull_pit_data_button:
+                intent = new Intent(HomeActivity.this, CommunicationService.class);
+                intent.putExtra(Constants.IntentExtras.DOWNLOAD_PIT_DATA, true);
+                startService(intent);
+                return;
+
+            case R.id.pull_pictures_button:
+                intent = new Intent(HomeActivity.this, CommunicationService.class);
+                intent.putExtra(Constants.IntentExtras.DOWNLOAD_TEAMS, true);
+                startService(intent);
+                return;
 
             case R.id.generate_test_data:
                 TeamLogistics teamLogistics = new TeamLogistics(1);
@@ -243,7 +279,7 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
                 teamMatchData.setStartLocationY(0.5f);
 
                 new GenerateTestDataTask().execute();
-                break;
+                return;
 
             default:
                 assert(false);
@@ -353,6 +389,7 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
             teamMatchData.setClimbTime(1000);
             teamMatchData.setClimbMethod(Constants.MatchScouting.Climb.Method.FOUL);
             teamMatchData.setRedCard(true);
+            teamMatchData.setFouls(5);
             Database.getInstance().updateTeamMatchData(teamMatchData);
 
             return null;

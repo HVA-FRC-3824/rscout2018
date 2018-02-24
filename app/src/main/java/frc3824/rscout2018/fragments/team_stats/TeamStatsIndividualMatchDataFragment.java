@@ -85,6 +85,7 @@ public class TeamStatsIndividualMatchDataFragment extends Fragment
                 mView.setBackgroundColor(Color.YELLOW);
                 mView.invalidate();
             }
+            mIndividualFouls.update();
         }
     }
 }

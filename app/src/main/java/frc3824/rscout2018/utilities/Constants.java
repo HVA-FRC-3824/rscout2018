@@ -68,7 +68,9 @@ public interface Constants
         String IP_MODIFIED = "ip_modified";
         String DOWNLOAD_FULL_UPDATE = "load_data";
         String DOWNLOAD_SCHEDULE = "pull_matches";
-        String DOWNLOAD_PIT_DATA = "download_pit_data";
+        String DOWNLOAD_TEAMS = "pull_teams";
+        String DOWNLOAD_PIT_DATA = "pull_pit_data";
+        String DOWNLOAD_PICTURES = "download_pictures";
         String PING = "ping";
     }
 
