@@ -171,6 +171,7 @@ public class CommunicationService extends IntentService
         }
 
         TeamMatchData teamMatchData = Database.getInstance().getTeamMatchData(teamNumber, matchNumber);
+        String test = mGson.toJson(teamMatchData);
         RequestBody body = RequestBody.create(kJSON, mGson.toJson(teamMatchData));
 
         Request request = new Request.Builder()
@@ -358,7 +359,7 @@ public class CommunicationService extends IntentService
                                                                 TastyToast.LENGTH_LONG,
                                                                 TastyToast.SUCCESS));
                 ResponseBody body = response.body();
-                ArrayList<MatchLogistics> matches = mGson.fromJson(body.toString(), new TypeToken<ArrayList<MatchLogistics>>(){}.getType());
+                ArrayList<MatchLogistics> matches = mGson.fromJson(body.string(), new TypeToken<ArrayList<MatchLogistics>>(){}.getType());
                 for(MatchLogistics match : matches)
                 {
                     Database.getInstance().updateMatchLogistics(match);

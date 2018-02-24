@@ -64,7 +64,7 @@ public class Database
 
         mDatabase = FirebaseDatabase.getInstance();
         mDatabase.setPersistenceEnabled(true);
-        mDatabase.goOffline();
+        //mDatabase.goOffline();
 
         mReferences.put(ROOT, mDatabase.getReference());
         mReferences.get(ROOT).addChildEventListener(new ChildEventListener()
