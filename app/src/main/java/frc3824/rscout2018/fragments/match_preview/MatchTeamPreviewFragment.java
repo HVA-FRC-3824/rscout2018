@@ -29,7 +29,7 @@ public class MatchTeamPreviewFragment extends Fragment
      * @param team The team data
      */
     /*
-    public void setData(TeamCalculatedData team)
+    public void setTeamMatchData(TeamCalculatedData team)
     {
         mTeam = team;
     }

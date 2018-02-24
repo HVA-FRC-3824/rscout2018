@@ -141,7 +141,6 @@ public class TeamStatsActivity extends RScoutActivity
                     TeamStatsChartsFragment tscf = new TeamStatsChartsFragment();
                     tscf.setTeamNumber(mTeamNumber);
                     return tscf;
-                    /*
                 case 1:
                     TeamStatsMatchDataFragment tsmdf = new TeamStatsMatchDataFragment();
                     tsmdf.setTeamNumber(mTeamNumber);
@@ -158,7 +157,6 @@ public class TeamStatsActivity extends RScoutActivity
                     TeamStatsScheduleFragment tssf = new TeamStatsScheduleFragment();
                     tssf.setTeamNumber(mTeamNumber);
                     return tssf;
-                    */
                 default:
                     assert(false);
             }
@@ -172,7 +170,7 @@ public class TeamStatsActivity extends RScoutActivity
         @Override
         public int getCount()
         {
-            return 1; //Constants.TeamStats.TABS.length;
+            return Constants.TeamStats.TABS.length;
         }
 
         /**

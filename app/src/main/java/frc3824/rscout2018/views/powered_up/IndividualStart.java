@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
@@ -15,22 +16,21 @@ import frc3824.rscout2018.database.data_models.TeamMatchData;
 /**
  * Created by frc3824
  */
-public class IndividualStart extends LinearLayout
+public class IndividualStart extends ConstraintLayout
 {
     TeamMatchData mTeamMatchData;
-    IndividualStartLocationView mIndividualStartLocationView = null;
+    IndividualStartLocation mIndividualStartLocation = null;
     TextView mStartedWithCube;
 
 
-    public IndividualStart(Context context,
-                           @Nullable AttributeSet attrs)
+    public IndividualStart(Context context, @Nullable AttributeSet attrs)
     {
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.view_individual_start, this, true);
 
-        mIndividualStartLocationView = findViewById(R.id.location);
+        mIndividualStartLocation = findViewById(R.id.location);
         mStartedWithCube = findViewById(R.id.cube);
 
         if(mTeamMatchData != null)
@@ -42,7 +42,7 @@ public class IndividualStart extends LinearLayout
     public void setTeamMatchData(TeamMatchData teamMatchData)
     {
         mTeamMatchData = teamMatchData;
-        if(mIndividualStartLocationView != null)
+        if(mIndividualStartLocation != null)
         {
             new UpdateTask().execute();
         }
@@ -56,19 +56,31 @@ public class IndividualStart extends LinearLayout
         {
             if(mTeamMatchData != null)
             {
-                mIndividualStartLocationView.setData(mTeamMatchData);
+                mIndividualStartLocation.setData(mTeamMatchData);
+                publishProgress();
+            }
+            return null;
+        }
 
+        @Override
+        protected void onProgressUpdate(Object... objects)
+        {
+            if(mTeamMatchData != null)
+            {
                 if(mTeamMatchData.getStartedWithCube())
                 {
+                    mStartedWithCube.setText("Started with Cube");
                     mStartedWithCube.setTextColor(Color.GREEN);
                 }
                 else
                 {
+                    mStartedWithCube.setText("Started without Cube");
                     mStartedWithCube.setTextColor(Color.RED);
                 }
-
+                mIndividualStartLocation.invalidate();
+                mStartedWithCube.invalidate();
             }
-            return null;
+
         }
     }
 

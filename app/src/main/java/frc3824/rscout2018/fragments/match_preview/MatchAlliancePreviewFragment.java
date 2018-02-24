@@ -22,7 +22,7 @@ public class MatchAlliancePreviewFragment extends Fragment
     //AllianceCalculatedData mAlliance = null;
 
     /*
-    public void setData(TeamCalculatedData team1, TeamCalculatedData team2, TeamCalculatedData team3)
+    public void setTeamMatchData(TeamCalculatedData team1, TeamCalculatedData team2, TeamCalculatedData team3)
     {
         mTeams = new TeamCalculatedData[3];
         mTeams[0] = team1;

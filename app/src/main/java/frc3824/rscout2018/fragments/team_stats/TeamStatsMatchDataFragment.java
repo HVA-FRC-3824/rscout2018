@@ -41,11 +41,11 @@ public class TeamStatsMatchDataFragment extends Fragment
         mFPA = new TeamStatsMatchDataFragment.TeamStatsMatchFragmentPagerAdapter(getFragmentManager());
 
         // Setup view pager
-        ViewPager viewPager = view.findViewById(R.id.view_pager);
+        ViewPager viewPager = view.findViewById(R.id.inner_view_pager);
         viewPager.setAdapter(mFPA);
-        viewPager.setOffscreenPageLimit(mFPA.getCount());
+        //viewPager.setOffscreenPageLimit(mFPA.getCount());
 
-        SmartTabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        SmartTabLayout tabLayout = view.findViewById(R.id.inner_tab_layout);
         tabLayout.setBackgroundColor(Color.BLUE);
         tabLayout.setViewPager(viewPager);
 

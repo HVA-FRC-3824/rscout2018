@@ -20,6 +20,7 @@ import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.buses.ToastBus;
 import frc3824.rscout2018.database.Database;
+import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.database.data_models.TeamLogistics;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.database.data_models.powered_up.CubeEvent;
@@ -269,6 +270,19 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
         protected Void doInBackground(Void... voids)
         {
 
+            MatchLogistics matchLogistics = new MatchLogistics(1);
+            matchLogistics.setTeamNumbers(new ArrayList<>(Arrays.asList(new Integer[]{
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+            })));
+            Database.getInstance().updateMatchLogistics(matchLogistics);
+            matchLogistics.setMatchNumber(2);
+            Database.getInstance().updateMatchLogistics(matchLogistics);
+
             TeamLogistics teamLogistics = new TeamLogistics(1);
             teamLogistics.setNickname("The first team");
             teamLogistics.setMatchNumbers(new ArrayList<>(Arrays.asList(1, 2)));
@@ -338,6 +352,7 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
             teamMatchData.setMatchNumber(2);
             teamMatchData.setClimbTime(1000);
             teamMatchData.setClimbMethod(Constants.MatchScouting.Climb.Method.FOUL);
+            teamMatchData.setRedCard(true);
             Database.getInstance().updateTeamMatchData(teamMatchData);
 
             return null;

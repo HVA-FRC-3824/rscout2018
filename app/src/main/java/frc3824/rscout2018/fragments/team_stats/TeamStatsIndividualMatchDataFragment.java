@@ -1,6 +1,8 @@
 package frc3824.rscout2018.fragments.team_stats;
 
 import android.app.Fragment;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,8 @@ import android.view.ViewGroup;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
+import frc3824.rscout2018.views.powered_up.IndividualClimb;
+import frc3824.rscout2018.views.powered_up.IndividualCubes;
 import frc3824.rscout2018.views.powered_up.IndividualStart;
 
 /**
@@ -20,7 +24,10 @@ public class TeamStatsIndividualMatchDataFragment extends Fragment
     int mMatchNumber;
     TeamMatchData mTeamMatchData;
 
+    View mView;
     IndividualStart mIndividualStart;
+    IndividualCubes mIndividualCubes;
+    IndividualClimb mIndividualClimb;
 
 
     public void setTeamMatchNumber(int teamNumber, int matchNumber)
@@ -33,17 +40,47 @@ public class TeamStatsIndividualMatchDataFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_team_stats_individual_match_data, null);
+        mView = inflater.inflate(R.layout.fragment_team_stats_individual_match_data, null);
 
-        mIndividualStart = view.findViewById(R.id.start);
+        mIndividualStart = mView.findViewById(R.id.start);
+        mIndividualCubes = mView.findViewById(R.id.cubes);
+        mIndividualClimb = mView.findViewById(R.id.climb);
 
-        update();
+        new UpdateTask().execute();
 
-        return view;
+        return mView;
     }
 
-    public void update()
+    private class UpdateTask extends AsyncTask
     {
-        mIndividualStart.setTeamMatchData(mTeamMatchData);
+        @Override
+        protected Object doInBackground(Object[] objects)
+        {
+            if(mTeamMatchData != null && mIndividualStart != null)
+            {
+                mIndividualStart.setTeamMatchData(mTeamMatchData);
+                mIndividualCubes.setTeamMatchData(mTeamMatchData);
+                mIndividualClimb.setTeamMatchData(mTeamMatchData);
+
+                publishProgress();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Object... objects)
+        {
+            if(mTeamMatchData.isRedCard())
+            {
+                mView.setBackgroundColor(Color.RED);
+                mView.invalidate();
+            }
+            else if(mTeamMatchData.isYellowCard())
+            {
+                mView.setBackgroundColor(Color.YELLOW);
+                mView.invalidate();
+            }
+        }
     }
 }
