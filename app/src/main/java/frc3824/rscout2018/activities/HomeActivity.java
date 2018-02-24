@@ -271,7 +271,7 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
 
             TeamLogistics teamLogistics = new TeamLogistics(1);
             teamLogistics.setNickname("The first team");
-            teamLogistics.setMatchNumbers(new ArrayList<>(Arrays.asList(1)));
+            teamLogistics.setMatchNumbers(new ArrayList<>(Arrays.asList(1, 2)));
             Database.getInstance().updateTeamLogistics(teamLogistics);
 
             TeamMatchData teamMatchData = new TeamMatchData(1, 1);
@@ -329,8 +329,15 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
 
             teamMatchData.setTeleopCubeEvents(events);
 
-            //teamMatchData.setClimbStatus(Constants.);
+            teamMatchData.setClimbTime(1500);
+            teamMatchData.setClimbStatus(Constants.MatchScouting.Climb.Status.CLIMB);
+            teamMatchData.setClimbMethod(Constants.MatchScouting.Climb.Method.CLIMB_RUNG);
 
+            Database.getInstance().updateTeamMatchData(teamMatchData);
+
+            teamMatchData.setMatchNumber(2);
+            teamMatchData.setClimbTime(1000);
+            teamMatchData.setClimbMethod(Constants.MatchScouting.Climb.Method.FOUL);
             Database.getInstance().updateTeamMatchData(teamMatchData);
 
             return null;

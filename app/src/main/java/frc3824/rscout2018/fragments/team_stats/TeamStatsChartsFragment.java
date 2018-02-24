@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.DataModelOnUpdate;
 import frc3824.rscout2018.database.data_models.Team;
+import frc3824.rscout2018.views.powered_up.ClimbView;
 import frc3824.rscout2018.views.powered_up.CubesView;
 import frc3824.rscout2018.views.powered_up.StartLocationView;
 import frc3824.rscout2018.views.powered_up.StartView;
@@ -25,6 +26,7 @@ public class TeamStatsChartsFragment extends Fragment
 
     StartView mStartView = null;
     CubesView mCubesView = null;
+    ClimbView mClimbView = null;
 
     public void setTeamNumber(int teamNumber)
     {
@@ -42,6 +44,7 @@ public class TeamStatsChartsFragment extends Fragment
 
         mStartView = view.findViewById(R.id.start);
         mCubesView = view.findViewById(R.id.cubes);
+        mClimbView = view.findViewById(R.id.climb);
 
         if(mTeamNumber != -1)
         {
@@ -62,6 +65,7 @@ public class TeamStatsChartsFragment extends Fragment
                 Team team = new Team(mTeamNumber);
                 mStartView.setTeam(team);
                 mCubesView.setTeam(team);
+                mClimbView.setTeam(team);
             }
 
             return null;
