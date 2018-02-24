@@ -61,13 +61,13 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
                                                        false));
 
         // Inflate the pit scouting button
-        button.setOnClickListener(this);
         button = findViewById(R.id.pit_scouting_button);
+        button.setOnClickListener(this);
         button.setEnabled(sharedPreferences.getBoolean(Constants.Settings.ENABLE_PIT_SCOUT, false));
 
         // Inflate the super scouting button
-        button.setOnClickListener(this);
         button = findViewById(R.id.super_scouting_button);
+        button.setOnClickListener(this);
         button.setEnabled(sharedPreferences.getBoolean(Constants.Settings.ENABLE_SUPER_SCOUT,
                                                        false));
 
