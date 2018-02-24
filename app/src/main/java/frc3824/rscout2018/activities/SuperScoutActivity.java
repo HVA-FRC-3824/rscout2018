@@ -2,6 +2,7 @@ package frc3824.rscout2018.activities;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -85,6 +86,7 @@ public class SuperScoutActivity extends RScoutActivity
         viewPager.setOffscreenPageLimit(mFPA.getCount());
 
         SmartTabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setBackgroundColor(Color.BLUE);
         tabLayout.setViewPager(viewPager);
     }
 
