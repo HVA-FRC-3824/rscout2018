@@ -101,7 +101,7 @@ public class MatchListActivity extends Activity implements View.OnClickListener
         MatchListAdapter()
         {
             mLayoutInflator = getLayoutInflater();
-            if (mNextPage == Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING)
+            if (mNextPage.equals(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING))
             {
                 mTeamNumbers = new HashMap<>();
             }
@@ -218,7 +218,7 @@ public class MatchListActivity extends Activity implements View.OnClickListener
                         }
                         else
                         {
-                            MatchLogistics m = new MatchLogistics(position + 1);
+                            MatchLogistics m = Database.getInstance().getMatchLogistics(position + 1);
                             teamNumber = m.getTeamNumber(mMatchScoutPosition);
                             mTeamNumbers.put(position + 1, teamNumber);
                         }

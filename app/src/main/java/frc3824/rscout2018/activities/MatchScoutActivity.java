@@ -93,6 +93,9 @@ public class MatchScoutActivity extends RScoutActivity
             }
 
             mTMD = Database.getInstance().getTeamMatchData(mTeamNumber, mMatchNumber);
+            if (mTMD == null) {
+                mTMD = new TeamMatchData(mTeamNumber, mMatchNumber);
+            }
         }
         // Practice Match
         else

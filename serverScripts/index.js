@@ -257,6 +257,26 @@ app.get('/getFullDB', function (req, res) {
 });
 
 //Pulls out match schedule information about a specified match
+app.get('/schedule', function (req, res) {
+	logger.info('Recieved getMatchSchedInfo request');
+	var sql = "SELECT * FROM " + serverEventKey + "matchschedule";
+	con.query(sql, function (err, result) {
+		var alreadyExists = false;
+		if (err) {
+			logger.fatal(err);
+			throw err;
+		};
+		for (var i = 0; i < result.length; i++) {
+			result[i].teamNumbers = [result[i].blue1, result[i].blue2, result[i].blue3, result[i].red1, result[i].red2, result[i].red3];
+		}
+		JSONresult = JSON.stringify(result);
+		console.log(JSONresult);
+		res.send(JSONresult);
+		logger.info('Sent match sched info');
+	});
+});
+
+//Pulls out match schedule information about a specified match
 app.get('/getMatchSchedInfo', function (req, res) {
 	logger.info('Recieved getMatchSchedInfo request');
 	var sql = "SELECT * FROM " + serverEventKey + "matchschedule WHERE matchKey='qm" + req.body.matchNumber + "'";
@@ -292,12 +312,14 @@ app.get('/getMatchData', function (req, res) {
 });
 
 //Inserts match data to the DB and factors it into the averages
-app.post('/postMatchData', function (req, res) {
+app.post('/updateTeamMatchData', function (req, res) {
+	console.log(req);
 	logger.info('Recieved insertMatchData');
 	var requestData = req.body;
 	console.log('InsertingMatchData');
 	console.log(requestData);
-	addMatchData(res, serverEventKey, requestData.teamNumber, "qm" + requestData.matchNumber, requestData.startedWithCube, requestData.startLocationX, requestData.startLocationY, requestData.crossedAutoLine, requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbingState, requestData.climbingMethod, requestData.fouls, requestData.techFouls, requestData.yellowCard, requestData.redCard, requestData.noShow, requestData.dq, requestData.notes);
+	addMatchData(res, serverEventKey, requestData.teamNumber, "qm" + requestData.matchNumber, convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbingState, requestData.climbingMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), mysql_real_escape_string(requestData.notes));
+	res.send(200);
 });
 
 //Inserts multiple pit data to the DB
@@ -305,7 +327,7 @@ app.post('/postMultMatchData', function (req, res) {
 	logger.info('Recieved insertPitData');
 	//Puts in pit data
 	var reqDataArr = req.body.data;
-	for (var i = 0; i < reqDataArr.length) {
+	for (var i = 0; i < reqDataArr.length; i++) {
 		var requestData = req.body;
 		console.log('InsertingMatchData');
 		console.log(requestData);
@@ -346,7 +368,7 @@ app.post('/postMultPitData', function (req, res) {
 	logger.info('Recieved insertPitData');
 	//Puts in pit data
 	var reqDataArr = req.body.data;
-	for (var i = 0; i < reqDataArr.length) {
+	for (var i = 0; i < reqDataArr.length; i++) {
 		var requestData = reqDataArr[i];
 		console.log('InsertingPitData');
 		console.log(requestData);
@@ -450,6 +472,7 @@ function addMatchData(res, eventKey, teamNumber, matchKey, startedWithCube, star
 			//}
 
 			//Update total and average stats
+			/*
 			//{
 			var sql = "SELECT * FROM " + eventKey + "teamstats WHERE teamNumber = '" + teamNumber + "'";
 			con.query(sql, function (err, result1) {
@@ -609,10 +632,11 @@ function addMatchData(res, eventKey, teamNumber, matchKey, startedWithCube, star
 					console.log("1 team record updated");
 					res.send("1 match added");
 				});
-
+				
 				}
 			});
 			//}
+			*/
 		}
 	});
 };
@@ -679,7 +703,7 @@ function addPitData(eventKey, teamNumber, width, length, height, weight, driveTr
 };
 
 //Listen on port 3824
-var server = http.listen(3824, function(err){
+var server = http.listen(3824, "0.0.0.0", function(err){
 	if (err) {
 		logger.fatal(err);
 		throw err;
@@ -715,7 +739,7 @@ function addEvent(eventKey) {
 				};
 				console.log("Created Team Table for event " + eventKey);
 			});
-			var sql = "CREATE TABLE " + eventKey + "matchschedule (matchKey varchar(255), blue1TeamNumber int, blue2TeamNumber int, blue3TeamNumber int, red1TeamNumber int, red2TeamNumber int, red3TeamNumber int)";
+			var sql = "CREATE TABLE " + eventKey + "matchschedule (matchNumber int,blue1 int, blue2 int, blue3 int, red1 int, red2 int, red3 int)";
 			con.query(sql, function (err, result) {
 				if (err) {
 					logger.fatal(err);
@@ -751,6 +775,14 @@ function addEvent(eventKey) {
 	});
 }
 
+//Converts boolean to tinyint
+function convertBool(bool) {
+		if (bool) {
+			return 1;
+		} else {
+			return 0;
+		}
+}
 //Fill teams table
 function addTeam(teamInfo, eventKey) {
 	var climbingStateTotalsObject = {};
@@ -766,7 +798,7 @@ function addTeam(teamInfo, eventKey) {
 //Fill matchSchedule table
 function addMatch(matchInfo, eventKey) {
 	
-	var matchKey = matchInfo.key.substr(eventKey.length + 1);
+	var matchNumber = matchInfo.key.substr(eventKey.length + 3);
 	
 	var red1 = matchInfo.alliances.red.team_keys[0].substr(3);
 	var red2 = matchInfo.alliances.red.team_keys[1].substr(3);
@@ -775,7 +807,7 @@ function addMatch(matchInfo, eventKey) {
 	var blue2 = matchInfo.alliances.blue.team_keys[1].substr(3);
 	var blue3 = matchInfo.alliances.blue.team_keys[2].substr(3);
 	
-	var sql = "INSERT INTO " + eventKey + "matchschedule (matchKey, blue1TeamNumber, blue2TeamNumber, blue3TeamNumber, red1TeamNumber, red2TeamNumber, red3TeamNumber) VALUES ('" + matchKey + "', '" + red1 + "', '" + red2 + "', '" + red3 + "', '" + blue1 + "', '" + blue2 + "', '" + blue3 + "')";
+	var sql = "INSERT INTO " + eventKey + "matchschedule (matchNumber, blue1, blue2, blue3, red1, red2, red3) VALUES ('" + matchNumber + "', '" + red1 + "', '" + red2 + "', '" + red3 + "', '" + blue1 + "', '" + blue2 + "', '" + blue3 + "')";
 	con.query(sql, function (err, result) {
 		if (err) {
 			logger.fatal(err);
