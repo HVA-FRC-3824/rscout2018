@@ -12,6 +12,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -64,6 +65,7 @@ public class Database
 
         mDatabase = FirebaseDatabase.getInstance();
         mDatabase.setPersistenceEnabled(true);
+        mDatabase.goOnline();
         //mDatabase.goOffline();
 
         mReferences.put(ROOT, mDatabase.getReference());
@@ -243,6 +245,21 @@ public class Database
             return null;
         }
         return dataSnapshot.getValue(TeamPitData.class);
+    }
+
+    public ArrayList<TeamPitData> getAllTeamPitData()
+    {
+        Collection<DataSnapshot> data = mMap.get(TEAM_PIT).values();
+
+        ArrayList<TeamPitData> rv = new ArrayList<>();
+        for(DataSnapshot snapshot : data)
+        {
+            if(snapshot != null)
+            {
+                rv.add(snapshot.getValue(TeamPitData.class));
+            }
+        }
+        return rv;
     }
 
     public void updateTeamPitData(TeamPitData teamPitData)
