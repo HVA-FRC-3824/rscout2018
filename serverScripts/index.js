@@ -51,7 +51,7 @@ var logger = new (winston.Logger)({
       colorize: true,
       timestamp: true
     }),
-    new (winston.transports.File)({ filename: 'logs.log' })
+    new (winston.transports.File)({ filename: __dirname + 'logs.log' })
   ]
 })
 

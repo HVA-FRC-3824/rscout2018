@@ -337,6 +337,7 @@ public class PitScoutActivity extends RScoutActivity
             if (!mPractice && mTPD.isDirty())
             {
                 Database.getInstance().updateTeamPitData(mTPD);
+                int breakpoint=-1;
             }
         }
     }

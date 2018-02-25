@@ -2,6 +2,8 @@ package frc3824.rscout2018.database;
 
 import android.util.Log;
 
+
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -277,9 +279,9 @@ public class Database
 
     public void updateTeamPitData(TeamPitData teamPitData)
     {
-        Gson gson = new Gson();
-        String json = gson.toJson(teamPitData);
-        mReferences.get(TEAM_PIT).child(String.valueOf(teamPitData.getTeamNumber())).setValue(teamPitData);
+        DatabaseReference testA = mReferences.get(TEAM_PIT);
+        DatabaseReference testB = testA.child(String.valueOf(teamPitData.getTeamNumber()));
+        testB.setValue(teamPitData);
     }
     //endregion
 
