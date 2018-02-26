@@ -25,6 +25,7 @@ import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.database.data_models.SuperMatchData;
 import frc3824.rscout2018.database.data_models.TeamLogistics;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
+import frc3824.rscout2018.database.data_models.TeamPitData;
 import frc3824.rscout2018.utilities.Constants;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -339,6 +340,42 @@ public class CommunicationService extends IntentService
                 ToastBus.getInstance().publish(new ToastRequest("Save Failure",
                                                                 TastyToast.LENGTH_LONG,
                                                                 TastyToast.ERROR));
+            }
+        }
+
+        if (!mSmdQueue.isEmpty())
+        {
+            RequestBody body = RequestBody.create(kJSON, mGson.toJson(mSmdQueue));
+            Request request = new Request.Builder()
+                    .url(mUrl + "/updateSuperMatchDataList")
+                    .post(body)
+                    .build();
+
+            try
+            {
+                Response response = mClient.newCall(request).execute();
+                if (response.code() == 200)
+                {
+                    ToastBus.getInstance()
+                            .publish(new ToastRequest("Super Match Data from queue Saved",
+                                    TastyToast.LENGTH_LONG,
+                                    TastyToast.SUCCESS));
+                    mSmdQueue.clear();
+                }
+                else
+                {
+                    ToastBus.getInstance()
+                            .publish(new ToastRequest(String.format("Error: Response code: %d",
+                                    response.code()),
+                                    TastyToast.LENGTH_LONG,
+                                    TastyToast.ERROR));
+                }
+            }
+            catch (IOException e)
+            {
+                ToastBus.getInstance().publish(new ToastRequest("Save Failure",
+                        TastyToast.LENGTH_LONG,
+                        TastyToast.ERROR));
             }
         }
     }

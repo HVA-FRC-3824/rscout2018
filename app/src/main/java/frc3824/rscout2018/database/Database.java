@@ -279,9 +279,7 @@ public class Database
 
     public void updateTeamPitData(TeamPitData teamPitData)
     {
-        DatabaseReference testA = mReferences.get(TEAM_PIT);
-        DatabaseReference testB = testA.child(String.valueOf(teamPitData.getTeamNumber()));
-        testB.setValue(teamPitData);
+        mReferences.get(TEAM_PIT).child(String.valueOf(teamPitData.getTeamNumber())).setValue(teamPitData);
     }
     //endregion
 
