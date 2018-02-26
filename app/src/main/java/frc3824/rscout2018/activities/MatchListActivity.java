@@ -88,6 +88,7 @@ public class MatchListActivity extends Activity implements View.OnClickListener
                 MatchScoutActivityStarter.start(this, -1);
                 break;
             case Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING:
+                SuperScoutActivityStarter.start(this, -1);
                 break;
         }
     }

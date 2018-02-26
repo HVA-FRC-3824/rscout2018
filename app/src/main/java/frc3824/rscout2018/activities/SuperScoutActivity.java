@@ -66,7 +66,11 @@ public class SuperScoutActivity extends RScoutActivity
                 header.removeNext();
             }
 
-            mSMD = new SuperMatchData(mMatchNumber);
+            mSMD = Database.getInstance().getSuperMatchData(mMatchNumber);
+            if(mSMD == null)
+            {
+                mSMD = new SuperMatchData(mMatchNumber);
+            }
         }
         // Practice Match
         else
