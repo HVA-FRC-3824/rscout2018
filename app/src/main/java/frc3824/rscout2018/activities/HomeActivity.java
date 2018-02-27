@@ -131,6 +131,14 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
             button.setOnClickListener(this);
         }
 
+        // Inflate the upload all pit data button
+        button = findViewById(R.id.upload_pit_data_button);
+        button.setEnabled(enableAdmin);
+        if(first)
+        {
+            button.setOnClickListener(this);
+        }
+
         // Inflate the pull pit data button
         button = findViewById(R.id.pull_pit_data_button);
         button.setEnabled(enableAdmin);
@@ -262,6 +270,11 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
                 startService(intent);
                 return;
 
+            case R.id.upload_pit_data_button:
+                intent = new Intent(HomeActivity.this, CommunicationService.class);
+                intent.putExtra(Constants.IntentExtras.UPLOAD_PIT_DATA, true);
+                startService(intent);
+                return;
 
             case R.id.pull_pit_data_button:
                 intent = new Intent(HomeActivity.this, CommunicationService.class);

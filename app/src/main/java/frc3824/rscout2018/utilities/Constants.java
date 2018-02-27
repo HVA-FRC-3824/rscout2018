@@ -70,6 +70,7 @@ public interface Constants
         String DOWNLOAD_SCHEDULE = "pull_matches";
         String DOWNLOAD_TEAMS = "pull_teams";
         String DOWNLOAD_PIT_DATA = "pull_pit_data";
+        String UPLOAD_PIT_DATA = "upload_pit_data";
         String DOWNLOAD_PICTURES = "download_pictures";
         String PING = "ping";
     }
