@@ -411,10 +411,10 @@ app.post('/uploadRobotPicture', function (req, res) {
 		logger.crit('No files sent');
 		return res.status(400).send('No files sent');
 	}
-	
+
 	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
 	let teamPic = req.files.picture;
- 
+
 	// Use the mv() method to place the file somewhere on your server
 	sampleFile.mv(__dirname + '/' + req.body.teamNumber + '/' + teamPic.name, function(err) {
     if (err) {

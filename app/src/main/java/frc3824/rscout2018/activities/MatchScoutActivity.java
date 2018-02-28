@@ -488,4 +488,13 @@ public class MatchScoutActivity extends RScoutActivity
             return Constants.MatchScouting.TABS[position];
         }
     }
+
+    /**
+     * Removes back pressed option
+     */
+    @Override
+    public void onBackPressed()
+    {
+        return;
+    }
 }

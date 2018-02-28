@@ -422,4 +422,13 @@ public class SuperScoutActivity extends RScoutActivity
             return Constants.SuperScouting.TABS[position];
         }
     }
+
+    /**
+     * Removes back pressed option
+     */
+    @Override
+    public void onBackPressed()
+    {
+        return;
+    }
 }

@@ -25,6 +25,7 @@ import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.database.data_models.SuperMatchData;
 import frc3824.rscout2018.database.data_models.TeamLogistics;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
+import frc3824.rscout2018.database.data_models.TeamPitData;
 import frc3824.rscout2018.utilities.Constants;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;

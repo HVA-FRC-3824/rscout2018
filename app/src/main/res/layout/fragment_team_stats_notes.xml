@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="notes"
+            type="frc3824.rscout2018.database.data_models.NotesStorage"/>
+    </data>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
@@ -15,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/match_notes"
+        android:text="@{notes.matchNotes}"
         android:textColor="@color/Black"/>
 
     <TextView
@@ -28,5 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/super_notes"
+        android:text="@{notes.superNotes}"
         android:textColor="@color/Black"/>
 </LinearLayout>
+</layout>

@@ -411,4 +411,12 @@ public class PitScoutActivity extends RScoutActivity
         }
     }
 
+    /**
+     * Removes back pressed option
+     */
+    @Override
+    public void onBackPressed()
+    {
+        return;
+    }
 }

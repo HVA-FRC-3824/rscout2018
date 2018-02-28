@@ -1,6 +1,7 @@
 package frc3824.rscout2018.fragments.match_preview;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 
 import activitystarter.ActivityStarter;
 import frc3824.rscout2018.R;
+import frc3824.rscout2018.database.Database;
+import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.utilities.Utilities;
 
 /**
@@ -17,20 +20,14 @@ import frc3824.rscout2018.utilities.Utilities;
  */
 public class MatchAlliancePreviewFragment extends Fragment
 {
+    int mMatchNumber;
     boolean mRed;
-    //TeamCalculatedData[] mTeams;
-    //AllianceCalculatedData mAlliance = null;
 
-    /*
-    public void setTeamMatchData(TeamCalculatedData team1, TeamCalculatedData team2, TeamCalculatedData team3)
+    public void setMatchNumber(int matchNumber, boolean red)
     {
-        mTeams = new TeamCalculatedData[3];
-        mTeams[0] = team1;
-        mTeams[1] = team2;
-        mTeams[2] = team3;
-        //mAlliance = new AllianceCalculatedData(mTeams);
+        mMatchNumber = matchNumber;
+        mRed = red;
     }
-    */
 
     /**
      * {@inheritDoc}
@@ -40,11 +37,7 @@ public class MatchAlliancePreviewFragment extends Fragment
     {
         // Inflate layout and bind the realm object
         View view = inflater.inflate(R.layout.fragment_match_alliance_preview, container, false);
-        //mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_match_alliance_preview, container, false);
-        //mBinding.setAcd(mAlliance);
-        //View view = mBinding.getRoot();
 
-        ActivityStarter.fill(this);
         if(mRed)
         {
             view.setBackgroundColor(Color.RED);
@@ -53,6 +46,17 @@ public class MatchAlliancePreviewFragment extends Fragment
         {
             view.setBackgroundColor(Color.BLUE);
         }
+
+        FragmentManager fm = getChildFragmentManager();
+
+        MatchTeamPreviewFragment team1 = (MatchTeamPreviewFragment)fm.findFragmentById(R.id.team1);
+        MatchTeamPreviewFragment team2 = (MatchTeamPreviewFragment)fm.findFragmentById(R.id.team2);
+        MatchTeamPreviewFragment team3 = (MatchTeamPreviewFragment)fm.findFragmentById(R.id.team3);
+
+        MatchLogistics match = Database.getInstance().getMatchLogistics(mMatchNumber);
+        team1.setTeamNumber(match.getTeamNumber(0 + (mRed ? 3 : 0)), mRed);
+        team2.setTeamNumber(match.getTeamNumber(1 + (mRed ? 3 : 0)), mRed);
+        team3.setTeamNumber(match.getTeamNumber(2 + (mRed ? 3 : 0)), mRed);
 
         // Add touch listeners
         Utilities.setupUi(getActivity(), view);

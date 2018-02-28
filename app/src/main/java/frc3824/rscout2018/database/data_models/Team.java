@@ -10,6 +10,15 @@ import frc3824.rscout2018.database.Database;
  */
 public class Team
 {
+    // region Team Number
+    int teamNumber;
+
+    public int getTeamNumber()
+    {
+        return teamNumber;
+    }
+    //endregion
+
     //region Logistics
     TeamLogistics mLogistics;
 
@@ -24,7 +33,7 @@ public class Team
     }
     //endregion
     //region Matches
-    Map<Integer, TeamMatchData> mMatches;
+    Map<Integer, TeamMatchData> mMatches = new HashMap<>();
 
     public Map<Integer, TeamMatchData> getMatches()
     {
@@ -45,6 +54,28 @@ public class Team
         mMatches.put(teamMatchData.getMatchNumber(), teamMatchData);
     }
     //endregion
+    //region Super Matches
+    Map<Integer, SuperMatchData> mSuperMatches = new HashMap<>();
+
+    public Map<Integer, SuperMatchData> getSuperMatches()
+    {
+        return mSuperMatches;
+    }
+
+    public SuperMatchData getSuperMatch(int matchNumber)
+    {
+        if(mSuperMatches.containsKey(matchNumber))
+        {
+            return mSuperMatches.get(matchNumber);
+        }
+        return null;
+    }
+
+    public void addSuperMatch(SuperMatchData superMatchData)
+    {
+        mSuperMatches.put(superMatchData.getMatchNumber(), superMatchData);
+    }
+    //endregion
     //region Pit
     TeamPitData mPit;
 
@@ -61,8 +92,10 @@ public class Team
 
     public Team(int teamNumber)
     {
+        this.teamNumber = teamNumber;
+
         mLogistics = Database.getInstance().getTeamLogistics(teamNumber);
-        // mPit = new TeamPitData(teamNumber);
+        mPit = Database.getInstance().getTeamPitData(teamNumber);
         mMatches = new HashMap<>();
 
         if(mLogistics != null)
@@ -74,6 +107,12 @@ public class Team
                 if (tmd != null)
                 {
                     addMatch(tmd);
+                }
+
+                SuperMatchData smd = Database.getInstance().getSuperMatchData(matchNumber);
+                if(smd != null)
+                {
+                    addSuperMatch(smd);
                 }
             }
         }

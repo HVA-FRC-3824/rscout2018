@@ -32,7 +32,7 @@
         <activity
             android:name=".activities.MatchPreviewActivity"
             android:label="Match Preview"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".activities.PitScoutActivity"
             android:label="Pit Scouting"
