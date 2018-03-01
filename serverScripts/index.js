@@ -51,7 +51,7 @@ var logger = new (winston.Logger)({
       colorize: true,
       timestamp: true
     }),
-    new (winston.transports.File)({ filename: 'logs.log' })
+    new (winston.transports.File)({ filename: __dirname + '/logs.log' })
   ]
 })
 
@@ -158,6 +158,7 @@ app.get('/addEvent', function(req, res) {
 					logger.crit(error);
 				}
 			});
+			res.sendStatus(200);
 		} else {
 			console.log("Error! Event already added!");
 			logger.crit('Error! Tried to add event which ')
@@ -278,7 +279,6 @@ app.get('/schedule', function (req, res) {
 	logger.info('Recieved getMatchSchedInfo request');
 	var sql = "SELECT * FROM " + serverEventKey + "matchschedule";
 	con.query(sql, function (err, result) {
-		var alreadyExists = false;
 		if (err) {
 			logger.fatal(err);
 			throw err;
@@ -293,115 +293,177 @@ app.get('/schedule', function (req, res) {
 	});
 });
 
-//Pulls out match schedule information about a specified match
-app.get('/getMatchSchedInfo', function (req, res) {
-	logger.info('Recieved getMatchSchedInfo request');
-	var sql = "SELECT * FROM " + serverEventKey + "matchschedule WHERE matchKey='qm" + req.body.matchNumber + "'";
-	con.query(sql, function (err, result) {
-		var alreadyExists = false;
-		if (err) {
-			logger.fatal(err);
-			throw err;
-		};
-		JSONresult = JSON.stringify(result[0]);
-		console.log(JSONresult);
-		res.send(JSONresult);
-		logger.info('Sent match sched info');
-	});
-});
-
-//Pulls out match data for a specified match and team
-app.get('/getMatchData', function (req, res) {
-	logger.info('Recieved get match data request');
+//Pulls out pit data
+app.get('/pitData', function (req, res) {
+	logger.info('Recieved get pit data request');
 	//Pulls out match data
-	var sql = "SELECT * FROM " + serverEventKey + "matchdata WHERE matchKey='qm" + req.body.matchKey + "' AND teamNumber='" + req.body.teamNumber + "'";
+	var sql = "SELECT * FROM " + serverEventKey + "pitdata";
 	con.query(sql, function (err, result) {
-		var alreadyExists = false;
 		if (err) {
 			logger.fatal(err);
 			throw err;
 		};
-		JSONresult = JSON.stringify(result[0]);
-		console.log(JSONresult);
-		res.send(JSONresult);
-		logger.info('Sent match data');
-	});
-});
-
-//Inserts match data to the DB and factors it into the averages
-app.post('/updateTeamMatchData', function (req, res) {
-	
-	logger.info('Recieved insertMatchData');
-	var requestData = req.body;
-	console.log('InsertingMatchData');
-	console.log(requestData);
-	addMatchData(res, serverEventKey, requestData.teamNumber, "qm" + requestData.matchNumber, convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbingState, requestData.climbingMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), mysql_real_escape_string(requestData.notes));
-	res.sendStatus(200);
-});
-
-//Inserts match data to the DB and factors it into the averages
-app.post('/updateSuperMatchData', function (req, res) {
-	console.log(req);
-	logger.info('Recieved insertSuperData');
-	var requestData = req.body;
-	console.log('InsertingSuperData');
-	console.log(requestData);
-	//addMatchData(res, serverEventKey, requestData.teamNumber, "qm" + requestData.matchNumber, convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbingState, requestData.climbingMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), mysql_real_escape_string(requestData.notes));
-	res.send(200);
-});
-
-//Inserts multiple pit data to the DB
-app.post('/postMultMatchData', function (req, res) {
-	logger.info('Recieved insertPitData');
-	//Puts in pit data
-	var reqDataArr = req.body.data;
-	for (var i = 0; i < reqDataArr.length; i++) {
-		var requestData = req.body;
-		console.log('InsertingMatchData');
-		console.log(requestData);
-		addMatchData(res, serverEventKey, requestData.teamNumber, "qm" + requestData.matchNumber, requestData.startedWithCube, requestData.startLocationX, requestData.startLocationY, requestData.crossedAutoLine, requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbingState, requestData.climbingMethod, requestData.fouls, requestData.techFouls, requestData.yellowCard, requestData.redCard, requestData.noShow, requestData.dq, requestData.notes);
-	}
-});
-
-//Pulls out pit data for a specified team
-app.get('/getPitData', function (req, res) {
-	logger.info('Recieved getPitData request');
-	//Pulls out pit data
-	var sql = "SELECT * FROM " + serverEventKey + "pitdata WHERE teamNumber='" + req.body.teamNumber + "'";
-	con.query(sql, function (err, result) {
-		var alreadyExists = false;
-		if (err) {
-			logger.fatal(err);
-			throw err;
-		};
-		JSONresult = JSON.stringify(result[0]);
+		JSONresult = JSON.stringify(result);
 		console.log(JSONresult);
 		res.send(JSONresult);
 		logger.info('Sent pit data');
 	});
 });
 
-//Inserts pit data to the DB
-app.post('/updatePitData', function (req, res) {
-	logger.info('Recieved insertPitData');
-	//Puts in pit data
-	var requestData = req.body.data;
-	console.log('InsertingPitData');
-	console.log(requestData);
-	addPitData(res, request.eventKey, requestData.teamNumber, requestData.robotWidth, requestData.robotLength, requestData.robotHeight, requestData.robotWeight, requestData.driveTrain, requestData.programmingLanguage, requestData.notes);
+//Pulls out match data
+app.get('/teamMatchData', function (req, res) {
+	logger.info('Recieved get match data request');
+	//Pulls out match data
+	var sql = "SELECT * FROM " + serverEventKey + "matchdata";
+	con.query(sql, function (err, result) {
+		if (err) {
+			logger.fatal(err);
+			throw err;
+		};
+		JSONresult = JSON.stringify(result);
+		console.log(JSONresult);
+		res.send(JSONresult);
+		logger.info('Sent match data');
+	});
 });
 
-//Inserts multiple pit data to the DB
-app.post('/postMultPitData', function (req, res) {
-	logger.info('Recieved insertPitData');
+//Pulls out match data for a specified match and team
+app.get('/superMatchData', function (req, res) {
+	logger.info('Recieved get super data request');
+	//Pulls out match data
+	var sql = "SELECT * FROM " + serverEventKey + "supermatchdata";
+	con.query(sql, function (err, result) {
+		if (err) {
+			logger.fatal(err);
+			throw err;
+		};
+		JSONresult = JSON.stringify(result);
+		console.log(JSONresult);
+		res.send(JSONresult);
+		logger.info('Sent super data');
+	});
+});
+
+//Inserts match data to the DB
+app.post('/updateTeamMatchData', function (req, res) {
+	
+	logger.info('Recieved insertMatchData');
+	var requestData = req.body;
+	console.log('InsertingMatchData');
+	console.log(requestData);
+	
+	var alreadyExists = false
+	
+	var sql = "SELECT * FROM " + serverEventKey + "matchdata";
+	con.query(sql, function (err, result) {
+		for (var i = 0; i < result.length; i++) {
+			if (result[i].teamNumber == requestData.teamNumber && result[i].matchNumber == requestData.matchNumber) {
+				alreadyExists = true;
+			}
+		}
+		if (alreadyExists) {
+			console.log('Already exists. Deleting row');
+			var sql = "DELETE FROM " + serverEventKey + "matchdata WHERE teamNumber= '" + requestData.teamNumber + "' AND matchNumber='" + requestData.matchNumber + "'";
+			con.query(sql, function (err, result) {		
+			});
+		}
+		addMatchData(res, serverEventKey, requestData.teamNumber, requestData.matchNumber, requestData.scoutName,convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbStatus, requestData.climbMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), mysql_real_escape_string(requestData.notes));
+	res.sendStatus(200);
+	});
+});
+
+//Inserts match data to the DB
+app.post('/updateTeamMatchDataList', function (req, res) {
+	
+	logger.info('Recieved insertMatchData');
+	var requestData = req.body;
+	console.log('InsertingMatchData');
+	console.log(requestData);
+	
+	var alreadyExists = false
+	
+	var sql = "SELECT * FROM " + serverEventKey + "matchdata";
+	con.query(sql, function (err, result) {
+		for (var i = 0; i < result.length; i++) {
+			if (result[i].teamNumber == requestData.teamNumber && result[i].matchNumber == requestData.matchNumber) {
+				alreadyExists = true;
+			}
+		}
+		if (alreadyExists) {
+			console.log('Already exists. Deleting row');
+			var sql = "DELETE FROM " + serverEventKey + "matchdata WHERE teamNumber= '" + requestData.teamNumber + "' AND matchNumber='" + requestData.matchNumber + "'";
+			con.query(sql, function (err, result) {		
+			});
+		}
+		addMatchData(res, serverEventKey, requestData.teamNumber, requestData.matchNumber, requestData.scoutName,convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbStatus, requestData.climbMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), mysql_real_escape_string(requestData.notes));
+	res.sendStatus(200);
+	});
+});
+
+//Inserts match data to the DB and factors it into the averages
+app.post('/updateSuperMatchData', function (req, res) {
+	logger.info('Recieved insertSuperData');
+	var requestData = req.body;
+	console.log('InsertingSuperData');
+	console.log(requestData);
+	
+	var alreadyExists = false
+	
+	var sql = "SELECT * FROM " + serverEventKey + "supermatchdata";
+	con.query(sql, function (err, result) {
+		for (var i = 0; i < result.length; i++) {
+			if (result[i].matchNumber == requestData.matchNumber) {
+				alreadyExists = true;
+			}
+		}
+		if (alreadyExists) {
+			console.log('Already exists. Deleting row');
+			var sql = "DELETE FROM " + serverEventKey + "supermatchdata WHERE matchNumber='" + requestData.matchNumber + "'";
+			con.query(sql, function (err, result) {		
+			});
+		}
+		addSuperMatchData(res, serverEventKey, requestData.matchNumber, requestData.scoutName, requestData.forceRed, requestData.levitateRed, requestData.boostRed, requestData.forceBlue, requestData.levitateBlue, requestData.boostBlue, mysql_real_escape_string(requestData.notes));
+		res.sendStatus(200);
+	});
+});
+
+//Inserts multiple Match data to the DB
+app.post('/updateSuperMatchDataList', function (req, res) {
+	logger.info('Recieved insertSuperDataList');
 	//Puts in pit data
 	var reqDataArr = req.body.data;
 	for (var i = 0; i < reqDataArr.length; i++) {
-		var requestData = reqDataArr[i];
-		console.log('InsertingPitData');
-		console.log(requestData);
-		addPitData(res, request.eventKey, requestData.teamNumber, requestData.robotWidth, requestData.robotLength, requestData.robotHeight, requestData.robotWeight, requestData.driveTrain, requestData.programmingLanguage, requestData.notes);
+		var requestData = req.body[i];
+		console.log('InsertingSuperData');
+		addSuperMatchData(res, serverEventKey, requestData.matchNumber, requestData.scoutName, requestData.forceRed, requestData.levitateRed, requestData.boostRed, requestData.forceBlue, requestData.levitateBlue, requestData.boostBlue, mysql_real_escape_string(requestData.notes));
+		res.sendStatus(200);
 	}
+});
+
+//Inserts multiple Match data to the DB
+app.post('/updateTeamMatchDataList', function (req, res) {
+	logger.info('Recieved insertMatchDataList');
+	//Puts in pit data
+	var reqDataArr = req.body.data;
+	for (var i = 0; i < reqDataArr.length; i++) {
+		var requestData = req.body[i];
+		console.log('InsertingMatchData');
+		addMatchData(res, serverEventKey, requestData.teamNumber, requestData.matchNumber, requestData.scoutName,convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbStatus, requestData.climbMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), mysql_real_escape_string(requestData.notes));
+		res.sendStatus(200);
+	}
+});
+
+//Inserts pit data to the DB
+app.post('/updateTeamPitDataList', function (req, res) {
+	logger.info('Recieved insertPitData');
+	//Puts in pit data
+	var requestData = req.body;
+	console.log('InsertingPitData');
+	console.log(requestData);
+	for (var i = 0; i < requestData.length; i++) {
+		addPitData(res, serverEventKey, requestData[i].teamNumber, requestData[i].robotWidth, requestData[i].robotLength, requestData[i].robotHeight, requestData[i].robotWeight, requestData[i].driveTrain, requestData[i].programmingLanguage, requestData[i].notes);
+	}
+	res.sendStatus(200);
 });
 
 //Uploads a robot picture
@@ -428,7 +490,7 @@ app.post('/uploadRobotPicture', function (req, res) {
 });
 
 //Sends back all pictures for a team
-app.get('/getRobotPicture', function(req, res) {
+app.get('/getPictures', function(req, res) {
 	logger.info("Recieved robot picture request");
 	res.sendFile(__dirname + '/' + req.body.teamNumber);
 });
@@ -460,7 +522,7 @@ function mysql_real_escape_string (str) {
 };
 
 //Insert Match Data
-function addMatchData(res, eventKey, teamNumber, matchKey, startedWithCube, startLocationX, startLocationY, autoCrossed, autoEvents, teleopEvents, climbTime, climbingState, climbingMethod, fouls, techFouls, yellowCard, redCard, noShow, DQ, notes) {
+function addMatchData(res, eventKey, teamNumber, matchNumber, scoutName, startedWithCube, startLocationX, startLocationY, autoCrossed, autoEvents, teleopEvents, climbTime, climbingState, climbingMethod, fouls, techFouls, yellowCard, redCard, noShow, DQ, notes) {
 	//Check if the event has been created
 	var alreadyExists = false;
 
@@ -489,7 +551,7 @@ function addMatchData(res, eventKey, teamNumber, matchKey, startedWithCube, star
 
 			//Insert match data
 			//{
-			var sql = "INSERT INTO " + eventKey + "matchdata (teamNumber, matchKey, startedWithCube, startLocationX, startLocationY, crossedAutoLine, autoEvents, teleopEvents, climbTime, climbingState, climbingMethod, fouls, techFouls, yellowCard, redCard, noShow, DQ, notes) VALUES ('" + teamNumber + "', '" + matchKey + "', '" + startedWithCube + "', '" + startLocationX + "', '" + startLocationY + "', '" + autoCrossed + "','" + autoEvents + "','" + teleopEvents + "','" + climbTime + "', '" + climbingState + "','" + climbingMethod + "','" + fouls + "','" + techFouls + "','" + yellowCard + "','" + redCard + "','" + noShow + "','" + DQ + "','" + mysql_real_escape_string(notes) + "')";
+			var sql = "INSERT INTO " + eventKey + "matchdata (teamNumber, matchNumber, scoutName, startedWithCube, startLocationX, startLocationY, crossedAutoLine, autoCubeEvents, teleopCubeEvents, climbTime, climbStatus, climbMethod, fouls, techFouls, yellowCard, redCard, noShow, DQ, notes) VALUES ('" + teamNumber + "', '" + matchNumber + "', '" + scoutName + "', '" + startedWithCube + "', '" + startLocationX + "', '" + startLocationY + "', '" + autoCrossed + "','" + JSON.stringify(autoEvents) + "','" + JSON.stringify(teleopEvents) + "','" + climbTime + "', '" + climbingState + "','" + climbingMethod + "','" + fouls + "','" + techFouls + "','" + yellowCard + "','" + redCard + "','" + noShow + "','" + DQ + "','" + mysql_real_escape_string(notes) + "')";
 			con.query(sql, function (err, result) {
 				if (err) {
 					logger.fatal(err);
@@ -670,7 +732,7 @@ function addMatchData(res, eventKey, teamNumber, matchKey, startedWithCube, star
 };
 
 //Insert Super Match Data
-function addSuperMatchData(eventKey, matchKey, boostCubes, forceCubes, levitateCubes, notes) {
+function addSuperMatchData(res, eventKey, matchNumber, scoutName, forceRed, levitateRed, boostRed, forceBlue, levitateBlue, boostBlue, notes) {
 	var alreadyExists = false;
 	var sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='rscout'";
 	con.query(sql, function (err, result) {
@@ -687,7 +749,7 @@ function addSuperMatchData(eventKey, matchKey, boostCubes, forceCubes, levitateC
 		if (!alreadyExists) {
 		console.log("Error! Event has not been created");
 		} else {
-			var sql = "INSERT INTO " + eventKey + "supermatchdata (matchKey, boostCubes, forceCubes, levitateCubes, notes) VALUES ('" + matchKey + "', '" + boostCubes + "', '" + forceCubes + "', '" + levitateCubes + "', '" + mysql_real_escape_string(notes) + "')";
+			var sql = "INSERT INTO " + eventKey + "supermatchdata (matchNumber, scoutName, forceRed, levitateRed, boostRed, forceBlue, levitateBlue, boostBlue, notes) VALUES ('" + matchNumber + "', '" + scoutName + "', '" + forceRed + "', '" + levitateRed + "', '" + boostRed + "', '" + forceBlue + "', '" + levitateBlue + "', '" + boostBlue + "', '" + mysql_real_escape_string(notes) + "')";
 			con.query(sql, function (err, result) {
 				if (err) {
 					logger.fatal(err);
@@ -700,7 +762,7 @@ function addSuperMatchData(eventKey, matchKey, boostCubes, forceCubes, levitateC
 };
 
 //Insert Pit Data
-function addPitData(eventKey, teamNumber, width, length, height, weight, driveTrain, programmingLanguage, notes) {
+function addPitData(res, eventKey, teamNumber, width, length, height, weight, driveTrain, programmingLanguage, notes) {
 	var alreadyExists = false;
 	var sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='rscout'";
 	con.query(sql, function (err, result) {
@@ -717,14 +779,13 @@ function addPitData(eventKey, teamNumber, width, length, height, weight, driveTr
 		if (!alreadyExists) {
 		console.log("Error! Event has not been created");
 		} else {
-			var sql = "INSERT INTO " + eventKey + "pitdata (teamNumber, width, length, height, weight, driveTrain, programmingLanguage, notes) VALUES ('" + teamNumber + "', '" + width + "', '" + length + "','" + height + "','" + weight + "','" + driveTrain + "','" + programmingLanguage + "','" + mysql_real_escape_string(notes) + "')";
+			var sql = "INSERT INTO " + eventKey + "pitdata (teamNumber, robotWidth, robotLength, robotHeight, robotWeight, driveTrain, programmingLanguage, notes) VALUES ('" + teamNumber + "', '" + width + "', '" + length + "','" + height + "','" + weight + "','" + driveTrain + "','" + programmingLanguage + "','" + mysql_real_escape_string(notes) + "')";
 			con.query(sql, function (err, result) {
 				if (err) {
 					logger.fatal(err);
 					throw err;
 				};
 				console.log("1 pit data record inserted");
-				res.send("1 pit data record inserted");
 			});
 		}
 	});
@@ -775,7 +836,7 @@ function addEvent(eventKey) {
 				};
 				console.log("Created Match Table for event " + eventKey);
 			});
-			var sql = "CREATE TABLE " + eventKey + "pitdata (teamNumber int, width int, length int, height int, weight int, driveTrain varchar(255), programmingLanguage varchar(255), notes varchar(511))";
+			var sql = "CREATE TABLE " + eventKey + "pitdata (teamNumber int, robotWidth int, robotLength int, robotHeight int, robotWeight int, driveTrain varchar(255), programmingLanguage varchar(255), notes varchar(511))";
 			con.query(sql, function (err, result) {
 				if (err) {
 					logger.fatal(err);
@@ -783,7 +844,7 @@ function addEvent(eventKey) {
 				};
 				console.log("Created Pit Data Table for event " + eventKey);
 			});
-			var sql = "CREATE TABLE " + eventKey + "matchdata (teamNumber int, matchKey varchar(255), crossedAutoLine boolean, startedWithCube boolean, startLocationX double, startLocationY double, autoEvents varchar(1027), teleopEvents varchar(1027), climbTime long, climbingState varchar(255), climbingMethod varchar(255), fouls int, techFouls int, yellowCard boolean, redCard boolean, noShow boolean, DQ boolean, notes varchar(511))";
+			var sql = "CREATE TABLE " + eventKey + "matchdata (teamNumber int, matchNumber int, scoutName varchar(255), crossedAutoLine boolean, startedWithCube boolean, startLocationX double, startLocationY double, autoCubeEvents varchar(4095), teleopCubeEvents varchar(4095), climbTime long, climbStatus varchar(255), climbMethod varchar(255), fouls int, techFouls int, yellowCard boolean, redCard boolean, noShow boolean, DQ boolean, notes varchar(511))";
 			con.query(sql, function (err, result) {
 				if (err) {
 					logger.fatal(err);
@@ -791,7 +852,7 @@ function addEvent(eventKey) {
 				};
 				console.log("Created Match Data Table for event " + eventKey);
 			});
-			var sql = "CREATE TABLE " + eventKey + "supermatchdata (matchKey varchar(255), boostCubes int, forceCubes int, levitateCubes int, notes varchar(255))";
+			var sql = "CREATE TABLE " + eventKey + "supermatchdata (matchNumber int, scoutName varchar(255), forceRed int, levitateRed int, boostRed int, forceBlue int, levitateBlue int, boostBlue int, notes varchar(255))";
 			con.query(sql, function (err, result) {
 				if (err) {
 					logger.fatal(err);

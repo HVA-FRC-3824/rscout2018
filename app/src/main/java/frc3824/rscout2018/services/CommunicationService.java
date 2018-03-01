@@ -47,6 +47,7 @@ public class CommunicationService extends IntentService
     private static final MediaType kJSON = MediaType.parse("application/json; charset=utf-8");
     static Set<TeamMatchData> mTmdQueue = null;
     static Set<SuperMatchData> mSmdQueue;
+    static Set<TeamPitData> mTpdQueue;
     static Gson mGson;
 
     /**
@@ -60,6 +61,7 @@ public class CommunicationService extends IntentService
         {
             mTmdQueue = new HashSet<>();
             mSmdQueue = new HashSet<>();
+            mTpdQueue = new HashSet<>();
             mGson = new GsonBuilder()
                     .setExclusionStrategies(new DataModel.DataModelExclusionStrategy())
                     .create();
@@ -94,7 +96,7 @@ public class CommunicationService extends IntentService
         }
         else if (intent.hasExtra(Constants.IntentExtras.NextPageOptions.PIT_SCOUTING))
         {
-            //handleSendingTeamPitData(intent.getStringExtra(Constants.IntentExtras.NextPageOptions.PIT_SCOUTING));
+            //
         }
         else if (intent.hasExtra(Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING))
         {
@@ -107,6 +109,10 @@ public class CommunicationService extends IntentService
         else if (intent.hasExtra(Constants.IntentExtras.DOWNLOAD_FULL_UPDATE))
         {
             // getFullUpdate();
+        }
+        else if (intent.hasExtra(Constants.IntentExtras.UPLOAD_PIT_DATA))
+        {
+            putAllPitData();
         }
         else if (intent.hasExtra(Constants.IntentExtras.DOWNLOAD_TEAMS))
         {
@@ -158,6 +164,42 @@ public class CommunicationService extends IntentService
             ToastBus.getInstance().publish(new ToastRequest("Ping failed",
                                                             TastyToast.LENGTH_LONG,
                                                             TastyToast.ERROR));
+        }
+    }
+
+    private void putAllPitData()
+    {
+        ArrayList<TeamPitData> teams = Database.getInstance().getAllTeamPitData();
+        RequestBody body = RequestBody.create(kJSON, mGson.toJson(teams));
+
+        Request request = new Request.Builder()
+                .url(mUrl + "/updateTeamPitDataList")
+                .post(body)
+                .build();
+
+        try
+        {
+            Response response = mClient.newCall(request).execute();
+            if (response.code() == 200)
+            {
+                ToastBus.getInstance().publish(new ToastRequest("All Pit Data Saved",
+                        TastyToast.LENGTH_LONG,
+                        TastyToast.SUCCESS));
+                // If success then start unloading the queue
+                unloadQueue();
+            }
+            else
+            {
+                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
+                        TastyToast.LENGTH_LONG,
+                        TastyToast.ERROR));
+            }
+        }
+        catch (IOException e)
+        {
+            ToastBus.getInstance().publish(new ToastRequest("Save Failure",
+                    TastyToast.LENGTH_LONG,
+                    TastyToast.ERROR));
         }
     }
 
@@ -261,7 +303,7 @@ public class CommunicationService extends IntentService
     private void unloadQueue()
     {
         // If nothing in either queue then nothing to send
-        if (mTmdQueue.isEmpty() && mSmdQueue.isEmpty())
+        if (mTmdQueue.isEmpty() && mSmdQueue.isEmpty() && mTpdQueue.isEmpty())
         {
             return;
         }
@@ -340,6 +382,42 @@ public class CommunicationService extends IntentService
                 ToastBus.getInstance().publish(new ToastRequest("Save Failure",
                                                                 TastyToast.LENGTH_LONG,
                                                                 TastyToast.ERROR));
+            }
+        }
+
+        if (!mTpdQueue.isEmpty())
+        {
+            RequestBody body = RequestBody.create(kJSON, mGson.toJson(mTpdQueue));
+            Request request = new Request.Builder()
+                    .url(mUrl + "/updateTeamPitDataList")
+                    .post(body)
+                    .build();
+
+            try
+            {
+                Response response = mClient.newCall(request).execute();
+                if (response.code() == 200)
+                {
+                    ToastBus.getInstance()
+                            .publish(new ToastRequest("Team Pit Data from queue Saved",
+                                    TastyToast.LENGTH_LONG,
+                                    TastyToast.SUCCESS));
+                    mTpdQueue.clear();
+                }
+                else
+                {
+                    ToastBus.getInstance()
+                            .publish(new ToastRequest(String.format("Error: Response code: %d",
+                                    response.code()),
+                                    TastyToast.LENGTH_LONG,
+                                    TastyToast.ERROR));
+                }
+            }
+            catch (IOException e)
+            {
+                ToastBus.getInstance().publish(new ToastRequest("Save Failure",
+                        TastyToast.LENGTH_LONG,
+                        TastyToast.ERROR));
             }
         }
     }
@@ -434,7 +512,7 @@ public class CommunicationService extends IntentService
                                                                 TastyToast.LENGTH_LONG,
                                                                 TastyToast.SUCCESS));
                 ResponseBody body = response.body();
-                ArrayList<TeamLogistics> teams = mGson.fromJson(body.toString(), new TypeToken<ArrayList<TeamLogistics>>(){}.getType());
+                ArrayList<TeamLogistics> teams = mGson.fromJson(body.string(), new TypeToken<ArrayList<TeamLogistics>>(){}.getType());
                 for(TeamLogistics team : teams)
                 {
                     Database.getInstance().updateTeamLogistics(team);
