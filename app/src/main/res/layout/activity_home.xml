@@ -339,20 +339,19 @@
             app:shadowHeight="5dp"/>
 
         <info.hoang8f.widget.FButton
-            android:id="@+id/pull_pit_data_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="8dp"
-            android:text="Pull Pit Data"
-            android:textColor="@color/White"
-            android:textSize="20sp"
-            app:fButtonColor="@color/Navy"
-            app:cornerRadius="5dp"
-            app:shadowColor="@color/Black"
-            app:shadowEnabled="true"
-            app:shadowHeight="5dp"/>
-
+        android:id="@+id/pull_pit_data_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_margin="8dp"
+        android:text="Pull Pit Data"
+        android:textColor="@color/White"
+        android:textSize="20sp"
+        app:fButtonColor="@color/Navy"
+        app:cornerRadius="5dp"
+        app:shadowColor="@color/Black"
+        app:shadowEnabled="true"
+        app:shadowHeight="5dp"/>
         <info.hoang8f.widget.FButton
             android:id="@+id/pull_pictures_button"
             android:layout_width="0dp"
@@ -360,6 +359,20 @@
             android:layout_weight="1"
             android:layout_margin="8dp"
             android:text="Pull Pictures"
+            android:textColor="@color/White"
+            android:textSize="20sp"
+            app:fButtonColor="@color/Navy"
+            app:cornerRadius="5dp"
+            app:shadowColor="@color/Black"
+            app:shadowEnabled="true"
+            app:shadowHeight="5dp"/>
+        <info.hoang8f.widget.FButton
+            android:id="@+id/pull_match_data_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:text="Pull Match Data"
             android:textColor="@color/White"
             android:textSize="20sp"
             app:fButtonColor="@color/Navy"

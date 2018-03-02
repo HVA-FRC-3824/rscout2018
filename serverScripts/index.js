@@ -86,7 +86,7 @@ var con = mysql.createConnection({
 });
 
 //Sets event key so that we don't send it with every request
-var serverEventKey = '2017scmb';
+var serverEventKey = '2018scmb';
 
 //Sets up JSON parsing for incoming data
 var bodyParser = require('body-parser');
@@ -102,7 +102,7 @@ app.get('/ping', function (req, res){
 //Sends back an HTML file to add an event to the DB
 app.get('/addEvent', function(req, res) {
 	//var reqEventKey = req.body.eventKey;
-	var reqEventKey = "2017scmb";
+	var reqEventKey = "2018scmb";
 	console.log('requesting event ' + reqEventKey);
 	logger.info('Requested event ' + reqEventKey);
 	var sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='rscout'";
@@ -162,6 +162,30 @@ app.get('/addEvent', function(req, res) {
 		} else {
 			console.log("Error! Event already added!");
 			logger.crit('Error! Tried to add event which ')
+		}
+	});
+});
+
+app.get('/populateMatches', function(req,res){
+	$.ajax({
+		url: "https://www.thebluealliance.com/api/v3/event/" + serverEventKey + "/matches/simple",
+		type: 'GET',
+		dataType: 'json',
+		headers: {
+			'X-TBA-Auth-Key': 'jFZAiivEncdZC24mwCGqWnImGrGJdwVRBP9m0djqwY25I42B1NpocGJikWZSu0CZ'
+		},
+	contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+	success: function (result) {
+		for(var i = 0; i < result.length; i++) {;
+			if (!result[i].key.substr(serverEventKey.length + 1).includes('f')) {
+				addMatch(result[i], serverEventKey);
+			}
+		}
+		res.sendStatus(200);
+		},
+		error: function (error) {
+			console.log(error);
+			logger.crit(error);
 		}
 	});
 });
@@ -311,6 +335,35 @@ app.get('/pitData', function (req, res) {
 });
 
 //Pulls out match data
+app.get('/matchData', function (req, res) {
+	logger.info('Recieved get match data request');
+	
+	var data
+	//Pulls out match data
+	var sql = "SELECT * FROM " + serverEventKey + "matchdata";
+	con.query(sql, function (err, result) {
+		if (err) {
+			logger.fatal(err);
+			throw err;
+		};
+		data.teamMatchData = result;
+		logger.info('Recieved get super data request');
+	//Pulls out match data
+	var sql = "SELECT * FROM " + serverEventKey + "supermatchdata";
+	con.query(sql, function (err, result) {
+		if (err) {
+			logger.fatal(err);
+			throw err;
+		};
+		data.superMatchData = result;
+		console.log(data);
+		res.send(data);
+		logger.info('Sent super data');
+	});
+	});
+});
+
+//Pulls out match data
 app.get('/teamMatchData', function (req, res) {
 	logger.info('Recieved get match data request');
 	//Pulls out match data
@@ -367,7 +420,7 @@ app.post('/updateTeamMatchData', function (req, res) {
 			con.query(sql, function (err, result) {		
 			});
 		}
-		addMatchData(res, serverEventKey, requestData.teamNumber, requestData.matchNumber, requestData.scoutName,convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbStatus, requestData.climbMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), mysql_real_escape_string(requestData.notes));
+		addMatchData(res, serverEventKey, requestData.teamNumber, requestData.matchNumber, requestData.scoutName,convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbStatus, requestData.climbMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), requestData.notes);
 	res.sendStatus(200);
 	});
 });
@@ -395,7 +448,7 @@ app.post('/updateTeamMatchDataList', function (req, res) {
 			con.query(sql, function (err, result) {		
 			});
 		}
-		addMatchData(res, serverEventKey, requestData.teamNumber, requestData.matchNumber, requestData.scoutName,convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbStatus, requestData.climbMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), mysql_real_escape_string(requestData.notes));
+		addMatchData(res, serverEventKey, requestData.teamNumber, requestData.matchNumber, requestData.scoutName,convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbStatus, requestData.climbMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), requestData.notes);
 	res.sendStatus(200);
 	});
 });
@@ -422,7 +475,7 @@ app.post('/updateSuperMatchData', function (req, res) {
 			con.query(sql, function (err, result) {		
 			});
 		}
-		addSuperMatchData(res, serverEventKey, requestData.matchNumber, requestData.scoutName, requestData.forceRed, requestData.levitateRed, requestData.boostRed, requestData.forceBlue, requestData.levitateBlue, requestData.boostBlue, mysql_real_escape_string(requestData.notes));
+		addSuperMatchData(res, serverEventKey, requestData.matchNumber, requestData.scoutName, requestData.forceRed, requestData.levitateRed, requestData.boostRed, requestData.forceBlue, requestData.levitateBlue, requestData.boostBlue, requestData.notes);
 		res.sendStatus(200);
 	});
 });
@@ -431,11 +484,11 @@ app.post('/updateSuperMatchData', function (req, res) {
 app.post('/updateSuperMatchDataList', function (req, res) {
 	logger.info('Recieved insertSuperDataList');
 	//Puts in pit data
-	var reqDataArr = req.body.data;
+	var reqDataArr = req.body;
 	for (var i = 0; i < reqDataArr.length; i++) {
-		var requestData = req.body[i];
+		var requestData = reqDataArr[i];
 		console.log('InsertingSuperData');
-		addSuperMatchData(res, serverEventKey, requestData.matchNumber, requestData.scoutName, requestData.forceRed, requestData.levitateRed, requestData.boostRed, requestData.forceBlue, requestData.levitateBlue, requestData.boostBlue, mysql_real_escape_string(requestData.notes));
+		addSuperMatchData(res, serverEventKey, requestData.matchNumber, requestData.scoutName, requestData.forceRed, requestData.levitateRed, requestData.boostRed, requestData.forceBlue, requestData.levitateBlue, requestData.boostBlue, requestData.notes);
 		res.sendStatus(200);
 	}
 });
@@ -525,7 +578,12 @@ function mysql_real_escape_string (str) {
 function addMatchData(res, eventKey, teamNumber, matchNumber, scoutName, startedWithCube, startLocationX, startLocationY, autoCrossed, autoEvents, teleopEvents, climbTime, climbingState, climbingMethod, fouls, techFouls, yellowCard, redCard, noShow, DQ, notes) {
 	//Check if the event has been created
 	var alreadyExists = false;
-
+	
+	if (teamNumber == null) {
+			return;
+			res.sendStatus(400);
+	}
+	
 	//Pull names of all tables in DB
 	var sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='rscout'";
 	con.query(sql, function (err, result) {
@@ -551,7 +609,7 @@ function addMatchData(res, eventKey, teamNumber, matchNumber, scoutName, started
 
 			//Insert match data
 			//{
-			var sql = "INSERT INTO " + eventKey + "matchdata (teamNumber, matchNumber, scoutName, startedWithCube, startLocationX, startLocationY, crossedAutoLine, autoCubeEvents, teleopCubeEvents, climbTime, climbStatus, climbMethod, fouls, techFouls, yellowCard, redCard, noShow, DQ, notes) VALUES ('" + teamNumber + "', '" + matchNumber + "', '" + scoutName + "', '" + startedWithCube + "', '" + startLocationX + "', '" + startLocationY + "', '" + autoCrossed + "','" + JSON.stringify(autoEvents) + "','" + JSON.stringify(teleopEvents) + "','" + climbTime + "', '" + climbingState + "','" + climbingMethod + "','" + fouls + "','" + techFouls + "','" + yellowCard + "','" + redCard + "','" + noShow + "','" + DQ + "','" + mysql_real_escape_string(notes) + "')";
+			var sql = "INSERT INTO " + eventKey + "matchdata (teamNumber, matchNumber, scoutName, startedWithCube, startLocationX, startLocationY, crossedAutoLine, autoCubeEvents, teleopCubeEvents, climbTime, climbStatus, climbMethod, fouls, techFouls, yellowCard, redCard, noShow, DQ, notes) VALUES ('" + teamNumber + "', '" + matchNumber + "', '" + scoutName + "', '" + startedWithCube + "', '" + startLocationX + "', '" + startLocationY + "', '" + autoCrossed + "','" + JSON.stringify(autoEvents) + "','" + JSON.stringify(teleopEvents) + "','" + climbTime + "', '" + climbingState + "','" + climbingMethod + "','" + fouls + "','" + techFouls + "','" + yellowCard + "','" + redCard + "','" + noShow + "','" + DQ + "','" + notes + "')";
 			con.query(sql, function (err, result) {
 				if (err) {
 					logger.fatal(err);
@@ -749,7 +807,7 @@ function addSuperMatchData(res, eventKey, matchNumber, scoutName, forceRed, levi
 		if (!alreadyExists) {
 		console.log("Error! Event has not been created");
 		} else {
-			var sql = "INSERT INTO " + eventKey + "supermatchdata (matchNumber, scoutName, forceRed, levitateRed, boostRed, forceBlue, levitateBlue, boostBlue, notes) VALUES ('" + matchNumber + "', '" + scoutName + "', '" + forceRed + "', '" + levitateRed + "', '" + boostRed + "', '" + forceBlue + "', '" + levitateBlue + "', '" + boostBlue + "', '" + mysql_real_escape_string(notes) + "')";
+			var sql = "INSERT INTO " + eventKey + "supermatchdata (matchNumber, scoutName, forceRed, levitateRed, boostRed, forceBlue, levitateBlue, boostBlue, notes) VALUES ('" + matchNumber + "', '" + scoutName + "', '" + forceRed + "', '" + levitateRed + "', '" + boostRed + "', '" + forceBlue + "', '" + levitateBlue + "', '" + boostBlue + "', '" + notes + "')";
 			con.query(sql, function (err, result) {
 				if (err) {
 					logger.fatal(err);

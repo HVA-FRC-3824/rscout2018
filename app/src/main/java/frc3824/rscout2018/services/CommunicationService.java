@@ -21,6 +21,7 @@ import frc3824.rscout2018.buses.ToastBus;
 import frc3824.rscout2018.buses.ToastRequest;
 import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.DataModel;
+import frc3824.rscout2018.database.data_models.MatchData;
 import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.database.data_models.SuperMatchData;
 import frc3824.rscout2018.database.data_models.TeamLogistics;
@@ -125,6 +126,10 @@ public class CommunicationService extends IntentService
         else if(intent.hasExtra(Constants.IntentExtras.DOWNLOAD_PICTURES))
         {
             getPictures();
+        }
+        else if (intent.hasExtra(Constants.IntentExtras.DOWNLOAD_MATCH_DATA))
+        {
+            getMatchData();
         }
         else if (intent.hasExtra(Constants.IntentExtras.IP_MODIFIED))
         {
@@ -530,6 +535,50 @@ public class CommunicationService extends IntentService
             ToastBus.getInstance().publish(new ToastRequest("Pit Data request failed",
                                                             TastyToast.LENGTH_LONG,
                                                             TastyToast.ERROR));
+        }
+    }
+
+    private void getMatchData()
+    {
+        Request request = new Request.Builder()
+                .url(mUrl + "/matchData")
+                .get()
+                .build();
+
+        try
+        {
+            Response response = mClient.newCall(request).execute();
+            if (response.code() == 200)
+            {
+                ToastBus.getInstance().publish(new ToastRequest("Match Data Received",
+                        TastyToast.LENGTH_LONG,
+                        TastyToast.SUCCESS));
+                ResponseBody body = response.body();
+                String data = body.string();
+                MatchData matchData = mGson.fromJson(data, new TypeToken<MatchData>(){}.getType());
+                ArrayList<TeamMatchData> teamMatchData = matchData.teamMatchData;
+                ArrayList<SuperMatchData> superMatchData = matchData.superMatchData;
+                for(TeamMatchData team : teamMatchData)
+                {
+                    Database.getInstance().updateTeamMatchData(team);
+                }
+                for(SuperMatchData match : superMatchData)
+                {
+                    Database.getInstance().updateSuperMatchData(match);
+                }
+            }
+            else
+            {
+                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
+                        TastyToast.LENGTH_LONG,
+                        TastyToast.ERROR));
+            }
+        }
+        catch (IOException e)
+        {
+            ToastBus.getInstance().publish(new ToastRequest("Pit Data request failed",
+                    TastyToast.LENGTH_LONG,
+                    TastyToast.ERROR));
         }
     }
 
