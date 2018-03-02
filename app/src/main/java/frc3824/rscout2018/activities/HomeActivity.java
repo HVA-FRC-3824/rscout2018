@@ -296,6 +296,12 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
                 startService(intent);
                 return;
 
+            case R.id.pull_match_data_button:
+                intent = new Intent(HomeActivity.this, CommunicationService.class);
+                intent.putExtra(Constants.IntentExtras.DOWNLOAD_MATCH_DATA, true);
+                startService(intent);
+                return;
+
             case R.id.generate_test_data:
                 TeamPitData tpd = new TeamPitData(1);
                 tpd.setNotes("soemthig");

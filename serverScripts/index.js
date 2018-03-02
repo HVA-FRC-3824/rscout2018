@@ -145,9 +145,9 @@ app.get('/addEvent', function(req, res) {
 				headers: {
 					'X-TBA-Auth-Key': 'jFZAiivEncdZC24mwCGqWnImGrGJdwVRBP9m0djqwY25I42B1NpocGJikWZSu0CZ'
 				},
-			contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-			success: function (result) {
-				for(var i = 0; i < result.length; i++) {;
+				contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+				success: function (result) {
+				for(var i = 0; i < result.length; i++) {
 						if (!result[i].key.substr(reqEventKey.length + 1).includes('f')) {
 							addMatch(result[i], reqEventKey);
 						}
@@ -188,6 +188,52 @@ app.get('/populateMatches', function(req,res){
 			logger.crit(error);
 		}
 	});
+});
+
+app.get('/populateTeamMatches', function(req,res){
+	console.log('filling');
+	var matches = []
+	var sql = "SELECT * FROM " + serverEventKey + "matchschedule";
+	con.query(sql, function (err, result) {
+		if (err) {
+			logger.fatal(err);
+			throw err;
+		};
+		for (var i = 0; i < result.length; i++) {
+			result[i].teamNumbers = [result[i].blue1, result[i].blue2, result[i].blue3, result[i].red1, result[i].red2, result[i].red3];
+		}
+		matches = result;
+		console.log('got matches');
+	});
+	var teams = []
+	var sql = "SELECT * FROM " + serverEventKey + "teamstats";
+	con.query(sql, function (err, result) {
+		if (err) {
+			logger.fatal(err);
+			throw err;
+		};
+		teams = result;
+		for(var i = 0; i < teams.length; i++) {
+			console.log('looping');
+			var matchNumbers = [];
+			for (var j = 0; j < matches.length; j++) {
+				console.log(matches[j].teamNumbers);
+				if (matches[j].teamNumbers.includes(teams[i].teamNumber)) {
+					matchNumbers.push(matches[j].matchNumber);
+					console.log(matches[j].matchNumber);
+				}
+			}
+			console.log(matchNumbers);
+			var sql = "UPDATE " + serverEventKey + "teamstats SET matchNumbers = '" + JSON.stringify(matchNumbers) + "' WHERE teamNumber = '" + teams[i].teamNumber + "'";
+			con.query(sql, function (err, result) {
+				if (err) {
+					logger.fatal(err);
+					throw err;
+				};
+			});
+		}
+	});
+	res.sendStatus(200);
 });
 
 //Resets the server's event key
@@ -291,6 +337,9 @@ app.get('/teams', function (req, res) {
 			logger.fatal(err);
 			throw err;
 		};
+		for (var i = 0; i < result.length; i++) {
+			result[i].matchNumbers = JSON.parse(result[i].matchNumbers);
+		}
 		JSONresult = JSON.stringify(result);
 		console.log(JSONresult);
 		res.send(JSONresult);
@@ -338,7 +387,7 @@ app.get('/pitData', function (req, res) {
 app.get('/matchData', function (req, res) {
 	logger.info('Recieved get match data request');
 	
-	var data
+	var data = {teamMatchData: [], superMatchData: []};
 	//Pulls out match data
 	var sql = "SELECT * FROM " + serverEventKey + "matchdata";
 	con.query(sql, function (err, result) {
@@ -347,6 +396,17 @@ app.get('/matchData', function (req, res) {
 			throw err;
 		};
 		data.teamMatchData = result;
+		for (var i = 0; i < data.teamMatchData.length; i++) {
+			data.teamMatchData[i].crossedAutoLine = convertBoolBack(data.teamMatchData[i].crossedAutoLine);
+			data.teamMatchData[i].startedWithCube = convertBoolBack(data.teamMatchData[i].startedWithCube);
+			data.teamMatchData[i].yellowCard = convertBoolBack(data.teamMatchData[i].yellowCard);
+			data.teamMatchData[i].redCard = convertBoolBack(data.teamMatchData[i].redCard);
+			data.teamMatchData[i].DQ = convertBoolBack(data.teamMatchData[i].DQ);
+			data.teamMatchData[i].noShow = convertBoolBack(data.teamMatchData[i].noShow);
+			
+			data.teamMatchData[i].autoCubeEvents = JSON.parse(data.teamMatchData[i].autoCubeEvents);
+			data.teamMatchData[i].teleopCubeEvents = JSON.parse(data.teamMatchData[i].teleopCubeEvents);
+		}
 		logger.info('Recieved get super data request');
 	//Pulls out match data
 	var sql = "SELECT * FROM " + serverEventKey + "supermatchdata";
@@ -356,7 +416,6 @@ app.get('/matchData', function (req, res) {
 			throw err;
 		};
 		data.superMatchData = result;
-		console.log(data);
 		res.send(data);
 		logger.info('Sent super data');
 	});
@@ -928,6 +987,15 @@ function convertBool(bool) {
 			return 1;
 		} else {
 			return 0;
+		}
+}
+
+//Converts boolean to tinyint
+function convertBoolBack(bool) {
+		if (bool == 1) {
+			return true;
+		} else {
+			return false;
 		}
 }
 //Fill teams table
