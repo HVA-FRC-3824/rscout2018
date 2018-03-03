@@ -90,8 +90,8 @@ var serverEventKey = '2018scmb';
 
 //Sets up JSON parsing for incoming data
 var bodyParser = require('body-parser');
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({limit: '50mb'})); // support json encoded bodies
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true }));
 
 //Simple server ping. Returns pong
 app.get('/ping', function (req, res){
@@ -486,30 +486,37 @@ app.post('/updateTeamMatchData', function (req, res) {
 
 //Inserts match data to the DB
 app.post('/updateTeamMatchDataList', function (req, res) {
-	
+	console.log('Got team match data list request');
 	logger.info('Recieved insertMatchData');
-	var requestData = req.body;
 	console.log('InsertingMatchData');
-	console.log(requestData);
-	
-	var alreadyExists = false
-	
-	var sql = "SELECT * FROM " + serverEventKey + "matchdata";
-	con.query(sql, function (err, result) {
-		for (var i = 0; i < result.length; i++) {
-			if (result[i].teamNumber == requestData.teamNumber && result[i].matchNumber == requestData.matchNumber) {
-				alreadyExists = true;
+		var sql = "SELECT * FROM " + serverEventKey + "matchdata";
+		con.query(sql, function (err, result) {
+			var reqDataArr = req.body;
+			for (var i = 0; i < reqDataArr.length; i++) {	
+				console.log(i);
+			var requestData = reqDataArr[i];
+			var alreadyExists = false
+			var isNull = false;
+			for (var j = 0; j < result.length; j++) {
+				if (requestData == null) {
+					isNull = true;
+				} else if (result[j].teamNumber == requestData.teamNumber && result[j].matchNumber == requestData.matchNumber) {
+					console.log("EXISTS");
+					alreadyExists = true;
+				}
+			}
+			if (alreadyExists) {
+				console.log('Already exists. Deleting row');
+				var sql = "DELETE FROM " + serverEventKey + "matchdata WHERE teamNumber= '" + requestData.teamNumber + "' AND matchNumber='" + requestData.matchNumber + "'";
+				con.query(sql, function (err, result) {		
+				});
+			}
+			if (!isNull) {
+				addMatchData(res, serverEventKey, requestData.teamNumber, requestData.matchNumber, requestData.scoutName,convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbStatus, requestData.climbMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), mysql_real_escape_string(requestData.notes));
 			}
 		}
-		if (alreadyExists) {
-			console.log('Already exists. Deleting row');
-			var sql = "DELETE FROM " + serverEventKey + "matchdata WHERE teamNumber= '" + requestData.teamNumber + "' AND matchNumber='" + requestData.matchNumber + "'";
-			con.query(sql, function (err, result) {		
-			});
-		}
-		addMatchData(res, serverEventKey, requestData.teamNumber, requestData.matchNumber, requestData.scoutName,convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbStatus, requestData.climbMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), requestData.notes);
-	res.sendStatus(200);
 	});
+	res.sendStatus(200);
 });
 
 //Inserts match data to the DB and factors it into the averages
@@ -544,11 +551,25 @@ app.post('/updateSuperMatchDataList', function (req, res) {
 	logger.info('Recieved insertSuperDataList');
 	//Puts in pit data
 	var reqDataArr = req.body;
+	console.log(reqDataArr);
 	for (var i = 0; i < reqDataArr.length; i++) {
 		var requestData = reqDataArr[i];
 		console.log('InsertingSuperData');
-		addSuperMatchData(res, serverEventKey, requestData.matchNumber, requestData.scoutName, requestData.forceRed, requestData.levitateRed, requestData.boostRed, requestData.forceBlue, requestData.levitateBlue, requestData.boostBlue, requestData.notes);
-		res.sendStatus(200);
+		var sql = "SELECT * FROM " + serverEventKey + "supermatchdata";
+		con.query(sql, function (err, result) {
+			for (var j = 0; j < result.length; j++) {
+				if (result[j].matchNumber == requestData.matchNumber) {
+					alreadyExists = true;
+				}	
+			}	
+			if (alreadyExists) {
+				console.log('Already exists. Deleting row');
+				var sql = "DELETE FROM " + serverEventKey + "supermatchdata WHERE matchNumber='" + requestData.matchNumber + "'";
+				con.query(sql, function (err, result) {		
+				});
+			}
+			addSuperMatchData(res, serverEventKey, requestData.matchNumber, requestData.scoutName, requestData.forceRed, requestData.levitateRed, requestData.boostRed, requestData.forceBlue, requestData.levitateBlue, requestData.boostBlue, requestData.notes);
+		});
 	}
 });
 
@@ -560,8 +581,22 @@ app.post('/updateTeamMatchDataList', function (req, res) {
 	for (var i = 0; i < reqDataArr.length; i++) {
 		var requestData = req.body[i];
 		console.log('InsertingMatchData');
+		var sql = "SELECT * FROM " + serverEventKey + "matchdata";
+		con.query(sql, function (err, result) {
+		for (var i = 0; i < result.length; i++) {
+			if (result[i].teamNumber == requestData.teamNumber && result[i].matchNumber == requestData.matchNumber) {
+				alreadyExists = true;
+			}
+		}
+		if (alreadyExists) {
+			console.log('Already exists. Deleting row');
+			var sql = "DELETE FROM " + serverEventKey + "matchdata WHERE teamNumber= '" + requestData.teamNumber + "' AND matchNumber='" + requestData.matchNumber + "'";
+			con.query(sql, function (err, result) {		
+			});
+		}
 		addMatchData(res, serverEventKey, requestData.teamNumber, requestData.matchNumber, requestData.scoutName,convertBool(requestData.startedWithCube), requestData.startLocationX, requestData.startLocationY, convertBool(requestData.crossedAutoLine), requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbStatus, requestData.climbMethod, requestData.fouls, requestData.techFouls, convertBool(requestData.yellowCard), convertBool(requestData.redCard), convertBool(requestData.noShow), convertBool(requestData.dq), mysql_real_escape_string(requestData.notes));
 		res.sendStatus(200);
+		});
 	}
 });
 

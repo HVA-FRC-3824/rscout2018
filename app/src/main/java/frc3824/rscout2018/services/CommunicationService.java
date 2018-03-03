@@ -115,6 +115,14 @@ public class CommunicationService extends IntentService
         {
             putAllPitData();
         }
+        else if (intent.hasExtra(Constants.IntentExtras.UPLOAD_SUPER_DATA))
+        {
+            putAllSuperData();
+        }
+        else if (intent.hasExtra(Constants.IntentExtras.UPLOAD_MATCH_DATA))
+        {
+            putAllMatchData();
+        }
         else if (intent.hasExtra(Constants.IntentExtras.DOWNLOAD_TEAMS))
         {
             getTeams();
@@ -254,6 +262,78 @@ public class CommunicationService extends IntentService
                                                             TastyToast.ERROR));
             // If failure then add to the queue for when connection is back
             mTmdQueue.add(teamMatchData);
+        }
+    }
+
+    private void putAllMatchData()
+    {
+        ArrayList<TeamMatchData> allTeamMatchData = Database.getInstance().getAllTeamMatchData();
+        RequestBody body = RequestBody.create(kJSON, mGson.toJson(allTeamMatchData));
+
+        Request request = new Request.Builder()
+                .url(mUrl + "/updateTeamMatchDataList")
+                .post(body)
+                .build();
+
+        try
+        {
+            Response response = mClient.newCall(request).execute();
+            if (response.code() == 200)
+            {
+                ToastBus.getInstance().publish(new ToastRequest("All Team Match Data Saved",
+                        TastyToast.LENGTH_LONG,
+                        TastyToast.SUCCESS));
+                // If success then start unloading the queue
+                unloadQueue();
+            }
+            else
+            {
+                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
+                        TastyToast.LENGTH_LONG,
+                        TastyToast.ERROR));
+            }
+        }
+        catch (IOException e)
+        {
+            ToastBus.getInstance().publish(new ToastRequest("Save Failure",
+                    TastyToast.LENGTH_LONG,
+                    TastyToast.ERROR));
+        }
+    }
+
+    private void putAllSuperData()
+    {
+        ArrayList<SuperMatchData> allSuperMatchData = Database.getInstance().getAllSuperMatchData();
+        RequestBody body = RequestBody.create(kJSON, mGson.toJson(allSuperMatchData));
+
+        Request request = new Request.Builder()
+                .url(mUrl + "/updateSuperMatchDataList")
+                .post(body)
+                .build();
+
+        try
+        {
+            Response response = mClient.newCall(request).execute();
+            if (response.code() == 200)
+            {
+                ToastBus.getInstance().publish(new ToastRequest("All Super Match Data Saved",
+                        TastyToast.LENGTH_LONG,
+                        TastyToast.SUCCESS));
+                // If success then start unloading the queue
+                unloadQueue();
+            }
+            else
+            {
+                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
+                        TastyToast.LENGTH_LONG,
+                        TastyToast.ERROR));
+            }
+        }
+        catch (IOException e)
+        {
+            ToastBus.getInstance().publish(new ToastRequest("Save Failure",
+                    TastyToast.LENGTH_LONG,
+                    TastyToast.ERROR));
         }
     }
 

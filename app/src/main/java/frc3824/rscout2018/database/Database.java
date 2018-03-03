@@ -262,6 +262,36 @@ public class Database
         return dataSnapshot.getValue(TeamPitData.class);
     }
 
+    public ArrayList<TeamMatchData> getAllTeamMatchData()
+    {
+        Collection<DataSnapshot> data = mMap.get(TEAM_MATCH).values();
+
+        ArrayList<TeamMatchData> rv = new ArrayList<>();
+        for(DataSnapshot snapshot : data)
+        {
+            if(snapshot != null)
+            {
+                rv.add(snapshot.getValue(TeamMatchData.class));
+            }
+        }
+        return rv;
+    }
+
+    public ArrayList<SuperMatchData> getAllSuperMatchData()
+    {
+        Collection<DataSnapshot> data = mMap.get(SUPER_MATCH).values();
+
+        ArrayList<SuperMatchData> rv = new ArrayList<>();
+        for(DataSnapshot snapshot : data)
+        {
+            if(snapshot != null)
+            {
+                rv.add(snapshot.getValue(SuperMatchData.class));
+            }
+        }
+        return rv;
+    }
+
     public ArrayList<TeamPitData> getAllTeamPitData()
     {
         Collection<DataSnapshot> data = mMap.get(TEAM_PIT).values();
