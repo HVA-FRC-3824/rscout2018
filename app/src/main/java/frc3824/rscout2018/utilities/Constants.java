@@ -72,6 +72,8 @@ public interface Constants
         String DOWNLOAD_PIT_DATA = "pull_pit_data";
         String DOWNLOAD_MATCH_DATA = "pull_match_data";
         String UPLOAD_PIT_DATA = "upload_pit_data";
+        String UPLOAD_MATCH_DATA = "upload_match_data";
+        String UPLOAD_SUPER_DATA = "upload_super_data";
         String DOWNLOAD_PICTURES = "download_pictures";
         String PING = "ping";
     }
