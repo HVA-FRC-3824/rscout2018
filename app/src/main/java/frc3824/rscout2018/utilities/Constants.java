@@ -1,5 +1,7 @@
 package frc3824.rscout2018.utilities;
 
+import android.graphics.Color;
+
 /**
  * @author frc3824
  */
@@ -27,6 +29,7 @@ public interface Constants
         String SERVER_IP = "server_ip";
         String SERVER_PORT = "server_port";
 
+        String ENABLE_ADMIN = "enable_admin";
 
         String EVENT_KEY = "event_key";
 
@@ -63,8 +66,15 @@ public interface Constants
         String SCOUTER = "scouter";
 
         String IP_MODIFIED = "ip_modified";
-        String LOAD_DATA = "load_data";
-        String PULL_MATCHES = "pull_matches";
+        String DOWNLOAD_FULL_UPDATE = "load_data";
+        String DOWNLOAD_SCHEDULE = "pull_matches";
+        String DOWNLOAD_TEAMS = "pull_teams";
+        String DOWNLOAD_PIT_DATA = "pull_pit_data";
+        String DOWNLOAD_MATCH_DATA = "pull_match_data";
+        String UPLOAD_PIT_DATA = "upload_pit_data";
+        String UPLOAD_MATCH_DATA = "upload_match_data";
+        String UPLOAD_SUPER_DATA = "upload_super_data";
+        String DOWNLOAD_PICTURES = "download_pictures";
         String PING = "ping";
     }
 
@@ -169,6 +179,43 @@ public interface Constants
     interface TeamStats
     {
         String[] TABS = {"Charts", "Match Data", "Pit Data", "Notes", "Schedule"};
+
+        interface Cubes
+        {
+            double SHORT_DISTANCE = 0.3;
+            double MEDIUM_DISTANCE = 0.7;
+
+            double EXCHANGE_THESHOLD = 0.10;
+            double SWITCH_THRESHOlD = 0.35;
+        }
+
+        interface Climb
+        {
+            int[] STATUS_COLORS = new int[]{
+                    Color.BLACK,
+                    Color.BLUE,
+                    Color.YELLOW,
+                    Color.RED,
+                    Color.GREEN
+            };
+
+            int[] METHOD_COLORS = new int[]{
+                    Color.YELLOW,
+                    Color.GRAY,
+                    Color.BLUE,
+                    Color.GREEN,
+                    Color.RED,
+                    Color.BLACK,
+                    Color.CYAN,
+                    Color.WHITE,
+                    Color.MAGENTA
+            };
+        }
+    }
+
+    interface MatchPreview
+    {
+        String[] TABS = {"Blue", "Red"};
     }
 
     interface Notifications
@@ -178,38 +225,95 @@ public interface Constants
 
     interface PickList
     {
-        String POWER_CUBES = "Power Cubes";
-        String CLIMB = "Climb";
-        String FOULS = "Fouls";
-        String[] MAIN_SORTING = {
-                POWER_CUBES,
-                CLIMB,
-                FOULS
-        };
-
-        interface PowerCubes
+        interface MainDropdown
         {
-            String ALL = "All";
-            String NEAR_SWITCH = "Near Switch";
-            String SCALE = "Scale";
-            String FAR_SWITCH = "Far Switch";
-            String EXCHANGE_STATION = "Exchange Station";
-            String DROP = "Drop";
-            String INCORRECT_SIDE = "Incorrect Side";
+            String POWER_CUBES = "Power Cubes";
+            String CLIMB = "Climb";
+            String FOULS = "Fouls";
+            String MISC = "Misc";
             String[] OPTIONS = {
-                    ALL,
-                    NEAR_SWITCH,
-                    SCALE,
-                    FAR_SWITCH,
-                    EXCHANGE_STATION,
-                    DROP,
-                    INCORRECT_SIDE
+                    POWER_CUBES,
+                    CLIMB,
+                    FOULS,
+                    MISC
             };
         }
 
-        interface Climb
+        interface SecondaryDropdown
         {
 
+            interface PowerCubes
+            {
+                String ALL = "All";
+                String SWITCH = "Switch";
+                String AUTO_SWITCH = "Auto Switch";
+                String TELEOP_SWITCH = "Teleop Switch";
+                String SCALE = "Scale";
+                String AUTO_SCALE = "Auto Scale";
+                String TELEOP_SCALE = "Teleop Scale";
+                String EXCHANGE_STATION = "Exchange Station";
+                String DROP = "Drop";
+                String[] OPTIONS = {
+                        ALL,
+                        SWITCH,
+                        AUTO_SWITCH,
+                        TELEOP_SWITCH,
+                        SCALE,
+                        AUTO_SCALE,
+                        TELEOP_SCALE,
+                        EXCHANGE_STATION,
+                        DROP,
+                };
+            }
+
+            interface Climb
+            {
+                String CLIMB = "Climb";
+                String CLIMB_ONE = "Climb while supporting 1";
+                String CLIMB_TWO = "Climb while supporting 2";
+                String CLIMB_ON_OTHER = "Climb on other robot";
+                String RAMP = "Ramp";
+                String RAMP_ONE = "Ramp while supporting 1";
+                String RAMP_TWO = "Ramp while supporting 2";
+                String RAMP_ON_OTHER = "Got on other's ramp";
+                String FELL = "Fell";
+                String NOT_IN_TIME = "Did not make it";
+                String PARKED_ON_PLATFORM = "Parked on the platform";
+
+                String[] OPTIONS = {
+                        CLIMB,
+                        CLIMB_ONE,
+                        CLIMB_TWO,
+                        CLIMB_ON_OTHER,
+                        RAMP,
+                        RAMP_ONE,
+                        RAMP_TWO,
+                        RAMP_ON_OTHER,
+                        FELL,
+                        NOT_IN_TIME,
+                        PARKED_ON_PLATFORM
+                };
+            }
+
+            interface Fouls
+            {
+                String FOUL = "Normal";
+                String TECH_FOUL = "Tech Fouls";
+                String YELLOW_CARD = "Yellow Card";
+                String RED_CARD = "Red Card";
+
+                String[] OPTIONS = {
+                        FOUL,
+                        TECH_FOUL,
+                        YELLOW_CARD,
+                        RED_CARD
+                };
+            }
+
+            interface Misc
+            {
+                String AUTO_CROSS = "Auto Cross";
+            }
         }
     }
 }

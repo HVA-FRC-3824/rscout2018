@@ -32,8 +32,7 @@ public class Timer extends LinearLayout implements View.OnClickListener
     ButtonListener mListener = null;
 
 
-    public Timer(Context context,
-                 @Nullable AttributeSet attrs)
+    public Timer(Context context, @Nullable AttributeSet attrs)
     {
         super(context, attrs);
 

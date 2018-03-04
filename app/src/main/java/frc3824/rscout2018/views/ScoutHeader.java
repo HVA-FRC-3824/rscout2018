@@ -84,6 +84,14 @@ public class ScoutHeader extends LinearLayout implements View.OnClickListener
     }
 
     /**
+     * Removes the list button from the header
+     */
+    public void removeList()
+    {
+        findViewById(R.id.list).setVisibility(INVISIBLE);
+    }
+
+    /**
      * A button has been clicked
      *
      * @param view The button

@@ -2,29 +2,28 @@ package frc3824.rscout2018.database.data_models;
 
 import android.databinding.Bindable;
 
-import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.Document;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-
-import frc3824.rscout2018.database.Database;
 
 /**
  * Data model containing the logistics information for a specific match
  */
+@IgnoreExtraProperties
 public class MatchLogistics extends DataModel
 {
     //region Match Number
     int matchNumber;
-    public long lastModified;
 
+    @Exclude
+    @Bindable
     public int getMatchNumber()
     {
         return matchNumber;
     }
 
+    @Exclude
     public void setMatchNumber(int matchNumber)
     {
         this.matchNumber = matchNumber;
@@ -33,8 +32,9 @@ public class MatchLogistics extends DataModel
     //endregion
 
     //region Team Numbers
-    ArrayList<Integer> teamNumbers;
+    ArrayList<Integer> teamNumbers = new ArrayList<>();
 
+    @Exclude
     public int getTeamNumber(int position)
     {
         assert(position >= 0 && position < teamNumbers.size());
@@ -44,15 +44,18 @@ public class MatchLogistics extends DataModel
     /**
      * Getter function for the numbers of the teams in a given match
      */
+    @Exclude
     @Bindable
     public ArrayList<Integer> getTeamNumbers()
     {
+        assert(teamNumbers.size() == 6);
         return teamNumbers;
     }
 
     /**
      * Setter function for the numbers of the teams in a given match
      */
+    @Exclude
     public void setTeamNumbers(ArrayList<Integer> teamNumbers)
     {
         assert(teamNumbers.size() == 6);
@@ -61,52 +64,62 @@ public class MatchLogistics extends DataModel
     }
     //endregion
 
+    @Exclude
     public boolean isRed(int teamNumber)
     {
-        // todo
-        return false;
+        assert(teamNumbers.size() == 6);
+        assert(this.teamNumbers.indexOf(teamNumber) != -1);
+        return this.teamNumbers.indexOf(teamNumber) >= 3;
     }
 
+    @Exclude
     public boolean isBlue(int teamNumber)
     {
-        // todo
-        return false;
+        assert(teamNumbers.size() == 6);
+        assert(this.teamNumbers.indexOf(teamNumber) != -1);
+        return this.teamNumbers.indexOf(teamNumber) < 3;
     }
 
+    @Exclude
     public int getBlue1()
     {
-        // todo
-        return -1;
+        assert(teamNumbers.size() == 6);
+        return teamNumbers.get(0);
     }
 
+    @Exclude
     public int getBlue2()
     {
-        // todo
-        return -1;
+        assert(teamNumbers.size() == 6);
+        return teamNumbers.get(1);
     }
 
+    @Exclude
     public int getBlue3()
     {
-        // todo
-        return -1;
+        assert(teamNumbers.size() == 6);
+        return teamNumbers.get(2);
     }
 
+    @Exclude
     public int getRed1()
     {
-        // todo
-        return -1;
+        assert(teamNumbers.size() == 6);
+        return teamNumbers.get(3);
     }
 
+    @Exclude
     public int getRed2()
     {
-        // todo
-        return -1;
+        assert(teamNumbers.size() == 6);
+        return teamNumbers.get(4);
     }
 
+    @Exclude
     public int getRed3()
     {
-        // todo
-        return -1;
+        assert(teamNumbers.size() == 6);
+        return teamNumbers.get(5);
     }
 
 
@@ -114,19 +127,9 @@ public class MatchLogistics extends DataModel
     public MatchLogistics(int matchNumber)
     {
         this.matchNumber = matchNumber;
-        load();
-    }
-    //endregion
-
-    //region Database
-    public void save()
-    {
-        super.save(String.format("ml_%d", matchNumber));
     }
 
-    public void load()
-    {
-        super.load(String.format("ml_%d", matchNumber), Arrays.asList("matchNumber"));
-    }
+    public MatchLogistics()
+    {}
     //endregion
 }

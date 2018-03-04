@@ -1,8 +1,11 @@
 package frc3824.rscout2018.activities;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -18,12 +21,13 @@ import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.database.data_models.SuperMatchData;
 import frc3824.rscout2018.fragments.super_scout.SuperNotesFragment;
 import frc3824.rscout2018.fragments.super_scout.SuperPowerUpFragment;
+import frc3824.rscout2018.services.CommunicationService;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.ScoutHeader;
 import frc3824.rscout2018.views.ScoutHeaderInterface;
 
 
-public class SuperScoutActivity extends Activity
+public class SuperScoutActivity extends RScoutActivity
 {
     @Arg
     protected int mMatchNumber = -1;
@@ -62,7 +66,11 @@ public class SuperScoutActivity extends Activity
                 header.removeNext();
             }
 
-            mSMD = new SuperMatchData(mMatchNumber);
+            mSMD = Database.getInstance().getSuperMatchData(mMatchNumber);
+            if(mSMD == null)
+            {
+                mSMD = new SuperMatchData(mMatchNumber);
+            }
         }
         // Practice Match
         else
@@ -86,6 +94,7 @@ public class SuperScoutActivity extends Activity
         viewPager.setOffscreenPageLimit(mFPA.getCount());
 
         SmartTabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setBackgroundColor(Color.BLUE);
         tabLayout.setViewPager(viewPager);
     }
 
@@ -108,11 +117,47 @@ public class SuperScoutActivity extends Activity
             {
                 if (mSMD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SuperScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Save to local database
+                                    Database.getInstance().updateSuperMatchData(mSMD);
+
+                                    // Send to the background service to be sent to server
+                                    Intent intent = new Intent(SuperScoutActivity.this, CommunicationService.class);
+                                    intent.putExtra(Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING, true);
+                                    intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
+                                    startService(intent);
+
+                                    SuperScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber - 1);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    SuperScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber - 1);
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else
                 {
-                    MatchScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber - 1);
+                    SuperScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber - 1);
                 }
             }
         }
@@ -130,11 +175,47 @@ public class SuperScoutActivity extends Activity
             {
                 if (mSMD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SuperScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Save to local database
+                                    Database.getInstance().updateSuperMatchData(mSMD);
+
+                                    // Send to the background service to be sent to server
+                                    Intent intent = new Intent(SuperScoutActivity.this, CommunicationService.class);
+                                    intent.putExtra(Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING, true);
+                                    intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
+                                    startService(intent);
+
+                                    SuperScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber + 1);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    SuperScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber + 1);
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
-                    MatchScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber + 1);
+                    SuperScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber + 1);
                 }
             }
         }
@@ -152,7 +233,44 @@ public class SuperScoutActivity extends Activity
             {
                 if (mSMD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SuperScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            // Set action for clicking yes
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Save to local database
+                                    Database.getInstance().updateSuperMatchData(mSMD);
+
+                                    // Send to the background service to be sent to server
+                                    Intent intent = new Intent(SuperScoutActivity.this, CommunicationService.class);
+                                    intent.putExtra(Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING, true);
+                                    intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
+                                    startService(intent);
+
+                                    HomeActivityStarter.start(SuperScoutActivity.this);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    HomeActivityStarter.start(SuperScoutActivity.this);
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
@@ -174,7 +292,43 @@ public class SuperScoutActivity extends Activity
             {
                 if (mSMD.isDirty())
                 {
-                    // todo: Save dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SuperScoutActivity.this)
+                            .setTitle("Unsaved Changes")
+                            .setMessage("You have unsaved changes. Would you like to save them?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Save to local database
+                                    Database.getInstance().updateSuperMatchData(mSMD);
+
+                                    // Send to the background service to be sent to server
+                                    Intent intent = new Intent(SuperScoutActivity.this, CommunicationService.class);
+                                    intent.putExtra(Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING, true);
+                                    intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
+                                    startService(intent);
+
+                                    MatchListActivityStarter.start(SuperScoutActivity.this, Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    MatchListActivityStarter.start(SuperScoutActivity.this, Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING);
+                                }
+                            })
+                            .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    // Nothing goes here
+                                }
+                            });
+                    builder.create().show();
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
@@ -190,8 +344,14 @@ public class SuperScoutActivity extends Activity
         {
             if(!mPractice) // Don't need to worry about saving for practice
             {
+                // Save to local database
+                Database.getInstance().updateSuperMatchData(mSMD);
 
-                TastyToast.makeText(SuperScoutActivity.this, "Saved", TastyToast.LENGTH_SHORT, TastyToast.SUCCESS);
+                // Send to the background service to be sent to server
+                Intent intent = new Intent(SuperScoutActivity.this, CommunicationService.class);
+                intent.putExtra(Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING, true);
+                intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
+                startService(intent);
             }
         }
     }
@@ -261,5 +421,14 @@ public class SuperScoutActivity extends Activity
             assert(position >= 0 && position < Constants.SuperScouting.TABS.length);
             return Constants.SuperScouting.TABS[position];
         }
+    }
+
+    /**
+     * Removes back pressed option
+     */
+    @Override
+    public void onBackPressed()
+    {
+        return;
     }
 }

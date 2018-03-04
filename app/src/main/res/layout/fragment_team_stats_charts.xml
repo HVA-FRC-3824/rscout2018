@@ -1,186 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/LightSkyBlue">
 
-    <!-- Cubes -->
-    <com.github.mikephil.charting.charts.RadarChart
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/cube_pickup_radar_chart"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/cube_placement_radar_chart"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <com.github.mikephil.charting.charts.RadarChart
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/cube_placement_radar_chart"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/cube_pickup_radar_chart"/>
+        <frc3824.rscout2018.views.powered_up.StartView
+            android:id="@+id/start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/cube_line_chart"
-        app:layout_constraintTop_toBottomOf="@id/cube_pickup_radar_chart"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/climb_radio_group"
-        app:layout_constraintRight_toLeftOf="@+id/cube_radio_group"/>
+        <frc3824.rscout2018.views.powered_up.CubesView
+            android:id="@+id/cubes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/cube_radio_group"
-        app:layout_constraintLeft_toRightOf="@id/cube_line_chart"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/climb_line_chart"
-        app:layout_constraintBottom_toBottomOf="@id/cube_line_chart">
+        <frc3824.rscout2018.views.powered_up.ClimbView
+            android:id="@+id/climb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-        <RadioButton
-            android:layout_width="wrap_content"
+        <TableLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/auto_place"
-            android:text="Auto Place"/>
+            android:stretchColumns="*"
+            android:background="@color/Black">
+            <TableRow>
+                <TextView
+                    android:text="Fouls"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/Black"
+                    android:layout_margin="4dp"
+                    android:padding="4dp"
+                    android:background="@color/White"/>
+                <TextView
+                    android:text="Tech Fouls"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/Black"
+                    android:layout_margin="4dp"
+                    android:padding="4dp"
+                    android:background="@color/White"/>
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:text="Tech Fouls"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/Black"
+                    android:id="@+id/fouls"
+                    android:layout_margin="4dp"
+                    android:padding="4dp"
+                    android:background="@color/White"/>
+                <TextView
+                    android:text="Tech Fouls"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="@color/Black"
+                    android:id="@+id/tech_fouls"
+                    android:layout_margin="4dp"
+                    android:padding="4dp"
+                    android:background="@color/White"/>
+            </TableRow>
+        </TableLayout>
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/auto_switch_place"
-            android:text="Auto Switch"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/auto_scale_place"
-            android:text="Auto Scale Place"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/teleop_place"
-            android:text="Teleop Place"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/teleop_near_switch_place"
-            android:text="Teleop Near Switch Place"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/teleop_scale_place"
-            android:text="Teleop Scale Place"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/teleop_far_switch_place"
-            android:text="Teleop Far Switch Place"/>
-
-    </RadioGroup>
-
-    <!-- Climbing -->
-    <com.github.mikephil.charting.charts.LineChart
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/climb_line_chart"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cube_line_chart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/climb_radio_group"/>
-
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/climb_radio_group"
-        app:layout_constraintTop_toTopOf="@id/climb_line_chart"
-        app:layout_constraintLeft_toRightOf="@id/climb_line_chart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/no_climb"
-            android:text="Did not climb"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/parked_platform"
-            android:text="Parked on platform"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/did_not_finish"
-            android:text="Did not finish in time"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/fell"
-            android:text="Fell"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/climbed_by_self"
-            android:text="Climbed the rung"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/climb_lift_one_other"
-            android:text="Climbed the rung while lifting another"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/climb_lift_two_others"
-            android:text="Climbed the rung while lifting two others"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/climb_on_other"
-            android:text="Climb on another robot's rung"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/climb_on_ramp"
-            android:text="Climb on another robot's ramp"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/climb_support_other"
-            android:text="Supported other robot through ramp"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/climb_support_two"
-            android:text="Supported two other robots through ramp"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/credit_through_foul"
-            android:text="Credited through foul"/>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/credit_through_levitate"
-            android:text="Credited through levitate without supporting other robot"/>
-    </RadioGroup>
-
-</android.support.constraint.ConstraintLayout>
+    </LinearLayout>
+</ScrollView>

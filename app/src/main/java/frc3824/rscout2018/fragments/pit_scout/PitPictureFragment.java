@@ -88,6 +88,7 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
         {
             mPictureFilepaths = mTeamPitData.getPictureFilepaths();
             String defaultFilepath = mTeamPitData.getDefaultPictureFilepath();
+            mCarouselView.setPageCount(mPictureFilepaths.size());
 
             // If there is a default image
             if(!defaultFilepath.isEmpty())

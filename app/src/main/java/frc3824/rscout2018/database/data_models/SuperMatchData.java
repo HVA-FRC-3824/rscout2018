@@ -1,8 +1,14 @@
 package frc3824.rscout2018.database.data_models;
 
 import android.databinding.Bindable;
+import android.text.Editable;
+import android.text.TextWatcher;
+
+import com.google.firebase.database.Exclude;
 
 import java.util.Arrays;
+
+import frc3824.rscout2018.views.SavableCounter;
 
 public class SuperMatchData extends DataModel
 {
@@ -31,7 +37,7 @@ public class SuperMatchData extends DataModel
     }
     //endregion
     //region Scout Name
-    String scoutName;
+    String scoutName = "";
 
     /**
      * Getter function for scout name
@@ -51,6 +57,32 @@ public class SuperMatchData extends DataModel
     {
         this.scoutName = scoutName;
         notifyChange();
+    }
+
+    @Exclude
+    @Bindable
+    public TextWatcher getScoutNameWatcher()
+    {
+        return new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+                // Do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+                // Do nothing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                setScoutName(s.toString());
+            }
+        };
     }
     //endregion
     //endregion
@@ -78,6 +110,20 @@ public class SuperMatchData extends DataModel
         this.forceRed = forceRed;
         notifyChange();
     }
+
+    @Exclude
+    @Bindable
+    public SavableCounter.CountListener getForceRedListener()
+    {
+        return new SavableCounter.CountListener()
+        {
+            @Override
+            public void onChange(int value)
+            {
+                setForceRed(value);
+            }
+        };
+    }
     //endregion
     //region Blue
     int forceBlue;
@@ -99,6 +145,20 @@ public class SuperMatchData extends DataModel
     {
         this.forceBlue = forceBlue;
         notifyChange();
+    }
+
+    @Exclude
+    @Bindable
+    public SavableCounter.CountListener getForceBlueListener()
+    {
+        return new SavableCounter.CountListener()
+        {
+            @Override
+            public void onChange(int value)
+            {
+                setForceBlue(value);
+            }
+        };
     }
     //endregion
     //endregion
@@ -123,6 +183,20 @@ public class SuperMatchData extends DataModel
         this.levitateRed = levitateRed;
         notifyChange();
     }
+
+    @Exclude
+    @Bindable
+    public SavableCounter.CountListener getLevitateRedListener()
+    {
+        return new SavableCounter.CountListener()
+        {
+            @Override
+            public void onChange(int value)
+            {
+                setLevitateRed(value);
+            }
+        };
+    }
     //endregion
     //region Blue
     int levitateBlue;
@@ -143,6 +217,20 @@ public class SuperMatchData extends DataModel
     {
         this.levitateBlue = levitateBlue;
         notifyChange();
+    }
+
+    @Exclude
+    @Bindable
+    public SavableCounter.CountListener getLevitateBlueListener()
+    {
+        return new SavableCounter.CountListener()
+        {
+            @Override
+            public void onChange(int value)
+            {
+                setLevitateBlue(value);
+            }
+        };
     }
     //endregion
     //endregion
@@ -167,9 +255,23 @@ public class SuperMatchData extends DataModel
         this.boostRed = boostRed;
         notifyChange();
     }
+
+    @Exclude
+    @Bindable
+    public SavableCounter.CountListener getBoostRedListener()
+    {
+        return new SavableCounter.CountListener()
+        {
+            @Override
+            public void onChange(int value)
+            {
+                setBoostRed(value);
+            }
+        };
+    }
     //endregion
     //region Blue
-    int boostBlue ;
+    int boostBlue;
 
     /**
      * Returns the number of cubes that were placed in the boost column by the blue alliance
@@ -188,13 +290,27 @@ public class SuperMatchData extends DataModel
         this.boostBlue = boostBlue ;
         notifyChange();
     }
+
+    @Exclude
+    @Bindable
+    public SavableCounter.CountListener getBoostBlueListener()
+    {
+        return new SavableCounter.CountListener()
+        {
+            @Override
+            public void onChange(int value)
+            {
+                setBoostBlue(value);
+            }
+        };
+    }
     //endregion
     //endregion
     //endregion
 
     //region Misc
     //region Notes
-    String notes;
+    String notes = "";
 
     /**
      * Returns the notes taken by the super scout for this match
@@ -211,26 +327,47 @@ public class SuperMatchData extends DataModel
     public void setNotes(String notes)
     {
         this.notes = notes;
+        notifyChange();
+    }
+
+    @Exclude
+    @Bindable
+    public TextWatcher getNotesWatcher()
+    {
+        return new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+                // Do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+                // Do nothing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                setNotes(s.toString());
+            }
+        };
     }
     //endregion
     //endregion
+
+    //region Constructors
 
     public SuperMatchData(int matchNumber)
     {
         this.matchNumber = matchNumber;
-        load();
+        mDirty = false;
     }
 
-    //region Database
-    public void save()
-    {
-        super.save(String.format("smd_%d", matchNumber));
-    }
-
-    public void load()
-    {
-        super.load(String.format("smd_%d", matchNumber), Arrays.asList("matchNumber"));
-
-    }
+    public SuperMatchData()
+    {}
+    //endregion
     //endregion
 }

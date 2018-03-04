@@ -13,11 +13,20 @@
     android:padding="@dimen/activity_vertical_margin">
 
     <frc3824.rscout2018.views.SavableEditText
-        android:id="@+id/pit_notes"
+        android:id="@+id/scout_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:label="Scout Name"
+        app:text="@{smd.scoutName}"
+        app:textAttrChanged="@{smd.scoutNameWatcher}"/>
+
+    <frc3824.rscout2018.views.SavableEditText
+        android:id="@+id/notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:label="Notes"
-        app:text="@{smd.notes}"/>
+        app:text="@{smd.notes}"
+        app:textAttrChanged="@{smd.notesWatcher}"/>
 
 </LinearLayout>
 </layout>

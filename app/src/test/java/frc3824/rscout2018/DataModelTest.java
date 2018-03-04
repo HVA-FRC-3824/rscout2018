@@ -4,8 +4,6 @@ import android.databinding.Bindable;
 
 import java.util.ArrayList;
 
-import frc3824.rscout2018.database.data_models.DataModel;
-
 /**
  * Created by andrew on 11/10/17.
  */

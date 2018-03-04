@@ -1,6 +1,5 @@
 package frc3824.rscout2018.activities;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.View;
@@ -19,7 +18,7 @@ import frc3824.rscout2018.fragments.pick_list.PickListFragment;
 import frc3824.rscout2018.utilities.Constants;
 
 @MakeActivityStarter
-public class PickListActivity extends Activity implements AdapterView.OnItemSelectedListener
+public class PickListActivity extends RScoutActivity implements AdapterView.OnItemSelectedListener
 {
     ChartFragment mChart;
     PickListFragment mList;
@@ -37,6 +36,7 @@ public class PickListActivity extends Activity implements AdapterView.OnItemSele
         setContentView(R.layout.activity_pick_list);
         ActivityStarter.fill(this);
 
+        /*
         FragmentManager fm = getFragmentManager();
         mChart = (ChartFragment) fm.findFragmentById(R.id.chart);
         mList = (PickListFragment) fm.findFragmentById(R.id.list);
@@ -47,11 +47,13 @@ public class PickListActivity extends Activity implements AdapterView.OnItemSele
         mSecondaryDropDown.setOnItemSelectedListener(this);
 
         mMainOptions = Arrays.asList(Constants.PickList.MAIN_SORTING);
+        */
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
     {
+        /*
         int parentId = parent.getId();
         if (parentId == R.id.main_dropdown)
         {
@@ -76,12 +78,13 @@ public class PickListActivity extends Activity implements AdapterView.OnItemSele
         {
             updateChart();
         }
+        */
     }
 
     private void updateChart()
     {
-        int mainDropdownPosition = mMainDropDown.getSelectedItemPosition();
-        int secondaryDropdownPosition = mSecondaryDropDown.getSelectedItemPosition();
+        //int mainDropdownPosition = mMainDropDown.getSelectedItemPosition();
+        //int secondaryDropdownPosition = mSecondaryDropDown.getSelectedItemPosition();
 
 
     }

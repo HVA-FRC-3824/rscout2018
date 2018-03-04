@@ -1,6 +1,8 @@
 package frc3824.rscout2018.activities;
 
+import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.os.Bundle;
@@ -22,6 +24,8 @@ import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.utilities.Constants;
+import frc3824.rscout2018.views.ScoutHeader;
+import frc3824.rscout2018.views.ScoutHeaderInterface;
 
 /**
  * @class MatchListActivity
@@ -29,7 +33,7 @@ import frc3824.rscout2018.utilities.Constants;
  *        based on the intent extra {@link MatchListActivity#mNextPage}passed to it.
  */
 @MakeActivityStarter
-public class MatchListActivity extends ListActivity implements View.OnClickListener
+public class MatchListActivity extends Activity implements View.OnClickListener
 {
     @Arg
     protected String mNextPage;
@@ -60,10 +64,25 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
             e.printStackTrace();
         }
 
-        findViewById(R.id.practice).setOnClickListener(this);
+        if(mNextPage.equals(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING) || mNextPage.equals(Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING))
+        {
+            findViewById(R.id.practice).setOnClickListener(this);
+        }
+        else
+        {
+            findViewById(R.id.practice).setVisibility(View.GONE);
+        }
+
+        ScoutHeader header = findViewById(R.id.header);
+        header.removeSave();
+        header.removePrevious();
+        header.removeNext();
+        header.removeList();
+        header.setTitle("Match List");
+        header.setInterface(new MatchListHeader());
 
         // Setup list of buttons for the individual matches
-        ListView listView = findViewById(android.R.id.list);
+        ListView listView = findViewById(R.id.list_view);
         listView.setAdapter(new MatchListAdapter());
     }
 
@@ -80,7 +99,42 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
                 MatchScoutActivityStarter.start(this, -1);
                 break;
             case Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING:
+                SuperScoutActivityStarter.start(this, -1);
                 break;
+        }
+    }
+
+    private class MatchListHeader implements ScoutHeaderInterface
+    {
+
+        @Override
+        public void previous()
+        {
+            // Should never be called
+        }
+
+        @Override
+        public void next()
+        {
+            // Should never be called
+        }
+
+        @Override
+        public void home()
+        {
+            HomeActivityStarter.start(MatchListActivity.this);
+        }
+
+        @Override
+        public void list()
+        {
+            // Should never be called
+        }
+
+        @Override
+        public void save()
+        {
+            // Should never be called
         }
     }
 
@@ -100,7 +154,7 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
         MatchListAdapter()
         {
             mLayoutInflator = getLayoutInflater();
-            if (mNextPage == Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING)
+            if (mNextPage.equals(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING))
             {
                 mTeamNumbers = new HashMap<>();
             }
@@ -217,7 +271,7 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
                         }
                         else
                         {
-                            MatchLogistics m = new MatchLogistics(position + 1);
+                            MatchLogistics m = Database.getInstance().getMatchLogistics(position + 1);
                             teamNumber = m.getTeamNumber(mMatchScoutPosition);
                             mTeamNumbers.put(position + 1, teamNumber);
                         }
@@ -284,14 +338,23 @@ public class MatchListActivity extends ListActivity implements View.OnClickListe
                     MatchScoutActivityStarter.start(MatchListActivity.this, view.getId());
                     break;
                 case Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING:
-                    // SuperScoutActivityStarter.start(view.getId());
+                    SuperScoutActivityStarter.start(MatchListActivity.this, view.getId());
                     break;
                 case Constants.IntentExtras.NextPageOptions.MATCH_PREVIEW:
-                    // MatchViewActivityStarter.start(view.getId());
+                    MatchPreviewActivityStarter.start(MatchListActivity.this, view.getId());
                     break;
                 default:
                     assert (false);
             }
         }
+    }
+
+    /**
+     * Removes back pressed option
+     */
+    @Override
+    public void onBackPressed()
+    {
+        return;
     }
 }

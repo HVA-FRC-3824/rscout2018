@@ -20,15 +20,5 @@ public class MyApplication extends Application
     public void onCreate()
     {
         super.onCreate();
-
-        // Setup database
-        try
-        {
-            Database.getInstance().setContext(this);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 }
