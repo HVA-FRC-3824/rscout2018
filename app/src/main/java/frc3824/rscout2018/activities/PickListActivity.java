@@ -36,6 +36,7 @@ public class PickListActivity extends RScoutActivity implements AdapterView.OnIt
         setContentView(R.layout.activity_pick_list);
         ActivityStarter.fill(this);
 
+        /*
         FragmentManager fm = getFragmentManager();
         mChart = (ChartFragment) fm.findFragmentById(R.id.chart);
         mList = (PickListFragment) fm.findFragmentById(R.id.list);
@@ -46,11 +47,13 @@ public class PickListActivity extends RScoutActivity implements AdapterView.OnIt
         mSecondaryDropDown.setOnItemSelectedListener(this);
 
         mMainOptions = Arrays.asList(Constants.PickList.MAIN_SORTING);
+        */
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
     {
+        /*
         int parentId = parent.getId();
         if (parentId == R.id.main_dropdown)
         {
@@ -75,12 +78,13 @@ public class PickListActivity extends RScoutActivity implements AdapterView.OnIt
         {
             updateChart();
         }
+        */
     }
 
     private void updateChart()
     {
-        int mainDropdownPosition = mMainDropDown.getSelectedItemPosition();
-        int secondaryDropdownPosition = mSecondaryDropDown.getSelectedItemPosition();
+        //int mainDropdownPosition = mMainDropDown.getSelectedItemPosition();
+        //int secondaryDropdownPosition = mSecondaryDropDown.getSelectedItemPosition();
 
 
     }

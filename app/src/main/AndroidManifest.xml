@@ -21,6 +21,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".activities.EventChartsActivity"
+                  android:label="Event Charts"
+                  android:screenOrientation="landscape"/>
         <activity
             android:name=".activities.MatchListActivity"
             android:label="Match List"

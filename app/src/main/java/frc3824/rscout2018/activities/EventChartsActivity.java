@@ -2,19 +2,969 @@ package frc3824.rscout2018.activities;
 
 import android.os.Bundle;
 
-import activitystarter.ActivityStarter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+
 import activitystarter.MakeActivityStarter;
-import frc3824.rscout2018.R;
+import frc3824.rscout2018.custom_charts.MainOption;
+import frc3824.rscout2018.custom_charts.SecondaryOption;
+import frc3824.rscout2018.database.data_models.LowLevelStats;
+import frc3824.rscout2018.database.data_models.TeamMatchData;
+import frc3824.rscout2018.database.data_models.powered_up.CubeEvent;
+import frc3824.rscout2018.utilities.Constants;
 
-
+/**
+ * Created by frc3824
+ */
 @MakeActivityStarter
-public class EventChartsActivity extends RScoutActivity
+public class EventChartsActivity extends EventChartsActivityBase
 {
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    public void onCreate(Bundle savedInstance)
     {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_charts);
-        ActivityStarter.fill(this);
+
+        ArrayList<SecondaryOption> secondaryOptions = new ArrayList<>();
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.ALL,
+                                                 false,
+                                                 new CubeAllOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.SWITCH,
+                             false,
+                             new CubeSwitchOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.AUTO_SWITCH,
+                                                 false,
+                                                 new CubeAutoSwitchOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.TELEOP_SWITCH,
+                                                 false,
+                                                 new CubeTeleopSwitchOptionFilter()));
+
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.SCALE,
+                                                 false,
+                                                 new CubeScaleOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.AUTO_SCALE,
+                                                 false,
+                                                 new CubeAutoScaleOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.TELEOP_SCALE,
+                                                 false,
+                                                 new CubeTeleopScaleOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.EXCHANGE_STATION,
+                                                 false,
+                                                 new CubeExchangeStationOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.DROP,
+                                                 false,
+                                                 new CubeDropOptionFilter()));
+        mOptions.put(Constants.PickList.MainDropdown.POWER_CUBES,
+                     new MainOption(this,
+                                    Constants.PickList.MainDropdown.POWER_CUBES,
+                                    secondaryOptions));
+
+        secondaryOptions = new ArrayList<>();
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.Climb.CLIMB,
+                             true,
+                             new ClimbOptionFilter()));
+        mOptions.put(Constants.PickList.MainDropdown.CLIMB, new MainOption(this, Constants.PickList.MainDropdown.CLIMB, secondaryOptions));
+
+        secondaryOptions = new ArrayList<>();
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.Fouls.FOUL,
+                                                 true,
+                                                 new FoulOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.Fouls.TECH_FOUL,
+                                                 true,
+                                                 new TechFoulOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.Fouls.YELLOW_CARD,
+                                                 true,
+                                                 new YellowCardOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.Fouls.RED_CARD,
+                                                 true,
+                                                 new RedCardOptionFilter()));
+        mOptions.put(Constants.PickList.MainDropdown.FOULS, new MainOption(this, Constants.PickList.MainDropdown.FOULS, secondaryOptions));
+
+        secondaryOptions = new ArrayList<>();
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.Misc.AUTO_CROSS,
+                                                 true,
+                                                 new AutoCrossOptionFilter()));
+
+        mOptions.put(Constants.PickList.MainDropdown.MISC, new MainOption(this, Constants.PickList.MainDropdown.MISC, secondaryOptions));
+
+        super.onCreate(savedInstance);
     }
+
+    //region Cube Filters
+    //region Cube All Filter
+    private class CubeAllOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            return 0;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            ArrayList<Integer> list = new ArrayList<>();
+            for (TeamMatchData tmd : tmds)
+            {
+                int total = 0;
+                for (CubeEvent cubeEvent : tmd.getAutoCubeEvents())
+                {
+                    if (cubeEvent.getEvent()
+                                 .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                            cubeEvent.getEvent().equals(Constants.MatchScouting.CubeEvents.PLACED))
+                    {
+                        total++;
+                    }
+                }
+
+                for (CubeEvent cubeEvent : tmd.getTeleopCubeEvents())
+                {
+                    if (cubeEvent.getEvent()
+                                 .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                            cubeEvent.getEvent().equals(Constants.MatchScouting.CubeEvents.PLACED))
+                    {
+                        total++;
+                    }
+                }
+                list.add(total);
+            }
+
+            return LowLevelStats.fromInt(list);
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Double> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                LowLevelStats lls = createLlsValue(map.get(teamNumber));
+                sortValues.put(teamNumber, lls.getAverage());
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return -Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Cube Switch Filter
+    private class CubeSwitchOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            return 0;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            ArrayList<Integer> list = new ArrayList<>();
+            for (TeamMatchData tmd : tmds)
+            {
+                int total = 0;
+                for (CubeEvent cubeEvent : tmd.getAutoCubeEvents())
+                {
+                    if (((cubeEvent.getLocationX() > Constants.TeamStats.Cubes.EXCHANGE_THESHOLD &&
+                            cubeEvent.getLocationX() < Constants.TeamStats.Cubes.SWITCH_THRESHOlD) ||
+                            (cubeEvent.getLocationX() < 1 - Constants.TeamStats.Cubes.EXCHANGE_THESHOLD &&
+                                    cubeEvent.getLocationX() > 1 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD)) &&
+                            (cubeEvent.getEvent()
+                                      .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                                    cubeEvent.getEvent()
+                                             .equals(Constants.MatchScouting.CubeEvents.PLACED)))
+                    {
+                        total++;
+                    }
+                }
+
+                for (CubeEvent cubeEvent : tmd.getTeleopCubeEvents())
+                {
+                    if (((cubeEvent.getLocationX() > Constants.TeamStats.Cubes.EXCHANGE_THESHOLD &&
+                            cubeEvent.getLocationX() < Constants.TeamStats.Cubes.SWITCH_THRESHOlD) ||
+                            (cubeEvent.getLocationX() < 1 - Constants.TeamStats.Cubes.EXCHANGE_THESHOLD &&
+                                    cubeEvent.getLocationX() > 1 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD)) &&
+                            (cubeEvent.getEvent()
+                                      .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                                    cubeEvent.getEvent()
+                                             .equals(Constants.MatchScouting.CubeEvents.PLACED)))
+                    {
+                        total++;
+                    }
+                }
+                list.add(total);
+            }
+            return LowLevelStats.fromInt(list);
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Double> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                LowLevelStats lls = createLlsValue(map.get(teamNumber));
+                sortValues.put(teamNumber, lls.getAverage());
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return -Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Cube Auto Switch Filter
+    private class CubeAutoSwitchOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            return 0;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            ArrayList<Integer> list = new ArrayList<>();
+            for (TeamMatchData tmd : tmds)
+            {
+                int total = 0;
+                for (CubeEvent cubeEvent : tmd.getAutoCubeEvents())
+                {
+                    if (((cubeEvent.getLocationX() > Constants.TeamStats.Cubes.EXCHANGE_THESHOLD &&
+                            cubeEvent.getLocationX() < Constants.TeamStats.Cubes.SWITCH_THRESHOlD) ||
+                            (cubeEvent.getLocationX() < 1 - Constants.TeamStats.Cubes.EXCHANGE_THESHOLD &&
+                                    cubeEvent.getLocationX() > 1 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD)) &&
+                            (cubeEvent.getEvent()
+                                      .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                                    cubeEvent.getEvent()
+                                             .equals(Constants.MatchScouting.CubeEvents.PLACED)))
+                    {
+                        total++;
+                    }
+                }
+
+                list.add(total);
+            }
+            return LowLevelStats.fromInt(list);
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Double> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                LowLevelStats lls = createLlsValue(map.get(teamNumber));
+                sortValues.put(teamNumber, lls.getAverage());
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return -Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Cube Teleop Switch Filter
+    private class CubeTeleopSwitchOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            return 0;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            ArrayList<Integer> list = new ArrayList<>();
+            for (TeamMatchData tmd : tmds)
+            {
+                int total = 0;
+
+                for (CubeEvent cubeEvent : tmd.getTeleopCubeEvents())
+                {
+                    if (((cubeEvent.getLocationX() > Constants.TeamStats.Cubes.EXCHANGE_THESHOLD &&
+                            cubeEvent.getLocationX() < Constants.TeamStats.Cubes.SWITCH_THRESHOlD) ||
+                            (cubeEvent.getLocationX() < 1 - Constants.TeamStats.Cubes.EXCHANGE_THESHOLD &&
+                                    cubeEvent.getLocationX() > 1 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD)) &&
+                            (cubeEvent.getEvent()
+                                      .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                                    cubeEvent.getEvent()
+                                             .equals(Constants.MatchScouting.CubeEvents.PLACED)))
+                    {
+                        total++;
+                    }
+                }
+                list.add(total);
+            }
+            return LowLevelStats.fromInt(list);
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Double> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                LowLevelStats lls = createLlsValue(map.get(teamNumber));
+                sortValues.put(teamNumber, lls.getAverage());
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return -Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Cube Scale Filter
+    private class CubeScaleOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            return 0;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            ArrayList<Integer> list = new ArrayList<>();
+            for (TeamMatchData tmd : tmds)
+            {
+                int total = 0;
+                for (CubeEvent cubeEvent : tmd.getAutoCubeEvents())
+                {
+                    if (((cubeEvent.getLocationX() > Constants.TeamStats.Cubes.SWITCH_THRESHOlD &&
+                            cubeEvent.getLocationX() < 1.0 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD) &&
+                            (cubeEvent.getEvent()
+                                      .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                                    cubeEvent.getEvent()
+                                             .equals(Constants.MatchScouting.CubeEvents.PLACED))))
+                    {
+                        total++;
+                    }
+                }
+
+                for (CubeEvent cubeEvent : tmd.getTeleopCubeEvents())
+                {
+                    if (((cubeEvent.getLocationX() > Constants.TeamStats.Cubes.SWITCH_THRESHOlD &&
+                            cubeEvent.getLocationX() < 1.0 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD) &&
+                            (cubeEvent.getEvent()
+                                      .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                                    cubeEvent.getEvent()
+                                             .equals(Constants.MatchScouting.CubeEvents.PLACED))))
+                    {
+                        total++;
+                    }
+                }
+                list.add(total);
+            }
+            return LowLevelStats.fromInt(list);
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Double> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                LowLevelStats lls = createLlsValue(map.get(teamNumber));
+                sortValues.put(teamNumber, lls.getAverage());
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return -Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Cube AutoScale Filter
+    private class CubeAutoScaleOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            return 0;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            ArrayList<Integer> list = new ArrayList<>();
+            for (TeamMatchData tmd : tmds)
+            {
+                int total = 0;
+                for (CubeEvent cubeEvent : tmd.getAutoCubeEvents())
+                {
+                    if (((cubeEvent.getLocationX() > Constants.TeamStats.Cubes.SWITCH_THRESHOlD &&
+                            cubeEvent.getLocationX() < 1.0 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD) &&
+                            (cubeEvent.getEvent()
+                                      .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                                    cubeEvent.getEvent()
+                                             .equals(Constants.MatchScouting.CubeEvents.PLACED))))
+                    {
+                        total++;
+                    }
+                }
+
+                list.add(total);
+            }
+            return LowLevelStats.fromInt(list);
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Double> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                LowLevelStats lls = createLlsValue(map.get(teamNumber));
+                sortValues.put(teamNumber, lls.getAverage());
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return -Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Cube Teleop Scale Filter
+    private class CubeTeleopScaleOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            return 0;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            ArrayList<Integer> list = new ArrayList<>();
+            for (TeamMatchData tmd : tmds)
+            {
+                int total = 0;
+
+                for (CubeEvent cubeEvent : tmd.getTeleopCubeEvents())
+                {
+                    if (((cubeEvent.getLocationX() > Constants.TeamStats.Cubes.SWITCH_THRESHOlD &&
+                            cubeEvent.getLocationX() < 1.0 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD) &&
+                            (cubeEvent.getEvent()
+                                      .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                                    cubeEvent.getEvent()
+                                             .equals(Constants.MatchScouting.CubeEvents.PLACED))))
+                    {
+                        total++;
+                    }
+                }
+                list.add(total);
+            }
+            return LowLevelStats.fromInt(list);
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Double> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                LowLevelStats lls = createLlsValue(map.get(teamNumber));
+                sortValues.put(teamNumber, lls.getAverage());
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return -Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Cube Teleop Scale Filter
+    private class CubeExchangeStationOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            return 0;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            ArrayList<Integer> list = new ArrayList<>();
+            for (TeamMatchData tmd : tmds)
+            {
+                int total = 0;
+
+                for (CubeEvent cubeEvent : tmd.getTeleopCubeEvents())
+                {
+                    if (((cubeEvent.getLocationX() < Constants.TeamStats.Cubes.EXCHANGE_THESHOLD ||
+                            cubeEvent.getLocationX() > 1.0 - Constants.TeamStats.Cubes.EXCHANGE_THESHOLD) &&
+                            (cubeEvent.getEvent()
+                                      .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                                    cubeEvent.getEvent()
+                                             .equals(Constants.MatchScouting.CubeEvents.PLACED))))
+                    {
+                        total++;
+                    }
+                }
+                list.add(total);
+            }
+            return LowLevelStats.fromInt(list);
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Double> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                LowLevelStats lls = createLlsValue(map.get(teamNumber));
+                sortValues.put(teamNumber, lls.getAverage());
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return -Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Cube Drop Filter
+    private class CubeDropOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            return 0;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            ArrayList<Integer> list = new ArrayList<>();
+            for (TeamMatchData tmd : tmds)
+            {
+                int total = 0;
+
+                for(CubeEvent cubeEvent : tmd.getAutoCubeEvents())
+                {
+                    if (cubeEvent.getEvent().equals(Constants.MatchScouting.CubeEvents.DROPPED) ||
+                            cubeEvent.getEvent().equals(Constants.MatchScouting.CubeEvents.LAUNCH_FAILURE))
+                    {
+                        total++;
+                    }
+                }
+
+                for (CubeEvent cubeEvent : tmd.getTeleopCubeEvents())
+                {
+                    if (cubeEvent.getEvent().equals(Constants.MatchScouting.CubeEvents.DROPPED) ||
+                            cubeEvent.getEvent().equals(Constants.MatchScouting.CubeEvents.LAUNCH_FAILURE))
+                    {
+                        total++;
+                    }
+                }
+                list.add(total);
+            }
+            return LowLevelStats.fromInt(list);
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Double> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                LowLevelStats lls = createLlsValue(map.get(teamNumber));
+                sortValues.put(teamNumber, lls.getAverage());
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+    // endregion
+
+    //region Climb Filters
+    //region Climb Filter
+    private class ClimbOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            int total = 0;
+            for(TeamMatchData tmd : tmds)
+            {
+                total += tmd.getClimbStatus().equals(Constants.MatchScouting.Climb.Status.CLIMB) ? 1 : 0;
+            }
+            return total;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            return null;
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Float> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                sortValues.put(teamNumber, createBarValue(map.get(teamNumber)));
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return -Float.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+    //endregion
+
+    //region Foul Filters
+    //region Normal Foul Filter
+    private class FoulOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            int total = 0;
+            for(TeamMatchData tmd : tmds)
+            {
+                total += tmd.getFouls();
+            }
+            return total;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            return null;
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Float> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                sortValues.put(teamNumber, createBarValue(map.get(teamNumber)));
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return Float.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Tech Foul Filter
+    private class TechFoulOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            int total = 0;
+            for(TeamMatchData tmd : tmds)
+            {
+                total += tmd.getTechFouls();
+            }
+            return total;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            return null;
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Float> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                sortValues.put(teamNumber, createBarValue(map.get(teamNumber)));
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Yellow Card Filter
+    private class YellowCardOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            int total = 0;
+            for(TeamMatchData tmd : tmds)
+            {
+                total += tmd.isYellowCard() ? 1 : 0;
+            }
+            return total;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            return null;
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Float> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                sortValues.put(teamNumber, createBarValue(map.get(teamNumber)));
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Red Card Filter
+    private class RedCardOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            int total = 0;
+            for (TeamMatchData tmd : tmds)
+            {
+                total += tmd.isRedCard() ? 1 : 0;
+            }
+            return total;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            return null;
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Float> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                sortValues.put(teamNumber, createBarValue(map.get(teamNumber)));
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+    //endregion
+
+    //region Misc Filters
+    //region Auto Cross Filter
+    private class AutoCrossOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            int total = 0;
+            for (TeamMatchData tmd : tmds)
+            {
+                total += tmd.getCrossedAutoLine() ? 1 : 0;
+            }
+            return total;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            return null;
+        }
+
+        @Override
+        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+
+            final Map<Integer, Float> sortValues = new HashMap<>();
+            for (int teamNumber : sortTeams)
+            {
+                sortValues.put(teamNumber, createBarValue(map.get(teamNumber)));
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return -Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+    //endregion
 }

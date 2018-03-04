@@ -303,11 +303,13 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
                 return;
 
             case R.id.generate_test_data:
+                /*
                 TeamPitData tpd = new TeamPitData(1);
                 tpd.setNotes("soemthig");
                 Database.getInstance().updateTeamPitData(tpd);
 
                 new GenerateTestDataTask().execute();
+                */
                 return;
 
             default:

@@ -7,13 +7,12 @@ import com.github.mikephil.charting.charts.BarLineChartBase;
 
 public class LLDChart extends BarLineChartBase<LLDData> implements LLDDataProvider
 {
-    LLDRenderer mRenderer;
-
     public LLDChart(Context context, AttributeSet attrs)
     {
         super(context, attrs);
     }
 
+    @Override
     protected void init()
     {
         super.init();
@@ -21,6 +20,7 @@ public class LLDChart extends BarLineChartBase<LLDData> implements LLDDataProvid
         mXAxis.mAxisMinimum = -0.5f;
     }
 
+    @Override
     public LLDData getLLDData()
     {
         return mData;

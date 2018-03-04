@@ -118,7 +118,7 @@ public class MatchPreviewTeam extends BaseObservable
     public void incrementTeleopSwitchSuccesses()
     {
         teleopSwitchSuccesses ++;
-        teleopScaleAttempts ++;
+        teleopSwitchAttempts ++;
         notifyChange();
     }
     //endregion

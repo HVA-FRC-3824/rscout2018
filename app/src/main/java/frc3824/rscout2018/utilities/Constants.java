@@ -223,38 +223,95 @@ public interface Constants
 
     interface PickList
     {
-        String POWER_CUBES = "Power Cubes";
-        String CLIMB = "Climb";
-        String FOULS = "Fouls";
-        String[] MAIN_SORTING = {
-                POWER_CUBES,
-                CLIMB,
-                FOULS
-        };
-
-        interface PowerCubes
+        interface MainDropdown
         {
-            String ALL = "All";
-            String NEAR_SWITCH = "Near Switch";
-            String SCALE = "Scale";
-            String FAR_SWITCH = "Far Switch";
-            String EXCHANGE_STATION = "Exchange Station";
-            String DROP = "Drop";
-            String INCORRECT_SIDE = "Incorrect Side";
+            String POWER_CUBES = "Power Cubes";
+            String CLIMB = "Climb";
+            String FOULS = "Fouls";
+            String MISC = "Misc";
             String[] OPTIONS = {
-                    ALL,
-                    NEAR_SWITCH,
-                    SCALE,
-                    FAR_SWITCH,
-                    EXCHANGE_STATION,
-                    DROP,
-                    INCORRECT_SIDE
+                    POWER_CUBES,
+                    CLIMB,
+                    FOULS,
+                    MISC
             };
         }
 
-        interface Climb
+        interface SecondaryDropdown
         {
 
+            interface PowerCubes
+            {
+                String ALL = "All";
+                String SWITCH = "Switch";
+                String AUTO_SWITCH = "Auto Switch";
+                String TELEOP_SWITCH = "Teleop Switch";
+                String SCALE = "Scale";
+                String AUTO_SCALE = "Auto Scale";
+                String TELEOP_SCALE = "Teleop Scale";
+                String EXCHANGE_STATION = "Exchange Station";
+                String DROP = "Drop";
+                String[] OPTIONS = {
+                        ALL,
+                        SWITCH,
+                        AUTO_SWITCH,
+                        TELEOP_SWITCH,
+                        SCALE,
+                        AUTO_SCALE,
+                        TELEOP_SCALE,
+                        EXCHANGE_STATION,
+                        DROP,
+                };
+            }
+
+            interface Climb
+            {
+                String CLIMB = "Climb";
+                String CLIMB_ONE = "Climb while supporting 1";
+                String CLIMB_TWO = "Climb while supporting 2";
+                String CLIMB_ON_OTHER = "Climb on other robot";
+                String RAMP = "Ramp";
+                String RAMP_ONE = "Ramp while supporting 1";
+                String RAMP_TWO = "Ramp while supporting 2";
+                String RAMP_ON_OTHER = "Got on other's ramp";
+                String FELL = "Fell";
+                String NOT_IN_TIME = "Did not make it";
+                String PARKED_ON_PLATFORM = "Parked on the platform";
+
+                String[] OPTIONS = {
+                        CLIMB,
+                        CLIMB_ONE,
+                        CLIMB_TWO,
+                        CLIMB_ON_OTHER,
+                        RAMP,
+                        RAMP_ONE,
+                        RAMP_TWO,
+                        RAMP_ON_OTHER,
+                        FELL,
+                        NOT_IN_TIME,
+                        PARKED_ON_PLATFORM
+                };
+            }
+
+            interface Fouls
+            {
+                String FOUL = "Normal";
+                String TECH_FOUL = "Tech Fouls";
+                String YELLOW_CARD = "Yellow Card";
+                String RED_CARD = "Red Card";
+
+                String[] OPTIONS = {
+                        FOUL,
+                        TECH_FOUL,
+                        YELLOW_CARD,
+                        RED_CARD
+                };
+            }
+
+            interface Misc
+            {
+                String AUTO_CROSS = "Auto Cross";
+            }
         }
     }
 }

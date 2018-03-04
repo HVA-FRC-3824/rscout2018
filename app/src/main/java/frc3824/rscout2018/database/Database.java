@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -247,6 +248,7 @@ public class Database
         {
             keys.add(Integer.parseInt(key));
         }
+        Collections.sort(keys);
         return keys;
     }
     //endregion

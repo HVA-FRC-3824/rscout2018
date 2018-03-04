@@ -576,7 +576,7 @@ public class CommunicationService extends IntentService
         }
         catch (IOException e)
         {
-            ToastBus.getInstance().publish(new ToastRequest("Pit Data request failed",
+            ToastBus.getInstance().publish(new ToastRequest("Match Data request failed",
                     TastyToast.LENGTH_LONG,
                     TastyToast.ERROR));
         }

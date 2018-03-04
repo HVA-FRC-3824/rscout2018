@@ -127,21 +127,25 @@ public class ClimbView extends ConstraintLayout
             ArrayList<String> matchLabels = new ArrayList<>();
             for (TeamMatchData tmd : mMatches)
             {
-                statusOptionsFrequency[statusOptions.indexOf(tmd.getClimbStatus())]++;
-                int methodIndex = methodOptions.indexOf(tmd.getClimbMethod());
-                if (methodIndex > -1)
+                int statusIndex = statusOptions.indexOf(tmd.getClimbStatus());
+                if(statusIndex > -1)
                 {
-                    methodOptionsFrequency[methodIndex]++;
-                }
-                if(tmd.getClimbTime() > 0)
-                {
-                    timeSum +=  (float)tmd.getClimbTime() / 1000.0f;
-                    timeNum ++;
-                }
-                timeEntries.add(new Entry((float)tmd.getClimbTime() / 1000.0f, j));
-                j++;
+                    statusOptionsFrequency[statusIndex]++;
+                    int methodIndex = methodOptions.indexOf(tmd.getClimbMethod());
+                    if (methodIndex > -1)
+                    {
+                        methodOptionsFrequency[methodIndex]++;
+                    }
+                    if (tmd.getClimbTime() > 0)
+                    {
+                        timeSum += (float) tmd.getClimbTime() / 1000.0f;
+                        timeNum++;
+                    }
+                    timeEntries.add(new Entry((float) tmd.getClimbTime() / 1000.0f, j));
+                    j++;
 
-                matchLabels.add(String.valueOf(tmd.getMatchNumber()));
+                    matchLabels.add(String.valueOf(tmd.getMatchNumber()));
+                }
             }
             LineDataSet lineDataSet = new LineDataSet(timeEntries, "Times");
             lineDataSet.setCircleColor(Color.GREEN);

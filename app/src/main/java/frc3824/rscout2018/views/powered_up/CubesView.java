@@ -145,9 +145,9 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
 
     private class UpdateTask extends AsyncTask
     {
-        double shortCycleSum = 0;
-        double mediumCycleSum = 0;
-        double longCycleSum = 0;
+        long shortCycleSum = 0;
+        long mediumCycleSum = 0;
+        long longCycleSum = 0;
         int shortCycleNum = 0;
         int mediumCycleNum = 0;
         int longCycleNum = 0;
@@ -200,67 +200,87 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
                 }
 
                 CubeEvent previousEvent = null;
-                for(CubeEvent cubeEvent : tmd.getTeleopCubeEvents())
+                long time;
+                double distance;
+                boolean first = true;
+                CubeEvent pickup = null;
+                ArrayList<CubeEvent> teleopCubeEvents = tmd.getTeleopCubeEvents();
+                for (int i = 0; i < teleopCubeEvents.size(); i++)
                 {
+                    CubeEvent cubeEvent = teleopCubeEvents.get(i);
+
+                    if (i == 0 && cubeEvent.getEvent()
+                                           .equals(Constants.MatchScouting.CubeEvents.PICK_UP))
+                    {
+                        first = false;
+                    }
                     switch (cubeEvent.getEvent())
                     {
                         case Constants.MatchScouting.CubeEvents.PICK_UP:
                             mTeleopPickUp.add(new Pair<>(cubeEvent.getLocationX(), cubeEvent.getLocationY()));
+                            if (pickup == null)
+                            {
+                                pickup = cubeEvent;
+                            }
                             break;
                         case Constants.MatchScouting.CubeEvents.PLACED:
                             mTeleopPlaced.add(new Pair<>(cubeEvent.getLocationX(), cubeEvent.getLocationY()));
-                            if(previousEvent != null)
+                            if (!first)
                             {
-                                assert(previousEvent.getEvent().equals(Constants.MatchScouting.CubeEvents.PICK_UP));
-                                // Convert time to seconds
-                                double currentTime = ((double)cubeEvent.getTime()) / 1000.0;
-                                double pickupTime = ((double)previousEvent.getTime()) / 1000.0;
-                                double distance = Math.sqrt(Math.pow(cubeEvent.getLocationX() - previousEvent.getLocationX(), 2) + Math.pow(cubeEvent.getLocationY() - previousEvent.getLocationY(), 2));
-                                if(distance < Constants.TeamStats.Cubes.SHORT_DISTANCE)
+                                distance = Math.sqrt(Math.pow(cubeEvent.getLocationX() - pickup.getLocationX(),
+                                                              2) + Math.pow(cubeEvent.getLocationY() - pickup
+                                        .getLocationY(), 2));
+                                time = cubeEvent.getTime() - pickup.getTime();
+
+                                if (distance < Constants.TeamStats.Cubes.SHORT_DISTANCE)
                                 {
-                                    shortCycleSum += currentTime - pickupTime;
+                                    shortCycleSum += time;
                                     shortCycleNum ++;
                                 }
-                                else if(distance < Constants.TeamStats.Cubes.MEDIUM_DISTANCE)
+                                else if (distance < Constants.TeamStats.Cubes.MEDIUM_DISTANCE)
                                 {
-                                    mediumCycleSum += currentTime - pickupTime;
+                                    mediumCycleSum += time;
                                     mediumCycleNum ++;
                                 }
                                 else
                                 {
-                                    longCycleSum += currentTime - pickupTime;
+                                    longCycleSum += time;
                                     longCycleNum ++;
                                 }
                             }
+                            pickup = null;
+                            first = false;
                             break;
                         case Constants.MatchScouting.CubeEvents.DROPPED:
                             mTeleopDropped.add(new Pair<>(cubeEvent.getLocationX(), cubeEvent.getLocationY()));
                             break;
                         case Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS:
                             mTeleopLaunchSuccess.add(new Pair<>(cubeEvent.getLocationX(), cubeEvent.getLocationY()));
-                            if(previousEvent != null)
+                            if (!first)
                             {
-                                assert(previousEvent.getEvent().equals(Constants.MatchScouting.CubeEvents.PICK_UP));
-                                // Convert time to seconds
-                                double currentTime = ((double)cubeEvent.getTime()) / 1000.0;
-                                double pickupTime = ((double)previousEvent.getTime()) / 1000.0;
-                                double distance = Math.sqrt(Math.pow(cubeEvent.getLocationX() - previousEvent.getLocationX(), 2) + Math.pow(cubeEvent.getLocationY() - previousEvent.getLocationY(), 2));
-                                if(distance < Constants.TeamStats.Cubes.SHORT_DISTANCE)
+                                distance = Math.sqrt(Math.pow(cubeEvent.getLocationX() - pickup.getLocationX(),
+                                                              2) + Math.pow(cubeEvent.getLocationY() - pickup
+                                        .getLocationY(), 2));
+                                time = cubeEvent.getTime() - pickup.getTime();
+
+                                if (distance < Constants.TeamStats.Cubes.SHORT_DISTANCE)
                                 {
-                                    shortCycleSum += currentTime - pickupTime;
+                                    shortCycleSum += time;
                                     shortCycleNum ++;
                                 }
-                                else if(distance < Constants.TeamStats.Cubes.MEDIUM_DISTANCE)
+                                else if (distance < Constants.TeamStats.Cubes.MEDIUM_DISTANCE)
                                 {
-                                    mediumCycleSum += currentTime - pickupTime;
+                                    mediumCycleSum += time;
                                     mediumCycleNum ++;
                                 }
                                 else
                                 {
-                                    longCycleSum += currentTime - pickupTime;
+                                    longCycleSum += time;
                                     longCycleNum ++;
                                 }
                             }
+                            pickup = null;
+                            first = false;
                             break;
                         case Constants.MatchScouting.CubeEvents.LAUNCH_FAILURE:
                             mTeleopLaunchFailure.add(new Pair<>(cubeEvent.getLocationX(), cubeEvent.getLocationY()));
@@ -268,7 +288,6 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
                         default:
                             assert(false);
                     }
-                    previousEvent = cubeEvent;
                 }
             }
 
@@ -286,7 +305,7 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
             }
             else
             {
-                mShortCycleTime.setText(String.format("%.2fs", shortCycleSum / (double)shortCycleNum));
+                mShortCycleTime.setText(String.format("%.2fs", (double)shortCycleSum / 1000.0f / (double)shortCycleNum));
             }
 
             if(mediumCycleNum == 0)
@@ -295,7 +314,7 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
             }
             else
             {
-                mMediumCycleTime.setText(String.format("%.2fs", mediumCycleSum / (double)mediumCycleNum));
+                mMediumCycleTime.setText(String.format("%.2fs", (double)mediumCycleSum / 1000.0f / (double)mediumCycleNum));
             }
 
             if(longCycleNum == 0)
@@ -304,7 +323,7 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
             }
             else
             {
-                mLongCycleTime.setText(String.format("%.2fs", longCycleSum / (double)longCycleNum));
+                mLongCycleTime.setText(String.format("%.2fs", (double)longCycleSum / 1000.0f / (double)longCycleNum));
             }
 
             onCheckedChanged(mOption, mOption.getCheckedRadioButtonId());
