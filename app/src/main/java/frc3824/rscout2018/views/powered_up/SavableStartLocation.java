@@ -16,6 +16,7 @@ import android.view.View;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.utilities.Constants;
+import frc3824.rscout2018.utilities.Utilities;
 
 /**
  * Created by frc3824
@@ -23,7 +24,6 @@ import frc3824.rscout2018.utilities.Constants;
 public class SavableStartLocation extends View
 {
     Context mContext;
-    Bitmap mFieldBitmap;
     Bitmap mBackgroundBitmap;
     Paint mCanvasPaint;
     Paint mPointPaint;
@@ -37,29 +37,6 @@ public class SavableStartLocation extends View
         super(context, attrs);
 
         mContext = context;
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        int position = Integer.parseInt(sharedPreferences.getString(Constants.Settings.MATCH_SCOUT_POSITION, "-1"));
-        if(position < 3) // Blue
-        {
-            mFieldBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.blue_top_down);
-            if(sharedPreferences.getBoolean(Constants.Settings.BLUE_LEFT, false))
-            {
-                Matrix matrix = new Matrix();
-                matrix.postRotate(180);
-                mFieldBitmap = Bitmap.createBitmap(mFieldBitmap, 0, 0, mFieldBitmap.getWidth(), mFieldBitmap.getHeight(), matrix, true);
-            }
-        }
-        else // Red
-        {
-            mFieldBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.red_top_down);
-            if(sharedPreferences.getBoolean(Constants.Settings.BLUE_LEFT, false))
-            {
-                Matrix matrix = new Matrix();
-                matrix.postRotate(180);
-                mFieldBitmap = Bitmap.createBitmap(mFieldBitmap, 0, 0, mFieldBitmap.getWidth(), mFieldBitmap.getHeight(), matrix, true);
-            }
-        }
         mCanvasPaint = new Paint(Paint.DITHER_FLAG);
         mPointPaint = new Paint();
         mPointPaint.setStyle(Paint.Style.STROKE);
@@ -84,7 +61,39 @@ public class SavableStartLocation extends View
 
         mScreenWidth = width;
         mScreenHeight = height;
-        mBackgroundBitmap = Bitmap.createScaledBitmap(mFieldBitmap, width, height, false);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        int position = Integer.parseInt(sharedPreferences.getString(Constants.Settings.MATCH_SCOUT_POSITION, "-1"));
+        if(position < 3) // Blue
+        {
+            Bitmap temp = Utilities.decodeSampledBitmapFromResource(getResources(), R.drawable.blue_top_down, mScreenWidth, mScreenHeight);
+            if(sharedPreferences.getBoolean(Constants.Settings.BLUE_LEFT, false))
+            {
+                Matrix matrix = new Matrix();
+                matrix.postRotate(180);
+                mBackgroundBitmap = Bitmap.createBitmap(temp, 0, 0, temp.getWidth(), temp.getHeight(), matrix, true);
+                temp.recycle();
+            }
+            else
+            {
+                mBackgroundBitmap = temp;
+            }
+        }
+        else // Red
+        {
+            Bitmap temp = Utilities.decodeSampledBitmapFromResource(getResources(), R.drawable.blue_top_down, mScreenWidth, mScreenHeight);
+            if(sharedPreferences.getBoolean(Constants.Settings.BLUE_LEFT, false))
+            {
+                Matrix matrix = new Matrix();
+                matrix.postRotate(180);
+                mBackgroundBitmap = Bitmap.createBitmap(temp, 0, 0, temp.getWidth(), temp.getHeight(), matrix, true);
+                temp.recycle();
+            }
+            else
+            {
+                mBackgroundBitmap = temp;
+            }
+        }
     }
 
     @Override

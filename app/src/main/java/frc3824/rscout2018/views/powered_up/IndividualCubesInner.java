@@ -1,28 +1,24 @@
 package frc3824.rscout2018.views.powered_up;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.database.data_models.powered_up.CubeEvent;
 import frc3824.rscout2018.utilities.Constants;
+import frc3824.rscout2018.utilities.Utilities;
 
 /**
  * Created by frc3824
@@ -30,7 +26,6 @@ import frc3824.rscout2018.utilities.Constants;
 public class IndividualCubesInner extends View
 {
     Context mContext;
-    Bitmap mFieldBitmap;
     Bitmap mBackgroundBitmap;
     Bitmap mPickedUpBitmap;
     Bitmap mPlacedBitmap;
@@ -38,8 +33,8 @@ public class IndividualCubesInner extends View
     Bitmap mLaunchSuccessBitmap;
     Bitmap mLaunchFailureBitmap;
     Paint mCanvasPaint;
-    int mScreenWidth;
-    int mScreenHeight;
+    int mWidth;
+    int mHeight;
     Boolean mAuto = null;
 
     TeamMatchData mTeamMatchData;
@@ -50,20 +45,6 @@ public class IndividualCubesInner extends View
     {
         super(context, attrs);
         mContext = context;
-        mFieldBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.field_top_down);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        if(sharedPreferences.getBoolean(Constants.Settings.BLUE_LEFT, false))
-        {
-            Matrix matrix = new Matrix();
-            matrix.postRotate(180);
-            mFieldBitmap = Bitmap.createBitmap(mFieldBitmap, 0, 0, mFieldBitmap.getWidth(), mFieldBitmap.getHeight(), matrix, true);
-        }
-        mPickedUpBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.level_up);
-        mPlacedBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.place);
-        mDroppedBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.breakable);
-        mLaunchSuccessBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cannon);
-        mLaunchFailureBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.delete);
         mCanvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
@@ -110,23 +91,35 @@ public class IndividualCubesInner extends View
     {
         super.onSizeChanged(width, height, oldWidth, oldHeight);
 
-        mScreenWidth = width;
-        mScreenHeight = height;
-        mBackgroundBitmap = Bitmap.createScaledBitmap(mFieldBitmap, width, height, false);
-        mPickedUpBitmap = Bitmap.createScaledBitmap(mPickedUpBitmap,
+        mWidth = width;
+        mHeight = height;
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        Resources resources = getResources();
+        Bitmap temp = Utilities.decodeSampledBitmapFromResource(resources, R.drawable.field_top_down, width, height);
+        if(sharedPreferences.getBoolean(Constants.Settings.BLUE_LEFT, false))
+        {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(180);
+            mBackgroundBitmap = Bitmap.createBitmap(temp, 0, 0, temp.getWidth(), temp.getHeight(), matrix, true);
+            temp.recycle();
+        }
+        else
+        {
+            mBackgroundBitmap = temp;
+        }
+
+        mPickedUpBitmap = Utilities.decodeSampledBitmapFromResource(resources, R.drawable.level_up,
                                                     height / 15,
-                                                    height / 15,
-                                                    false);
-        mPlacedBitmap = Bitmap.createScaledBitmap(mPlacedBitmap, height / 15, height / 15, false);
-        mDroppedBitmap = Bitmap.createScaledBitmap(mDroppedBitmap, height / 15, height / 15, false);
-        mLaunchSuccessBitmap = Bitmap.createScaledBitmap(mLaunchSuccessBitmap,
+                                                    height / 15);
+        mPlacedBitmap = Utilities.decodeSampledBitmapFromResource(resources, R.drawable.place, height / 15, height / 15);
+        mDroppedBitmap = Utilities.decodeSampledBitmapFromResource(resources, R.drawable.breakable, height / 15, height / 15);
+        mLaunchSuccessBitmap = Utilities.decodeSampledBitmapFromResource(resources, R.drawable.cannon,
                                                          height / 15,
+                                                         height / 15);
+        mLaunchFailureBitmap = Utilities.decodeSampledBitmapFromResource(resources, R.drawable.delete,
                                                          height / 15,
-                                                         false);
-        mLaunchFailureBitmap = Bitmap.createScaledBitmap(mLaunchFailureBitmap,
-                                                         height / 15,
-                                                         height / 15,
-                                                         false);
+                                                         height / 15);
     }
 
     @Override
@@ -138,8 +131,8 @@ public class IndividualCubesInner extends View
         {
             for (CubeEvent event : mCubeEvents)
             {
-                float x = event.getLocationX() * mScreenWidth;
-                float y = event.getLocationY() * mScreenHeight;
+                float x = event.getLocationX() * mWidth;
+                float y = event.getLocationY() * mHeight;
                 switch (event.getEvent())
                 {
                     case Constants.MatchScouting.CubeEvents.PICK_UP:

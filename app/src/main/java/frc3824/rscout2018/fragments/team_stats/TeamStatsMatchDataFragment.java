@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.Database;
@@ -68,6 +69,7 @@ public class TeamStatsMatchDataFragment extends Fragment
             else
             {
                 mMatchNumbers = teamLogistics.getMatchNumbers();
+                Collections.sort(mMatchNumbers);
             }
         }
 

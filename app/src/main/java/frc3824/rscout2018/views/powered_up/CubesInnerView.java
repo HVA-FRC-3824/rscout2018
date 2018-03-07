@@ -2,7 +2,6 @@ package frc3824.rscout2018.views.powered_up;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.AsyncTask;
@@ -12,6 +11,7 @@ import android.util.Pair;
 import java.util.ArrayList;
 
 import frc3824.rscout2018.R;
+import frc3824.rscout2018.utilities.Utilities;
 import frc3824.rscout2018.views.heatmap.HeatMap;
 import frc3824.rscout2018.views.heatmap.HeatMapMarkerCallback;
 
@@ -20,17 +20,15 @@ import frc3824.rscout2018.views.heatmap.HeatMapMarkerCallback;
  */
 public class CubesInnerView extends HeatMap
 {
-    Bitmap mFieldBitmap = null;
     Bitmap mBackgroundBitmap;
     Paint mCanvasPaint;
-    int mScreenWidth;
-    int mScreenHeight;
+    int mWidth;
+    int mHeight;
     ArrayList<Pair<Float, Float>> mData;
 
     public CubesInnerView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
-        mFieldBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.field_top_down);
         setMinimum(0);
         setMaximum(100);
         setMarkerCallback(new HeatMapMarkerCallback.CircleHeatMapMarker(0xff9400D3));
@@ -48,9 +46,10 @@ public class CubesInnerView extends HeatMap
     {
         super.onSizeChanged(width, height, oldWidth, oldHeight);
 
-        mScreenWidth = width;
-        mScreenHeight = height;
-        mBackgroundBitmap = Bitmap.createScaledBitmap(mFieldBitmap, width, height, false);
+        mWidth = width;
+        mHeight = height;
+        mBackgroundBitmap = Utilities.decodeSampledBitmapFromResource(getResources(), R.drawable.field_top_down,
+                                                                      mWidth, mHeight);
     }
 
     @Override
