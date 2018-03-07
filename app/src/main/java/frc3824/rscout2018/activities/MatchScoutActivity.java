@@ -28,6 +28,7 @@ import frc3824.rscout2018.fragments.match_scout.MatchAutoFragment;
 import frc3824.rscout2018.fragments.match_scout.MatchEndgameFragment;
 import frc3824.rscout2018.fragments.match_scout.MatchFoulsFragment;
 import frc3824.rscout2018.fragments.match_scout.MatchMiscFragment;
+import frc3824.rscout2018.fragments.match_scout.MatchScoutFragment;
 import frc3824.rscout2018.fragments.match_scout.MatchStartFragment;
 import frc3824.rscout2018.fragments.match_scout.MatchTeleopFragment;
 import frc3824.rscout2018.services.CommunicationService;
@@ -47,11 +48,13 @@ public class MatchScoutActivity extends RScoutActivity
     private int mTeamNumber = -1;
     @Arg
     protected int mMatchNumber = -1;
-    private boolean mPractice = false;
+    boolean mPractice = false;
 
-    private MatchScoutFragmentPagerAdapter mFPA;
-    private ViewPager mViewPager;
-    private TeamMatchData mTMD;
+    ScoutHeader mHeader;
+    int mScoutPosition;
+    MatchScoutFragmentPagerAdapter mFPA;
+    ViewPager mViewPager;
+    TeamMatchData mTeamMatchData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -61,65 +64,44 @@ public class MatchScoutActivity extends RScoutActivity
         ActivityStarter.fill(this);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int position = Integer.parseInt(sharedPreferences.getString(Constants.Settings.MATCH_SCOUT_POSITION, "-1"));
-        if (position == -1)
+        int mScoutPosition = Integer.parseInt(sharedPreferences.getString(Constants.Settings.MATCH_SCOUT_POSITION, "-1"));
+        if (mScoutPosition == -1)
         {
             Log.e(TAG, "Error: impossible match scout position");
             return;
         }
 
-        ScoutHeader header = findViewById(R.id.header);
-        header.setInterface(new MatchScoutHeader());
-
-        // Normal match
-        if (mMatchNumber > 0)
-        {
-            MatchLogistics m = Database.getInstance().getMatchLogistics(mMatchNumber);
-            mTeamNumber = m.getTeamNumber(position);
-            header.setTitle(String.format("Match Number: %d Team Number: %d",
-                                          mMatchNumber,
-                                          mTeamNumber));
-
-            // If on the first match then the previous button should be hidden
-            if (mMatchNumber == 1)
-            {
-                header.removePrevious();
-            }
-
-            // If on the final match then next button should be hidden
-            if (mMatchNumber == Database.getInstance().numberOfMatches())
-            {
-                header.removeNext();
-            }
-
-            mTMD = Database.getInstance().getTeamMatchData(mTeamNumber, mMatchNumber);
-            if (mTMD == null) {
-                mTMD = new TeamMatchData(mTeamNumber, mMatchNumber);
-            }
-        }
-        // Practice Match
-        else
-        {
-            mPractice = true;
-            header.setTitle("Practice Match");
-            mTMD = new TeamMatchData(-1, -1);
-            header.removeSave();
-        }
+        // Inflate header
+        mHeader = findViewById(R.id.header);
+        mHeader.setInterface(new MatchScoutHeader());
 
         // Keep screen on while scouting
         findViewById(android.R.id.content).setKeepScreenOn(true);
 
         // Setup the TABS and fragment pages
-        mFPA = new MatchScoutFragmentPagerAdapter(getFragmentManager(),
-                                                  mTMD);
+        mFPA = new MatchScoutFragmentPagerAdapter(getFragmentManager());
 
         // Setup view pager
         mViewPager = findViewById(R.id.view_pager);
         mViewPager.setAdapter(mFPA);
         mViewPager.setOffscreenPageLimit(mFPA.getCount());
 
+        // Normal match
+        if (mMatchNumber > 0)
+        {
+            setup();
+        }
+        // Practice Match
+        else
+        {
+            mPractice = true;
+            mHeader.setTitle("Practice Match");
+            mTeamMatchData = new TeamMatchData(-1, -1);
+            mHeader.removeSave();
+        }
+
         SmartTabLayout tabLayout = findViewById(R.id.tab_layout);
-        if (position < 3)
+        if (mScoutPosition < 3)
         {
             tabLayout.setBackgroundColor(Color.BLUE);
         }
@@ -129,6 +111,55 @@ public class MatchScoutActivity extends RScoutActivity
         }
         tabLayout.setViewPager(mViewPager);
     }
+
+    public void setup()
+    {
+        // Normal match
+        if (mMatchNumber > 0)
+        {
+            MatchLogistics m = Database.getInstance().getMatchLogistics(mMatchNumber);
+            mTeamNumber = m.getTeamNumber(mScoutPosition);
+            mHeader.setTitle(String.format("Match Number: %d Team Number: %d",
+                                          mMatchNumber,
+                                          mTeamNumber));
+
+            // If on the first match then the previous button should be hidden
+            if (mMatchNumber == 1)
+            {
+                mHeader.removePrevious();
+            }
+            else
+            {
+                mHeader.addPrevious();
+            }
+
+            // If on the final match then next button should be hidden
+            if (mMatchNumber == Database.getInstance().numberOfMatches())
+            {
+                mHeader.removeNext();
+            }
+            else
+            {
+                mHeader.addNext();
+            }
+
+            mTeamMatchData = Database.getInstance().getTeamMatchData(mTeamNumber, mMatchNumber);
+            if (mTeamMatchData == null)
+            {
+                mTeamMatchData = new TeamMatchData(mTeamNumber, mMatchNumber);
+            }
+            mFPA.update();
+            mViewPager.setCurrentItem(0);
+        }
+        else
+        {
+            // Clear
+            mTeamMatchData = new TeamMatchData(-1, -1);
+            mFPA.update();
+            mViewPager.setCurrentItem(0);
+        }
+    }
+
 
     /**
      * Inner class that handles pressing the buttons on the header
@@ -143,11 +174,11 @@ public class MatchScoutActivity extends RScoutActivity
         {
             if (mPractice) // Don't need to worry about saving for practice
             {
-                MatchScoutActivityStarter.start(MatchScoutActivity.this, -1);
+                setup();
             }
             else
             {
-                if (mTMD.isDirty())
+                if (mTeamMatchData.isDirty())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MatchScoutActivity.this)
                             .setTitle("Unsaved Changes")
@@ -158,7 +189,7 @@ public class MatchScoutActivity extends RScoutActivity
                                 public void onClick(DialogInterface dialog, int which)
                                 {
                                     // Save to local database
-                                    Database.getInstance().updateTeamMatchData(mTMD);
+                                    Database.getInstance().updateTeamMatchData(mTeamMatchData);
 
                                     // Send to the background service to be sent to server
                                     Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
@@ -167,7 +198,8 @@ public class MatchScoutActivity extends RScoutActivity
                                     intent.putExtra(Constants.IntentExtras.TEAM_NUMBER, mTeamNumber);
                                     startService(intent);
 
-                                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber - 1);
+                                    mMatchNumber--;
+                                    setup();
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -175,7 +207,8 @@ public class MatchScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber - 1);
+                                    mMatchNumber--;
+                                    setup();
                                 }
                             })
                             .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
@@ -190,7 +223,8 @@ public class MatchScoutActivity extends RScoutActivity
                 }
                 else
                 {
-                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber - 1);
+                    mMatchNumber--;
+                    MatchScoutActivity.this.setup();
                 }
             }
         }
@@ -202,11 +236,11 @@ public class MatchScoutActivity extends RScoutActivity
         {
             if (mPractice) // Don't need to worry about saving for practice
             {
-                MatchScoutActivityStarter.start(MatchScoutActivity.this, -1);
+                setup();
             }
             else
             {
-                if (mTMD.isDirty())
+                if (mTeamMatchData.isDirty())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MatchScoutActivity.this)
                             .setTitle("Unsaved Changes")
@@ -217,7 +251,7 @@ public class MatchScoutActivity extends RScoutActivity
                                 public void onClick(DialogInterface dialog, int which)
                                 {
                                     // Save to local database
-                                    Database.getInstance().updateTeamMatchData(mTMD);
+                                    Database.getInstance().updateTeamMatchData(mTeamMatchData);
 
                                     // Send to the background service to be sent to server
                                     Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
@@ -226,7 +260,8 @@ public class MatchScoutActivity extends RScoutActivity
                                     intent.putExtra(Constants.IntentExtras.TEAM_NUMBER, mTeamNumber);
                                     startService(intent);
 
-                                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber + 1);
+                                    mMatchNumber++;
+                                    setup();
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -234,7 +269,8 @@ public class MatchScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber + 1);
+                                    mMatchNumber++;
+                                    setup();
                                 }
                             })
                             .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
@@ -249,7 +285,8 @@ public class MatchScoutActivity extends RScoutActivity
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
-                    MatchScoutActivityStarter.start(MatchScoutActivity.this, mMatchNumber + 1);
+                    mMatchNumber++;
+                    setup();
                 }
             }
         }
@@ -265,7 +302,7 @@ public class MatchScoutActivity extends RScoutActivity
             }
             else
             {
-                if (mTMD.isDirty())
+                if (mTeamMatchData.isDirty())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MatchScoutActivity.this)
                             .setTitle("Unsaved Changes")
@@ -277,7 +314,7 @@ public class MatchScoutActivity extends RScoutActivity
                                 public void onClick(DialogInterface dialog, int which)
                                 {
                                     // Save to local database
-                                    Database.getInstance().updateTeamMatchData(mTMD);
+                                    Database.getInstance().updateTeamMatchData(mTeamMatchData);
 
                                     // Send to the background service to be sent to server
                                     Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
@@ -321,11 +358,11 @@ public class MatchScoutActivity extends RScoutActivity
         {
             if (mPractice) // Don't need to worry about saving for practice
             {
-                MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
+                onBackPressed();
             }
             else
             {
-                if (mTMD.isDirty())
+                if (mTeamMatchData.isDirty())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MatchScoutActivity.this)
                             .setTitle("Unsaved Changes")
@@ -336,7 +373,7 @@ public class MatchScoutActivity extends RScoutActivity
                                 public void onClick(DialogInterface dialog, int which)
                                 {
                                     // Save to local database
-                                    Database.getInstance().updateTeamMatchData(mTMD);
+                                    Database.getInstance().updateTeamMatchData(mTeamMatchData);
 
                                     // Send to the background service to be sent to server
                                     Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
@@ -345,7 +382,7 @@ public class MatchScoutActivity extends RScoutActivity
                                     intent.putExtra(Constants.IntentExtras.TEAM_NUMBER, mTeamNumber);
                                     startService(intent);
 
-                                    MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
+                                    onBackPressed();
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -353,7 +390,7 @@ public class MatchScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
+                                    onBackPressed();
                                 }
                             })
                             .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
@@ -368,7 +405,7 @@ public class MatchScoutActivity extends RScoutActivity
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
-                    MatchListActivityStarter.start(MatchScoutActivity.this, Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING);
+                    onBackPressed();
                 }
             }
         }
@@ -378,10 +415,10 @@ public class MatchScoutActivity extends RScoutActivity
          */
         public void save()
         {
-            if(!mPractice && mTMD.isDirty()) // Don't need to worry about saving for practice or if there is nothing new
+            if(!mPractice && mTeamMatchData.isDirty()) // Don't need to worry about saving for practice or if there is nothing new
             {
                 // Save to local database
-                Database.getInstance().updateTeamMatchData(mTMD);
+                Database.getInstance().updateTeamMatchData(mTeamMatchData);
 
                 // Send to the background service to be sent to server
                 Intent intent = new Intent(MatchScoutActivity.this, CommunicationService.class);
@@ -402,14 +439,12 @@ public class MatchScoutActivity extends RScoutActivity
     {
         static final String TAG = "MatchScoutFragmentPagerAdapter";
 
-        TeamMatchData mTeamMatchData;
-        HashMap<Integer, Fragment> mFragments;
+        HashMap<Integer, MatchScoutFragment> mFragments;
 
 
-        public MatchScoutFragmentPagerAdapter(FragmentManager fm, TeamMatchData teamMatchData)
+        public MatchScoutFragmentPagerAdapter(FragmentManager fm)
         {
             super(fm);
-            mTeamMatchData = teamMatchData;
             mFragments = new HashMap<>();
         }
 
@@ -428,42 +463,33 @@ public class MatchScoutActivity extends RScoutActivity
                 return mFragments.get(position);
             }
 
+            MatchScoutFragment f = null;
             switch (position)
             {
                 case 0:
-                    MatchStartFragment msf = new MatchStartFragment();
-                    msf.setData(mTeamMatchData);
-                    mFragments.put(0, msf);
-                    return msf;
+                    f = new MatchStartFragment();
+                break;
                 case 1:
-                    MatchAutoFragment maf = new MatchAutoFragment();
-                    maf.setTeamMatchData(mTeamMatchData);
-                    mFragments.put(1, maf);
-                    return maf;
+                    f = new MatchAutoFragment();
+                    break;
                 case 2:
-                    MatchTeleopFragment mtf = new MatchTeleopFragment();
-                    mtf.setTeamMatchData(mTeamMatchData);
-                    mFragments.put(2, mtf);
-                    return mtf;
+                    f = new MatchTeleopFragment();
+                    break;
                 case 3:
-                    MatchEndgameFragment mef = new MatchEndgameFragment();
-                    mef.setTeamMatchData(mTeamMatchData);
-                    mFragments.put(3, mef);
-                    return mef;
+                    f = new MatchEndgameFragment();
+                    break;
                 case 4:
-                    MatchFoulsFragment mff = new MatchFoulsFragment();
-                    mff.setTeamMatchData(mTeamMatchData);
-                    mFragments.put(4, mff);
-                    return mff;
+                    f = new MatchFoulsFragment();
+                    break;
                 case 5:
-                    MatchMiscFragment mmf = new MatchMiscFragment();
-                    mmf.setTeamMatchData(mTeamMatchData);
-                    mFragments.put(5, mmf);
-                    return mmf;
+                    f = new MatchMiscFragment();
+                    break;
                 default:
                     assert(false);
             }
-            return null;
+            f.setTeamMatchData(mTeamMatchData);
+            mFragments.put(position, f);
+            return f;
         }
 
         /**
@@ -487,14 +513,13 @@ public class MatchScoutActivity extends RScoutActivity
             assert(position >= 0 && position < Constants.MatchScouting.TABS.length);
             return Constants.MatchScouting.TABS[position];
         }
-    }
 
-    /**
-     * Removes back pressed option
-     */
-    @Override
-    public void onBackPressed()
-    {
-        return;
+        public void update()
+        {
+            for(MatchScoutFragment f : mFragments.values())
+            {
+                f.setTeamMatchData(mTeamMatchData);
+            }
+        }
     }
 }

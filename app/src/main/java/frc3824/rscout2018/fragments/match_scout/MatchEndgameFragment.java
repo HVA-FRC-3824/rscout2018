@@ -1,6 +1,5 @@
 package frc3824.rscout2018.fragments.match_scout;
 
-import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,21 +16,14 @@ import frc3824.rscout2018.utilities.Utilities;
  * @class MatchEndgameFragment
  * @brief Fragment used to record information about how a team performed during the end game
  */
-public class MatchEndgameFragment extends Fragment implements RadioGroup.OnCheckedChangeListener
+public class MatchEndgameFragment extends MatchScoutFragment
 {
     FragmentMatchEndgameBinding mBinding = null;
-    TeamMatchData mTeamMatchData = null;
 
-    // SavableRadioButtons mClimbingMethod;
-
-    /**
-     * Sets the data model for binding
-     * @param teamMatchData The data model for how a team performed in a specific match
-     */
-    public void setTeamMatchData(TeamMatchData teamMatchData)
+    @Override
+    protected void bind()
     {
-        mTeamMatchData = teamMatchData;
-        if(mBinding != null)
+        if(mTeamMatchData != null && mBinding != null)
         {
             mBinding.setTmd(mTeamMatchData);
         }
@@ -45,32 +37,12 @@ public class MatchEndgameFragment extends Fragment implements RadioGroup.OnCheck
     {
         // Inflate layout and bind the realm object
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_match_endgame, container, false);
-        if(mTeamMatchData != null)
-        {
-            mBinding.setTmd(mTeamMatchData);
-        }
+        bind();
         View view = mBinding.getRoot();
 
-        /*
-        SavableRadioButtons climbingState = view.findViewById(R.id.endgame_climb_state);
-        climbingState.setOnCheckChange(this);
-
-        mClimbingMethod = view.findViewById(R.id.endgame_climb_method);
-        */
         // Add touch listeners
         Utilities.setupUi(getActivity(), view);
 
         return view;
-    }
-
-    @Override
-    public void onCheckedChanged(RadioGroup radioGroup, int i) {
-        /*
-        if(i == Arrays.asList(CLIMB_STATE_OPTIONS).indexOf("Successful")) {
-            mClimbingMethod.setVisibility(View.VISIBLE);
-        } else {
-            mClimbingMethod.setVisibility(View.GONE);
-        }
-        */
     }
 }

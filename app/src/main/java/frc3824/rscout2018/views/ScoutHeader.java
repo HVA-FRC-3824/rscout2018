@@ -68,11 +68,25 @@ public class ScoutHeader extends LinearLayout implements View.OnClickListener
     }
 
     /**
+     * Displays the previous button in the header
+     */
+    public void addPrevious() {
+        findViewById(R.id.previous).setVisibility(VISIBLE);
+    }
+
+    /**
      * Removes the next button from the header
      */
     public void removeNext()
     {
         findViewById(R.id.next).setVisibility(INVISIBLE);
+    }
+
+    /**
+     * Displays the next button in the header
+     */
+    public void addNext() {
+        findViewById(R.id.next).setVisibility(VISIBLE);
     }
 
     /**

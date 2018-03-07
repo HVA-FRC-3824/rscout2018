@@ -43,7 +43,6 @@ public class SavableCubes extends View implements View.OnClickListener
     int mWidth;
     int mHeight;
     Boolean mAuto = null;
-    long mStartTime;
     Button mUndoButton = null;
 
     TeamMatchData mTeamMatchData;
@@ -59,7 +58,6 @@ public class SavableCubes extends View implements View.OnClickListener
         super(context, attrs);
         mContext = context;
         mCanvasPaint = new Paint(Paint.DITHER_FLAG);
-        mStartTime = -1;
 
         mEventSelect = new EventSelect();
         mPickUpOk = new PickUpOk();
@@ -100,17 +98,13 @@ public class SavableCubes extends View implements View.OnClickListener
                 mCubeEvents = mTeamMatchData.getTeleopCubeEvents();
             }
         }
+        invalidate();
     }
 
     public void setUndoButton(Button undo)
     {
         mUndoButton = undo;
         mUndoButton.setOnClickListener(this);
-    }
-
-    public void start()
-    {
-        mStartTime = Calendar.getInstance().getTimeInMillis();
     }
 
     @Override
@@ -209,11 +203,6 @@ public class SavableCubes extends View implements View.OnClickListener
             float x = e.getX();
             float y = e.getY();
 
-            if (mStartTime < 0)
-            {
-                return false;
-            }
-
             if (mFirst)
             {
                 if (mTeamMatchData.getStartedWithCube())
@@ -227,7 +216,7 @@ public class SavableCubes extends View implements View.OnClickListener
             }
 
             mTempCubeEvent = new CubeEvent();
-            long time = Calendar.getInstance().getTimeInMillis() - mStartTime;
+            long time = Calendar.getInstance().getTimeInMillis();
             mTempCubeEvent.setTime(time);
             mTempCubeEvent.setLocationX(x / (float) mWidth);
             mTempCubeEvent.setLocationY(y / (float) mHeight);

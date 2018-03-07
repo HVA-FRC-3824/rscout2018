@@ -1,6 +1,5 @@
 package frc3824.rscout2018.fragments.match_scout;
 
-import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,19 +15,14 @@ import frc3824.rscout2018.utilities.Utilities;
  * @class MatchFoulsFragment
  * @brief Fragment used to record information about the fouls a team causes
  */
-public class MatchFoulsFragment extends Fragment
+public class MatchFoulsFragment extends MatchScoutFragment
 {
     FragmentMatchFoulsBinding mBinding = null;
-    TeamMatchData mTeamMatchData = null;
 
-    /**
-     * Sets the data model for binding
-     * @param teamMatchData The data model for how a team performed in a specific match
-     */
-    public void setTeamMatchData(TeamMatchData teamMatchData)
+    @Override
+    protected void bind()
     {
-        mTeamMatchData = teamMatchData;
-        if(mBinding != null)
+        if(mTeamMatchData != null && mBinding != null)
         {
             mBinding.setTmd(mTeamMatchData);
         }
@@ -42,10 +36,7 @@ public class MatchFoulsFragment extends Fragment
     {
         // Inflate layout and bind the realm object
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_match_fouls, container, false);
-        if(mTeamMatchData != null)
-        {
-            mBinding.setTmd(mTeamMatchData);
-        }
+        bind();
         View view = mBinding.getRoot();
 
         // Add touch listeners

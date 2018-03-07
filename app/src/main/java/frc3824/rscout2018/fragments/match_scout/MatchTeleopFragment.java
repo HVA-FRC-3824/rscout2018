@@ -1,6 +1,5 @@
 package frc3824.rscout2018.fragments.match_scout;
 
-import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.databinding.FragmentMatchTeleopBinding;
 import frc3824.rscout2018.utilities.Utilities;
 import frc3824.rscout2018.views.powered_up.SavableCubes;
@@ -18,20 +16,15 @@ import frc3824.rscout2018.views.powered_up.SavableCubes;
  * @class MatchTeleopFragment
  * @brief Fragment used to record information about how a team performed during the teleop period
  */
-public class MatchTeleopFragment extends Fragment
+public class MatchTeleopFragment extends MatchScoutFragment
 {
     FragmentMatchTeleopBinding mBinding = null;
-    TeamMatchData mTeamMatchData = null;
     SavableCubes mCubes;
 
-    /**
-     * Sets the data model for binding
-     * @param teamMatchData The data model for how a team performed in a specific match
-     */
-    public void setTeamMatchData(TeamMatchData teamMatchData)
+    @Override
+    protected void bind()
     {
-        mTeamMatchData = teamMatchData;
-        if(mBinding != null)
+        if(mTeamMatchData != null && mBinding != null)
         {
             mBinding.setTmd(mTeamMatchData);
         }
@@ -60,8 +53,6 @@ public class MatchTeleopFragment extends Fragment
 
         // Add touch listeners
         Utilities.setupUi(getActivity(), view);
-
-        mCubes.start();
 
         return view;
     }

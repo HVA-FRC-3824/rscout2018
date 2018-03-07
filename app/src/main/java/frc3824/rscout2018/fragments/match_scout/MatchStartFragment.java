@@ -1,6 +1,5 @@
 package frc3824.rscout2018.fragments.match_scout;
 
-import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +14,7 @@ import com.synnapps.carouselview.ImageListener;
 import java.util.ArrayList;
 
 import frc3824.rscout2018.R;
+import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.database.data_models.TeamPitData;
 import frc3824.rscout2018.databinding.FragmentMatchStartBinding;
@@ -23,23 +23,30 @@ import frc3824.rscout2018.utilities.Utilities;
 /**
  * @author frc3824
  */
-public class MatchStartFragment extends Fragment implements ImageListener
+public class MatchStartFragment extends MatchScoutFragment implements ImageListener
 {
-    private TeamMatchData mTeamMatchData = null;
     private FragmentMatchStartBinding mBinding = null;
     private CarouselView mCarouselView;
     private ArrayList<String> mPictureFilepaths;
 
-
-    public void setData(TeamMatchData teamMatchData)
+    @Override
+    public void setTeamMatchData(TeamMatchData teamMatchData)
     {
-        mTeamMatchData = teamMatchData;
-        if(mBinding != null)
+        super.setTeamMatchData(teamMatchData);
+        TeamPitData tpd = Database.getInstance().getTeamPitData(teamMatchData.getTeamNumber());
+        if(tpd != null)
+        {
+            mPictureFilepaths = tpd.getPictureFilepaths();
+        }
+    }
+
+    @Override
+    protected void bind()
+    {
+        if(mTeamMatchData != null && mBinding != null)
         {
             mBinding.setTmd(mTeamMatchData);
         }
-        TeamPitData tpd = new TeamPitData(mTeamMatchData.getTeamNumber());
-        mPictureFilepaths = tpd.getPictureFilepaths();
     }
 
     /**
@@ -50,10 +57,7 @@ public class MatchStartFragment extends Fragment implements ImageListener
     {
         // Inflate layout and bind the realm object
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_match_start, container, false);
-        if(mTeamMatchData != null)
-        {
-            mBinding.setTmd(mTeamMatchData);
-        }
+        bind();
         View view = mBinding.getRoot();
 
         // Inflate the carousel

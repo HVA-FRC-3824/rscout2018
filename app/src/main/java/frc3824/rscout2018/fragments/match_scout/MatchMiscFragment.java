@@ -1,6 +1,5 @@
 package frc3824.rscout2018.fragments.match_scout;
 
-import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.databinding.FragmentMatchMiscBinding;
 import frc3824.rscout2018.utilities.Utilities;
 
@@ -16,19 +14,14 @@ import frc3824.rscout2018.utilities.Utilities;
  * @class MatchMiscFragment
  * @brief Fragment used to record information about how a team performed that is not in any of the other fragments
  */
-public class MatchMiscFragment extends Fragment
+public class MatchMiscFragment extends MatchScoutFragment
 {
     FragmentMatchMiscBinding mBinding = null;
-    TeamMatchData mTeamMatchData = null;
 
-    /**
-     * Sets the data model for binding
-     * @param teamMatchData The data model for how a team performed in a specific match
-     */
-    public void setTeamMatchData(TeamMatchData teamMatchData)
+    @Override
+    protected void bind()
     {
-        mTeamMatchData = teamMatchData;
-        if(mBinding != null)
+        if(mTeamMatchData != null && mBinding != null)
         {
             mBinding.setTmd(mTeamMatchData);
         }
@@ -42,10 +35,7 @@ public class MatchMiscFragment extends Fragment
     {
         // Inflate layout and bind the realm object
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_match_misc, container, false);
-        if(mTeamMatchData != null)
-        {
-            mBinding.setTmd(mTeamMatchData);
-        }
+        bind();
         View view = mBinding.getRoot();
 
         // Add touch listeners
