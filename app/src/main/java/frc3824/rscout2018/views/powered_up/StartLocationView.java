@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
+import frc3824.rscout2018.utilities.Utilities;
 import frc3824.rscout2018.views.heatmap.HeatMap;
 import frc3824.rscout2018.views.heatmap.HeatMapMarkerCallback;
 
@@ -22,20 +23,15 @@ import frc3824.rscout2018.views.heatmap.HeatMapMarkerCallback;
 public class StartLocationView extends HeatMap
 {
 
-    Bitmap mFieldBitmap = null;
     Bitmap mBackgroundBitmap;
     Paint mCanvasPaint;
-    int mScreenWidth;
-    int mScreenHeight;
+    int mWidth;
+    int mHeight;
     ArrayList<TeamMatchData> mTeamMatchData;
 
     public StartLocationView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
-        mFieldBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.blue_top_down);
-        Matrix matrix = new Matrix();
-        matrix.postRotate(180);
-        mFieldBitmap = Bitmap.createBitmap(mFieldBitmap, 0, 0, mFieldBitmap.getWidth(), mFieldBitmap.getHeight(), matrix, true);
         setMinimum(0);
         setMaximum(100);
         setMarkerCallback(new HeatMapMarkerCallback.CircleHeatMapMarker(0xff9400D3));
@@ -58,9 +54,19 @@ public class StartLocationView extends HeatMap
     {
         super.onSizeChanged(width, height, oldWidth, oldHeight);
 
-        mScreenWidth = width;
-        mScreenHeight = height;
-        mBackgroundBitmap = Bitmap.createScaledBitmap(mFieldBitmap, width, height, false);
+        mWidth = width;
+        mHeight = height;
+        if(mBackgroundBitmap != null)
+        {
+            mBackgroundBitmap.recycle();
+        }
+        mBackgroundBitmap = Utilities.decodeSampledBitmapFromResource(getResources(), R.drawable.blue_top_down,
+                                                                      mWidth, mHeight);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(180);
+        Bitmap temp = Bitmap.createBitmap(mBackgroundBitmap, 0, 0, mBackgroundBitmap.getWidth(), mBackgroundBitmap.getHeight(), matrix, true);
+        mBackgroundBitmap.recycle();
+        mBackgroundBitmap = temp;
     }
 
     @Override
@@ -82,9 +88,18 @@ public class StartLocationView extends HeatMap
 
                 for (TeamMatchData tmd : mTeamMatchData)
                 {
-                    addData(new HeatMap.DataPoint((float) tmd.getStartLocationX(),
-                                                  (float) tmd.getStartLocationY(),
-                                                  100));
+                    if(tmd.getStartLocationX() < 0.5)
+                    {
+                        addData(new HeatMap.DataPoint((float) tmd.getStartLocationX(),
+                                                      (float) tmd.getStartLocationY(),
+                                                      100));
+                    }
+                    else
+                    {
+                        addData(new HeatMap.DataPoint(1.0f - (float) tmd.getStartLocationX(),
+                                                      (float) tmd.getStartLocationY(),
+                                                      100));
+                    }
                 }
                 publishProgress();
             }

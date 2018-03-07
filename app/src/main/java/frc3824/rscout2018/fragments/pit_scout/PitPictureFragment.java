@@ -3,6 +3,7 @@ package frc3824.rscout2018.fragments.pit_scout;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -217,6 +218,9 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
             super.onPictureTaken(picture);
 
             Bitmap result = BitmapFactory.decodeByteArray(picture, 0, picture.length);
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            result = Bitmap.createBitmap(result, 0, 0, result.getWidth(), result.getHeight(), matrix, true);
             FileOutputStream output = null;
             File directory = new File(mDir);
             if(!directory.exists())

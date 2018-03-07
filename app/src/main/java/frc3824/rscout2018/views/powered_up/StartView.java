@@ -24,7 +24,7 @@ import frc3824.rscout2018.database.data_models.TeamMatchData;
  */
 public class StartView extends ConstraintLayout
 {
-    int mTeamNumber;
+    // int mTeamNumber;
 
     ArrayList<TeamMatchData> mMatches = null;
 
@@ -48,8 +48,6 @@ public class StartView extends ConstraintLayout
         mStartWithCubeChart.setRotationEnabled(false);
         mStartWithCubeChart.setHighlightPerTapEnabled(true);
 
-
-
         if(mMatches != null)
         {
             new UpdateTask().execute();
@@ -57,7 +55,7 @@ public class StartView extends ConstraintLayout
     }
 
     public void setTeam(Team team)
-    {;
+    {
         mMatches = new ArrayList<>(team.getMatches().values());
         if(mStartLocationView != null)
         {
