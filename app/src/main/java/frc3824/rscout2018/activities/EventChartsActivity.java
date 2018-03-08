@@ -1,11 +1,11 @@
 package frc3824.rscout2018.activities;
 
 import android.os.Bundle;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 
 import activitystarter.MakeActivityStarter;
@@ -135,11 +135,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Double> sortValues = new HashMap<>();
+            final SparseArray<Double>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 LowLevelStats lls = createLlsValue(map.get(teamNumber));
@@ -212,11 +216,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Double> sortValues = new HashMap<>();
+            final SparseArray<Double>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 LowLevelStats lls = createLlsValue(map.get(teamNumber));
@@ -275,11 +283,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Double> sortValues = new HashMap<>();
+            final SparseArray<Double>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 LowLevelStats lls = createLlsValue(map.get(teamNumber));
@@ -338,11 +350,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Double> sortValues = new HashMap<>();
+            final SparseArray<Double>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 LowLevelStats lls = createLlsValue(map.get(teamNumber));
@@ -411,11 +427,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Double> sortValues = new HashMap<>();
+            final SparseArray<Double>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 LowLevelStats lls = createLlsValue(map.get(teamNumber));
@@ -472,11 +492,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Double> sortValues = new HashMap<>();
+            final SparseArray<Double>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 LowLevelStats lls = createLlsValue(map.get(teamNumber));
@@ -533,11 +557,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Double> sortValues = new HashMap<>();
+            final SparseArray<Double>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 LowLevelStats lls = createLlsValue(map.get(teamNumber));
@@ -594,11 +622,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Double> sortValues = new HashMap<>();
+            final SparseArray<Double>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 LowLevelStats lls = createLlsValue(map.get(teamNumber));
@@ -660,11 +692,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Double> sortValues = new HashMap<>();
+            final SparseArray<Double>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 LowLevelStats lls = createLlsValue(map.get(teamNumber));
@@ -709,11 +745,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Float> sortValues = new HashMap<>();
+            final SparseArray<Float>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 sortValues.put(teamNumber, createBarValue(map.get(teamNumber)));
@@ -757,11 +797,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Float> sortValues = new HashMap<>();
+            final SparseArray<Float>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 sortValues.put(teamNumber, createBarValue(map.get(teamNumber)));
@@ -803,11 +847,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Float> sortValues = new HashMap<>();
+            final SparseArray<Float>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 sortValues.put(teamNumber, createBarValue(map.get(teamNumber)));
@@ -849,11 +897,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Float> sortValues = new HashMap<>();
+            final SparseArray<Float>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 sortValues.put(teamNumber, createBarValue(map.get(teamNumber)));
@@ -895,11 +947,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Float> sortValues = new HashMap<>();
+            final SparseArray<Float>sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 sortValues.put(teamNumber, createBarValue(map.get(teamNumber)));
@@ -943,11 +999,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         }
 
         @Override
-        public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
         {
-            ArrayList<Integer> sortTeams = new ArrayList(map.keySet());
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
 
-            final Map<Integer, Float> sortValues = new HashMap<>();
+            final SparseArray<Float> sortValues = new SparseArray<>();
             for (int teamNumber : sortTeams)
             {
                 sortValues.put(teamNumber, createBarValue(map.get(teamNumber)));

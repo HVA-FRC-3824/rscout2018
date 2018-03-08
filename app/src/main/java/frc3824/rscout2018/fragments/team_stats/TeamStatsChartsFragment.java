@@ -1,32 +1,26 @@
 package frc3824.rscout2018.fragments.team_stats;
 
-import android.app.Fragment;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.database.data_models.DataModelOnUpdate;
 import frc3824.rscout2018.database.data_models.Team;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.views.powered_up.ClimbView;
 import frc3824.rscout2018.views.powered_up.CubesView;
-import frc3824.rscout2018.views.powered_up.StartLocationView;
 import frc3824.rscout2018.views.powered_up.StartView;
 
 /**
  * A fragment for displaying chart showing the performance of a team
  */
-public class TeamStatsChartsFragment extends Fragment
+public class TeamStatsChartsFragment extends TeamStatsFragment
 {
-    int mTeamNumber = -1;
-
     StartView mStartView = null;
     CubesView mCubesView = null;
     ClimbView mClimbView = null;
@@ -34,10 +28,9 @@ public class TeamStatsChartsFragment extends Fragment
     TextView mTechFouls;
     View mView;
 
-    public void setTeamNumber(int teamNumber)
+    protected void bind()
     {
-        mTeamNumber = teamNumber;
-        if(mStartView != null)
+        if(mTeamNumber != -1 && mStartView != null)
         {
             new UpdateTask().execute();
         }
@@ -54,10 +47,7 @@ public class TeamStatsChartsFragment extends Fragment
         mFouls = mView.findViewById(R.id.fouls);
         mTechFouls = mView.findViewById(R.id.tech_fouls);
 
-        if(mTeamNumber != -1)
-        {
-            new UpdateTask().execute();
-        }
+        bind();
 
         return mView;
     }
@@ -78,8 +68,10 @@ public class TeamStatsChartsFragment extends Fragment
                 mCubesView.setTeam(team);
                 mClimbView.setTeam(team);
 
-                for(TeamMatchData tmd : team.getMatches().values())
+                SparseArray<TeamMatchData> matches = team.getMatches();
+                for (int matchIndex = 0, end = matches.size(); matchIndex < end; matchIndex++)
                 {
+                    TeamMatchData tmd = matches.valueAt(matchIndex);
                     if(tmd.isRedCard())
                     {
                         red = true;

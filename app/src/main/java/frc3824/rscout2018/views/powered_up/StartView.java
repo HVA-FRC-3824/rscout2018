@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 
 import com.github.mikephil.charting.charts.PieChart;
@@ -26,7 +27,7 @@ public class StartView extends ConstraintLayout
 {
     // int mTeamNumber;
 
-    ArrayList<TeamMatchData> mMatches = null;
+    SparseArray<TeamMatchData> mMatches = null;
 
     StartLocationView mStartLocationView = null;
     PieChart mStartWithCubeChart = null;
@@ -56,7 +57,7 @@ public class StartView extends ConstraintLayout
 
     public void setTeam(Team team)
     {
-        mMatches = new ArrayList<>(team.getMatches().values());
+        mMatches = team.getMatches();
         if(mStartLocationView != null)
         {
             new UpdateTask().execute();
@@ -77,8 +78,10 @@ public class StartView extends ConstraintLayout
                 ArrayList<Entry> entries = new ArrayList<>();
                 int yes = 0;
                 int no = 0;
-                for(TeamMatchData tmd : mMatches)
+                TeamMatchData tmd;
+                for(int i = 0, end = mMatches.size(); i < end; i++)
                 {
+                   tmd  = mMatches.valueAt(i);
                    if(tmd.getStartedWithCube())
                    {
                        yes++;

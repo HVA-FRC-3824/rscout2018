@@ -58,7 +58,7 @@ public class IndividualCubes extends ConstraintLayout implements RadioGroup.OnCh
                 mIndividualCubesInner.setAuto(false);
                 return;
             default:
-                assert(false);
+                throw new AssertionError();
         }
     }
 }

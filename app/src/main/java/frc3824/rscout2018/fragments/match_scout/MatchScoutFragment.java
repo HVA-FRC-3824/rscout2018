@@ -7,7 +7,6 @@ import frc3824.rscout2018.database.data_models.TeamMatchData;
 /**
  * Created by frc3824
  */
-
 public abstract class MatchScoutFragment extends Fragment
 {
     protected TeamMatchData mTeamMatchData;

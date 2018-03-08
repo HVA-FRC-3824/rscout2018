@@ -12,10 +12,11 @@ import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
-import java.util.HashMap;
+import java.util.Locale;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
@@ -35,6 +36,8 @@ import frc3824.rscout2018.services.CommunicationService;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.ScoutHeader;
 import frc3824.rscout2018.views.ScoutHeaderInterface;
+
+import static java.lang.String.format;
 
 /**
  * @class MatchScoutActivity
@@ -119,9 +122,9 @@ public class MatchScoutActivity extends RScoutActivity
         {
             MatchLogistics m = Database.getInstance().getMatchLogistics(mMatchNumber);
             mTeamNumber = m.getTeamNumber(mScoutPosition);
-            mHeader.setTitle(String.format("Match Number: %d Team Number: %d",
-                                          mMatchNumber,
-                                          mTeamNumber));
+            mHeader.setTitle(format(Locale.US, "Match Number: %d Team Number: %d",
+                                    mMatchNumber,
+                                    mTeamNumber));
 
             // If on the first match then the previous button should be hidden
             if (mMatchNumber == 1)
@@ -298,7 +301,8 @@ public class MatchScoutActivity extends RScoutActivity
         {
             if (mPractice) // Don't need to worry about saving for practice
             {
-                HomeActivityStarter.start(MatchScoutActivity.this);
+                HomeActivityStarter.startWithFlags(MatchScoutActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                finish();
             }
             else
             {
@@ -323,7 +327,8 @@ public class MatchScoutActivity extends RScoutActivity
                                     intent.putExtra(Constants.IntentExtras.TEAM_NUMBER, mTeamNumber);
                                     startService(intent);
 
-                                    HomeActivityStarter.start(MatchScoutActivity.this);
+                                    HomeActivityStarter.startWithFlags(MatchScoutActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    finish();
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -331,7 +336,8 @@ public class MatchScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    HomeActivityStarter.start(MatchScoutActivity.this);
+                                    HomeActivityStarter.startWithFlags(MatchScoutActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    finish();
                                 }
                             })
                             .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
@@ -346,7 +352,8 @@ public class MatchScoutActivity extends RScoutActivity
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
-                    HomeActivityStarter.start(MatchScoutActivity.this);
+                    HomeActivityStarter.startWithFlags(MatchScoutActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    finish();
                 }
             }
         }
@@ -439,13 +446,13 @@ public class MatchScoutActivity extends RScoutActivity
     {
         static final String TAG = "MatchScoutFragmentPagerAdapter";
 
-        HashMap<Integer, MatchScoutFragment> mFragments;
+        SparseArray<MatchScoutFragment> mFragments;
 
 
         public MatchScoutFragmentPagerAdapter(FragmentManager fm)
         {
             super(fm);
-            mFragments = new HashMap<>();
+            mFragments = new SparseArray<>();
         }
 
         /**
@@ -457,13 +464,16 @@ public class MatchScoutActivity extends RScoutActivity
         @Override
         public Fragment getItem(int position)
         {
-            assert(position >= 0 && position < Constants.MatchScouting.TABS.length);
-            if(mFragments.containsKey(position))
+            if (!(position >= 0 && position < Constants.MatchScouting.TABS.length))
+            {
+                throw new AssertionError();
+            }
+            if(mFragments.get(position) != null)
             {
                 return mFragments.get(position);
             }
 
-            MatchScoutFragment f = null;
+            MatchScoutFragment f;
             switch (position)
             {
                 case 0:
@@ -485,7 +495,7 @@ public class MatchScoutActivity extends RScoutActivity
                     f = new MatchMiscFragment();
                     break;
                 default:
-                    assert(false);
+                    throw new AssertionError();
             }
             f.setTeamMatchData(mTeamMatchData);
             mFragments.put(position, f);
@@ -510,15 +520,19 @@ public class MatchScoutActivity extends RScoutActivity
         @Override
         public String getPageTitle(int position)
         {
-            assert(position >= 0 && position < Constants.MatchScouting.TABS.length);
+            if (!(position >= 0 && position < Constants.MatchScouting.TABS.length))
+            {
+                throw new AssertionError();
+            }
             return Constants.MatchScouting.TABS[position];
         }
 
         public void update()
         {
-            for(MatchScoutFragment f : mFragments.values())
+            for(int i = 0, end = mFragments.size(); i < end; i++)
             {
-                f.setTeamMatchData(mTeamMatchData);
+                MatchScoutFragment fragment = mFragments.valueAt(i);
+                fragment.setTeamMatchData(mTeamMatchData);
             }
         }
     }

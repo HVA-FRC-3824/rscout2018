@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,10 +12,12 @@ import android.preference.PreferenceManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
@@ -25,9 +28,12 @@ import frc3824.rscout2018.database.data_models.TeamPitData;
 import frc3824.rscout2018.fragments.pit_scout.PitDimensionsFragment;
 import frc3824.rscout2018.fragments.pit_scout.PitMiscFragment;
 import frc3824.rscout2018.fragments.pit_scout.PitPictureFragment;
+import frc3824.rscout2018.fragments.pit_scout.PitScoutFragment;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.ScoutHeader;
 import frc3824.rscout2018.views.ScoutHeaderInterface;
+
+import static java.lang.String.format;
 
 /**
  * @class PitScoutActivity
@@ -40,10 +46,13 @@ public class PitScoutActivity extends RScoutActivity
 
     @Arg
     protected int mTeamNumber = -1;
-    private boolean mPractice = false;
+    boolean mPractice = false;
+    int mScoutPosition;
 
-    private PitScoutFragmentPagerAdapter mFPA;
-    private TeamPitData mTPD;
+    ScoutHeader mHeader;
+    PitScoutFragmentPagerAdapter mFPA;
+    ViewPager mViewPager;
+    TeamPitData mTeamPitData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -53,72 +62,91 @@ public class PitScoutActivity extends RScoutActivity
         ActivityStarter.fill(this);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int position = Integer.parseInt(sharedPreferences.getString(Constants.Settings.PIT_SCOUT_POSITION,
+        mScoutPosition = Integer.parseInt(sharedPreferences.getString(Constants.Settings.PIT_SCOUT_POSITION,
                                                                     "-1"));
-        if (position == -1)
+        if (mScoutPosition == -1)
         {
             Log.e(TAG, "Error: impossible pit scout position");
             return;
         }
 
         // Setup header
-        ScoutHeader header = findViewById(R.id.header);
-        header.setInterface(new PitScoutHeader());
-
-        // Real pit scouting
-        if (mTeamNumber > 0)
-        {
-            header.setTitle(String.format("Team Number: %d",
-                                          mTeamNumber));
-
-            // todo: handle admin
-            // If first team then remove the previous button
-            ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
-            int index = teamNumbers.indexOf(mTeamNumber);
-            if (index - (teamNumbers.size() / 6 * position) <= 0)
-            {
-                header.removePrevious();
-            }
-
-            // todo: handle admin
-            // If last team then remove the next button
-            index = teamNumbers.indexOf(mTeamNumber);
-            if (index >= (teamNumbers.size() / 6 * (position + 1)) - 1)
-            {
-                header.removeNext();
-            }
-
-            mTPD = Database.getInstance().getTeamPitData(mTeamNumber);
-            if(mTPD == null)
-            {
-                mTPD = new TeamPitData(mTeamNumber);
-            }
-        }
-        // Practice
-        else
-        {
-            mPractice = true;
-            header.setTitle("Practice Match");
-            mTPD = new TeamPitData(-1);
-            header.removeSave();
-        }
+        mHeader = findViewById(R.id.header);
+        mHeader.setInterface(new PitScoutHeader());
 
         // Keep screen on while scouting
         findViewById(android.R.id.content).setKeepScreenOn(true);
 
         // Setup the TABS and fragment pages
-        mFPA = new PitScoutFragmentPagerAdapter(getFragmentManager(),
-                                                  mTPD);
+        mFPA = new PitScoutFragmentPagerAdapter(getFragmentManager());
 
         // Setup view pager
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(mFPA);
-        viewPager.setOffscreenPageLimit(mFPA.getCount());
+        mViewPager = findViewById(R.id.view_pager);
+        mViewPager.setAdapter(mFPA);
+        mViewPager.setOffscreenPageLimit(mFPA.getCount());
+
+        // Real pit scouting
+        if (mTeamNumber > 0)
+        {
+            setup();
+        }
+        // Practice
+        else
+        {
+            mPractice = true;
+            mHeader.setTitle("Practice Match");
+            mTeamPitData = new TeamPitData(-1);
+            mHeader.removeSave();
+        }
 
         SmartTabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setBackgroundColor(Color.BLUE);
-        tabLayout.setViewPager(viewPager);
+        tabLayout.setViewPager(mViewPager);
     }
+
+    private void setup()
+    {
+        if(mTeamNumber > 0)
+        {
+            mHeader.setTitle(format(Locale.US, "Team Number: %d",
+                                    mTeamNumber));
+
+            // todo: handle admin
+            // If first team then remove the previous button
+            ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
+            int index = teamNumbers.indexOf(mTeamNumber);
+            if (index - (teamNumbers.size() / 6 * mScoutPosition) <= 0)
+            {
+                mHeader.removePrevious();
+            }
+            else
+            {
+                mHeader.addPrevious();
+            }
+
+            // todo: handle admin
+            // If last team then remove the next button
+            index = teamNumbers.indexOf(mTeamNumber);
+            if (index >= (teamNumbers.size() / 6 * (mScoutPosition + 1)) - 1)
+            {
+                mHeader.removeNext();
+            }
+            else
+            {
+                mHeader.addNext();
+            }
+
+            mTeamPitData = Database.getInstance().getTeamPitData(mTeamNumber);
+            if(mTeamPitData == null)
+            {
+                mTeamPitData = new TeamPitData(mTeamNumber);
+            }
+
+            mFPA.update();
+            mViewPager.setCurrentItem(0);
+        }
+    }
+
 
     private class PitScoutHeader implements ScoutHeaderInterface
     {
@@ -128,13 +156,13 @@ public class PitScoutActivity extends RScoutActivity
         {
             if (mPractice)
             {
-                PitScoutActivityStarter.start(PitScoutActivity.this, -1);
+                setup();
             }
             else
             {
                 final ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
                 final int index = teamNumbers.indexOf(mTeamNumber);
-                if (mTPD.isDirty())
+                if (mTeamPitData.isDirty())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(PitScoutActivity.this)
                             .setTitle("Unsaved Changes")
@@ -145,9 +173,10 @@ public class PitScoutActivity extends RScoutActivity
                                 public void onClick(DialogInterface dialog, int which)
                                 {
                                     // Save to local database
-                                    Database.getInstance().updateTeamPitData(mTPD);
+                                    Database.getInstance().updateTeamPitData(mTeamPitData);
 
-                                    PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index - 1));
+                                    mTeamNumber = teamNumbers.get(index - 1);
+                                    setup();
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -155,7 +184,8 @@ public class PitScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index - 1));
+                                    mTeamNumber = teamNumbers.get(index - 1);
+                                    setup();
                                 }
                             })
                             .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
@@ -172,7 +202,8 @@ public class PitScoutActivity extends RScoutActivity
                 {
                     if (index > 0) // If null then this function shouldn't be possible to call as the button should have been hidden
                     {
-                        PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index - 1));
+                        mTeamNumber = teamNumbers.get(index - 1);
+                        setup();
                     }
                 }
             }
@@ -183,14 +214,14 @@ public class PitScoutActivity extends RScoutActivity
         {
             if (mPractice)
             {
-                PitScoutActivityStarter.start(PitScoutActivity.this, -1);
+                setup();
             }
             else
             {
                 final ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
                 final int index = teamNumbers.indexOf(mTeamNumber);
 
-                if (mTPD.isDirty())
+                if (mTeamPitData.isDirty())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(PitScoutActivity.this)
                             .setTitle("Unsaved Changes")
@@ -201,9 +232,10 @@ public class PitScoutActivity extends RScoutActivity
                                 public void onClick(DialogInterface dialog, int which)
                                 {
                                     // Save to local database
-                                    Database.getInstance().updateTeamPitData(mTPD);
+                                    Database.getInstance().updateTeamPitData(mTeamPitData);
 
-                                    PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index + 1));
+                                    mTeamNumber = teamNumbers.get(index + 1);
+                                    setup();
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -211,7 +243,8 @@ public class PitScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index + 1));
+                                    mTeamNumber = teamNumbers.get(index + 1);
+                                    setup();
                                 }
                             })
                             .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
@@ -226,7 +259,8 @@ public class PitScoutActivity extends RScoutActivity
                 }
                 else
                 {
-                    PitScoutActivityStarter.start(PitScoutActivity.this, teamNumbers.get(index + 1));
+                    mTeamNumber = teamNumbers.get(index + 1);
+                    setup();
                 }
             }
         }
@@ -236,11 +270,12 @@ public class PitScoutActivity extends RScoutActivity
         {
             if (mPractice)
             {
-                HomeActivityStarter.start(PitScoutActivity.this);
+                HomeActivityStarter.startWithFlags(PitScoutActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                finish();
             }
             else
             {
-                if (mTPD.isDirty())
+                if (mTeamPitData.isDirty())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(PitScoutActivity.this)
                             .setTitle("Unsaved Changes")
@@ -251,9 +286,10 @@ public class PitScoutActivity extends RScoutActivity
                                 public void onClick(DialogInterface dialog, int which)
                                 {
                                     // Save to local database
-                                    Database.getInstance().updateTeamPitData(mTPD);
+                                    Database.getInstance().updateTeamPitData(mTeamPitData);
 
-                                    HomeActivityStarter.start(PitScoutActivity.this);
+                                    HomeActivityStarter.startWithFlags(PitScoutActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    finish();
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -261,7 +297,8 @@ public class PitScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    HomeActivityStarter.start(PitScoutActivity.this);
+                                    HomeActivityStarter.startWithFlags(PitScoutActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    finish();
                                 }
                             })
                             .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
@@ -276,7 +313,8 @@ public class PitScoutActivity extends RScoutActivity
                 }
                 else
                 {
-                    HomeActivityStarter.start(PitScoutActivity.this);
+                    HomeActivityStarter.startWithFlags(PitScoutActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    finish();
                 }
             }
         }
@@ -290,7 +328,7 @@ public class PitScoutActivity extends RScoutActivity
             }
             else
             {
-                if (mTPD.isDirty())
+                if (mTeamPitData.isDirty())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(PitScoutActivity.this)
                             .setTitle("Unsaved Changes")
@@ -301,9 +339,9 @@ public class PitScoutActivity extends RScoutActivity
                                 public void onClick(DialogInterface dialog, int which)
                                 {
                                     // Save to local database
-                                    Database.getInstance().updateTeamPitData(mTPD);
+                                    Database.getInstance().updateTeamPitData(mTeamPitData);
 
-                                    TeamListActivityStarter.start(PitScoutActivity.this, Constants.IntentExtras.NextPageOptions.PIT_SCOUTING);
+                                    onBackPressed();
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -311,7 +349,7 @@ public class PitScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    TeamListActivityStarter.start(PitScoutActivity.this, Constants.IntentExtras.NextPageOptions.PIT_SCOUTING);
+                                    onBackPressed();
                                 }
                             })
                             .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
@@ -326,7 +364,7 @@ public class PitScoutActivity extends RScoutActivity
                 }
                 else
                 {
-                    TeamListActivityStarter.start(PitScoutActivity.this, Constants.IntentExtras.NextPageOptions.PIT_SCOUTING);
+                    onBackPressed();
                 }
             }
         }
@@ -334,10 +372,9 @@ public class PitScoutActivity extends RScoutActivity
         @Override
         public void save()
         {
-            if (!mPractice && mTPD.isDirty())
+            if (!mPractice && mTeamPitData.isDirty())
             {
-                Database.getInstance().updateTeamPitData(mTPD);
-                int breakpoint=-1;
+                Database.getInstance().updateTeamPitData(mTeamPitData);
             }
         }
     }
@@ -350,13 +387,13 @@ public class PitScoutActivity extends RScoutActivity
     {
         static final String TAG = "MatchScoutFragmentPagerAdapter";
 
-        TeamPitData mTeamPitData;
+        SparseArray<PitScoutFragment> mFragments;
 
 
-        public PitScoutFragmentPagerAdapter(FragmentManager fm, TeamPitData teamPitData)
+        public PitScoutFragmentPagerAdapter(FragmentManager fm)
         {
             super(fm);
-            mTeamPitData = teamPitData;
+            mFragments = new SparseArray<>();
         }
 
         /**
@@ -367,25 +404,32 @@ public class PitScoutActivity extends RScoutActivity
         @Override
         public Fragment getItem(int position)
         {
-            assert (position >= 0 && position < Constants.PitScouting.TABS.length);
+            if (!(position >= 0 && position < Constants.PitScouting.TABS.length))
+            {
+                throw new AssertionError();
+            }
+            if(mFragments.get(position) != null)
+            {
+                return mFragments.get(position);
+            }
+            PitScoutFragment f;
             switch (position)
             {
                 case 0:
-                    PitPictureFragment ppf = new PitPictureFragment();
-                    ppf.setData(mTeamPitData);
-                    return ppf;
+                    f = new PitPictureFragment();
+                    break;
                 case 1:
-                    PitDimensionsFragment pdf = new PitDimensionsFragment();
-                    pdf.setData(mTeamPitData);
-                    return pdf;
+                    f = new PitDimensionsFragment();
+                    break;
                 case 2:
-                    PitMiscFragment pmf = new PitMiscFragment();
-                    pmf.setData(mTeamPitData);
-                    return pmf;
+                    f = new PitMiscFragment();
+                    break;
                 default:
-                    assert (false);
+                    throw new AssertionError();
             }
-            return null;
+            f.setTeamPitData(mTeamPitData);
+            mFragments.put(position, f);
+            return f;
         }
 
         /**
@@ -407,17 +451,21 @@ public class PitScoutActivity extends RScoutActivity
         @Override
         public String getPageTitle(int position)
         {
-            assert (position >= 0 && position < Constants.PitScouting.TABS.length);
+            if (!(position >= 0 && position < Constants.PitScouting.TABS.length))
+            {
+                throw new AssertionError();
+            }
             return Constants.PitScouting.TABS[position];
         }
-    }
 
-    /**
-     * Removes back pressed option
-     */
-    @Override
-    public void onBackPressed()
-    {
-        return;
+        public void update()
+        {
+            for (int i = 0, end = mFragments.size(); i < end; i++)
+            {
+                PitScoutFragment fragment = mFragments.valueAt(i);
+                fragment.setTeamPitData(mTeamPitData);
+            }
+        }
+
     }
 }

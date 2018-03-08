@@ -1,6 +1,5 @@
 package frc3824.rscout2018.fragments.team_stats;
 
-import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,7 +13,6 @@ import com.synnapps.carouselview.ImageListener;
 
 import java.util.ArrayList;
 
-import activitystarter.Arg;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.TeamPitData;
@@ -23,18 +21,17 @@ import frc3824.rscout2018.databinding.FragmentTeamStatsPitDataBinding;
 /**
  * A fragment that displays the data collected during pit scouting
  */
-public class TeamStatsPitDataFragment extends Fragment implements ImageListener
+public class TeamStatsPitDataFragment extends TeamStatsFragment implements ImageListener
 {
     FragmentTeamStatsPitDataBinding mBinding = null;
     TeamPitData mTeamPitData = null;
     ArrayList<String> mPictureFilepaths = null;
     CarouselView mCarouselView = null;
 
-
-    public void setTeamNumber(int teamNumber)
+    protected void bind()
     {
-        mTeamPitData = Database.getInstance().getTeamPitData(teamNumber);
-        if(mTeamPitData != null)
+        mTeamPitData = Database.getInstance().getTeamPitData(mTeamNumber);
+        if(mTeamPitData != null && mCarouselView != null)
         {
             mPictureFilepaths = mTeamPitData.getPictureFilepaths();
 
@@ -85,51 +82,13 @@ public class TeamStatsPitDataFragment extends Fragment implements ImageListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_team_stats_pit_data, container, false);
-        if(mTeamPitData != null)
-        {
-            mBinding.setTpd(mTeamPitData);
-        }
         View view = mBinding.getRoot();
 
         // Inflate the carousel
         mCarouselView = view.findViewById(R.id.carousel);
         mCarouselView.setImageListener(this);
 
-        if(mTeamPitData != null)
-        {
-            // If there are pictures then display the default image
-            if(mTeamPitData.numberOfPictures() > 0)
-            {
-                String defaultFilepath = mTeamPitData.getDefaultPictureFilepath();
-                mCarouselView.setPageCount(mPictureFilepaths.size());
-
-                // If there is a default image
-                if(!defaultFilepath.isEmpty())
-                {
-                    int index = mPictureFilepaths.indexOf(defaultFilepath);
-                    // Show the default image
-                    if(index > -1)
-                    {
-                        mCarouselView.setCurrentItem(index);
-                    }
-                    // if the default picture isn't in the list then show the first one
-                    else
-                    {
-                        mCarouselView.setCurrentItem(0);
-                    }
-                }
-                // if there is no default picture then show the first one
-                else
-                {
-                    mCarouselView.setCurrentItem(0);
-                }
-            }
-            // Otherwise hide the carousel and N/A buttons
-            else
-            {
-                mCarouselView.setVisibility(View.GONE);
-            }
-        }
+        bind();
 
         return view;
     }

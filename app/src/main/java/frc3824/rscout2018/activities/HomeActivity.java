@@ -10,9 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -23,7 +20,6 @@ import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.database.data_models.TeamLogistics;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
-import frc3824.rscout2018.database.data_models.TeamPitData;
 import frc3824.rscout2018.database.data_models.powered_up.CubeEvent;
 import frc3824.rscout2018.services.CommunicationService;
 import frc3824.rscout2018.utilities.Constants;
@@ -206,7 +202,7 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
         {
             String temp = sharedPreferences.getString(Constants.Settings.EVENT_KEY, "");
 
-            if (temp != mEventKey)
+            if (!temp.equals(mEventKey))
             {
                 mEventKey = temp;
                 String ip = sharedPreferences.getString(Constants.Settings.SERVER_IP, "");
@@ -338,7 +334,8 @@ public class HomeActivity extends RScoutActivity implements View.OnClickListener
                 return;
 
             default:
-                assert(false);
+                throw new AssertionError();
+
         }
     }
 

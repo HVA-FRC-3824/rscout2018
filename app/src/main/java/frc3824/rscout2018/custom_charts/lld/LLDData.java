@@ -19,7 +19,7 @@ public class LLDData extends BarLineScatterCandleBubbleData<ILLDDataSet>
 
     private static List<ILLDDataSet> toList(ILLDDataSet dataset)
     {
-        List<ILLDDataSet> sets = new ArrayList<ILLDDataSet>();
+        List<ILLDDataSet> sets = new ArrayList<>();
         sets.add(dataset);
         return sets;
     }

@@ -6,7 +6,6 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 @IgnoreExtraProperties
 public class TeamLogistics extends DataModel
@@ -72,7 +71,10 @@ public class TeamLogistics extends DataModel
     @Exclude
     public void setMatchNumbers(ArrayList<Integer> matchNumbers)
     {
-        assert(matchNumbers.size() == 6);
+        if (matchNumbers.size() != 6)
+        {
+            throw new AssertionError();
+        }
         this.matchNumbers = matchNumbers;
         notifyChange();
     }

@@ -170,7 +170,7 @@ public class IndividualCubesInner extends View
                                           mCanvasPaint);
                         break;
                     default:
-                        assert (false);
+                        throw new AssertionError();
                 }
             }
         }

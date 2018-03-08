@@ -1,13 +1,10 @@
 package frc3824.rscout2018.activities;
 
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import java.util.Arrays;
 import java.util.List;
 
 import activitystarter.ActivityStarter;
@@ -15,7 +12,6 @@ import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.fragments.pick_list.ChartFragment;
 import frc3824.rscout2018.fragments.pick_list.PickListFragment;
-import frc3824.rscout2018.utilities.Constants;
 
 @MakeActivityStarter
 public class PickListActivity extends RScoutActivity implements AdapterView.OnItemSelectedListener

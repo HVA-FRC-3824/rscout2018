@@ -40,6 +40,7 @@ public class SavableEditText extends LinearLayout implements TextWatcher
         // Set label
         TextView label = findViewById(R.id.label);
         label.setText(typedArray.getString(R.styleable.SavableView_label));
+        typedArray.recycle();
 
         mEditText = findViewById(R.id.edittext);
         mEditText.addTextChangedListener(this);

@@ -2,20 +2,18 @@ package frc3824.rscout2018.database;
 
 import android.util.Log;
 
-
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +22,8 @@ import frc3824.rscout2018.database.data_models.SuperMatchData;
 import frc3824.rscout2018.database.data_models.TeamLogistics;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.database.data_models.TeamPitData;
+
+import static java.lang.String.format;
 
 
 /**
@@ -74,7 +74,7 @@ public class Database
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
             {
                 mEvents.add(dataSnapshot.getKey());
-                Log.v(TAG, String.format("root.onChildAdded: %s", dataSnapshot.getKey()));
+                Log.v(TAG, format(Locale.US, "root.onChildAdded: %s", dataSnapshot.getKey()));
 
             }
 
@@ -82,26 +82,26 @@ public class Database
             public void onChildChanged(DataSnapshot dataSnapshot, String s)
             {
                 mEvents.add(dataSnapshot.getKey());
-                Log.v(TAG, String.format("root.onChildChanged: %s", dataSnapshot.getKey()));
+                Log.v(TAG, format(Locale.US, "root.onChildChanged: %s", dataSnapshot.getKey()));
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot)
             {
                 mEvents.remove(dataSnapshot.getKey());
-                Log.v(TAG, String.format("root.onChildRemoved: %s", dataSnapshot.getKey()));
+                Log.v(TAG, format(Locale.US, "root.onChildRemoved: %s", dataSnapshot.getKey()));
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s)
             {
-                Log.v(TAG, String.format("root.onChildMoved: %s", dataSnapshot.getKey()));
+                Log.v(TAG, format(Locale.US, "root.onChildMoved: %s", dataSnapshot.getKey()));
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError)
             {
-                Log.v(TAG, String.format("root.onCancelled"));
+                Log.v(TAG, "root.onCancelled");
             }
         });
     }
@@ -118,7 +118,7 @@ public class Database
 
     public void setEventKey(String eventKey)
     {
-        if(mEventKey == null || mEventKey.isEmpty() || eventKey != mEventKey)
+        if(mEventKey == null || mEventKey.isEmpty() || !eventKey.equals(mEventKey))
         {
             mEventKey = eventKey;
 
@@ -143,33 +143,33 @@ public class Database
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
             {
                 mMap.get(id).put(dataSnapshot.getKey(), dataSnapshot);
-                Log.v(TAG, String.format("%s.onChildAdded: %s", id, dataSnapshot.getKey()));
+                Log.v(TAG, format(Locale.US, "%s.onChildAdded: %s", id, dataSnapshot.getKey()));
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s)
             {
                 mMap.get(id).put(dataSnapshot.getKey(), dataSnapshot);
-                Log.v(TAG, String.format("%s.onChildChanged: %s", id, dataSnapshot.getKey()));
+                Log.v(TAG, format(Locale.US, "%s.onChildChanged: %s", id, dataSnapshot.getKey()));
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot)
             {
                 mMap.get(id).remove(dataSnapshot.getKey());
-                Log.v(TAG, String.format("%s.onChildRemoved: %s", id, dataSnapshot.getKey()));
+                Log.v(TAG, format(Locale.US, "%s.onChildRemoved: %s", id, dataSnapshot.getKey()));
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s)
             {
-                Log.v(TAG, String.format("%s.onChildMoved: %s", id, dataSnapshot.getKey()));
+                Log.v(TAG, format(Locale.US, "%s.onChildMoved: %s", id, dataSnapshot.getKey()));
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError)
             {
-                Log.v(TAG, String.format("%s.onCancelled", id));
+                Log.v(TAG, format(Locale.US, "%s.onCancelled", id));
             }
         });
     }
@@ -211,7 +211,7 @@ public class Database
     //region Team Match Data
     public TeamMatchData getTeamMatchData(int teamNumber, int matchNumber)
     {
-        DataSnapshot dataSnapshot = mMap.get(TEAM_MATCH).get(String.format("%d_%d", teamNumber, matchNumber));
+        DataSnapshot dataSnapshot = mMap.get(TEAM_MATCH).get(format(Locale.US, "%d_%d", teamNumber, matchNumber));
         if(dataSnapshot == null)
         {
             return null;
@@ -221,7 +221,7 @@ public class Database
 
     public void updateTeamMatchData(TeamMatchData teamMatchData)
     {
-        mReferences.get(TEAM_MATCH).child(String.format("%d_%d", teamMatchData.getTeamNumber(), teamMatchData.getMatchNumber())).setValue(teamMatchData);
+        mReferences.get(TEAM_MATCH).child(format(Locale.US, "%d_%d", teamMatchData.getTeamNumber(), teamMatchData.getMatchNumber())).setValue(teamMatchData);
     }
     //endregion
 

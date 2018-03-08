@@ -2,7 +2,6 @@ package frc3824.rscout2018.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
 import android.databinding.InverseBindingAdapter;
 import android.text.Editable;
@@ -12,7 +11,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -47,11 +45,13 @@ public class SavableNumeric extends LinearLayout implements TextWatcher
         // Set label
         TextView label = findViewById(R.id.label);
         label.setText(typedArray.getString(R.styleable.SavableView_label));
+        typedArray.recycle();
 
         // Set min and max
         typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableNumeric);
         mMin = typedArray.getFloat(R.styleable.SavableNumeric_min, Float.MIN_VALUE);
         mMax = typedArray.getFloat(R.styleable.SavableNumeric_max, Float.MAX_VALUE);
+        typedArray.recycle();
 
         mEditText = findViewById(R.id.edittext);
         mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);

@@ -1,12 +1,9 @@
 package frc3824.rscout2018.fragments.pit_scout;
 
-import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,18 +18,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import frc3824.rscout2018.R;
-import frc3824.rscout2018.database.data_models.TeamPitData;
 import info.hoang8f.widget.FButton;
+
+import static java.lang.String.format;
 
 /**
  * @class PitPictureFragment
  * @brief Fragment for taking pictures of a team's robot
  */
-public class PitPictureFragment extends Fragment implements View.OnClickListener, ImageListener
+public class PitPictureFragment extends PitScoutFragment implements View.OnClickListener, ImageListener
 {
-    TeamPitData mTeamPitData;
     ArrayList<String> mPictureFilepaths;
 
     View mView;
@@ -45,10 +43,12 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
     boolean mTakingPicture = false;
     String mDir;
 
-    public void setData(TeamPitData teamPitData)
+    protected void bind()
     {
-        mTeamPitData = teamPitData;
-        mPictureFilepaths = mTeamPitData.getPictureFilepaths();
+        if(mTeamPitData != null)
+        {
+            mPictureFilepaths = mTeamPitData.getPictureFilepaths();
+        }
     }
 
     @Override
@@ -82,7 +82,7 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
         mCarouselView = mView.findViewById(R.id.carousel);
         mCarouselView.setImageListener(this);
 
-        mDir = String.format("data/data/%s/files/robots/%d/", getContext().getPackageName(), mTeamPitData.getTeamNumber() > 0 ? mTeamPitData.getTeamNumber() : 0);
+        mDir = format(Locale.US, "data/data/%s/files/robots/%d/", getContext().getPackageName(), mTeamPitData.getTeamNumber() > 0 ? mTeamPitData.getTeamNumber() : 0);
 
         // If there are pictures then display the default image
         if(mTeamPitData.numberOfPictures() > 0)
@@ -203,10 +203,7 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
         {
             Glide.with(this).load(mPictureFilepaths.get(position)).into(imageView);
         }
-        else
-        {
-            // todo(Andrew): error
-        }
+        // todo(Andrew): error
     }
 
     // todo Document
@@ -228,7 +225,7 @@ public class PitPictureFragment extends Fragment implements View.OnClickListener
                 directory.mkdirs();
             }
 
-            File file = new File(directory, String.format("%d.png", System.currentTimeMillis()));
+            File file = new File(directory, format(Locale.US, "%d.png", System.currentTimeMillis()));
 
             // todo: Replace all the print stack traces with something useful
 

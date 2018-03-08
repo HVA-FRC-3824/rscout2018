@@ -3,8 +3,8 @@ package frc3824.rscout2018.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -13,12 +13,9 @@ import java.util.Arrays;
 
 import frc3824.rscout2018.R;
 
-import android.widget.LinearLayout;
-
 /**
- * Created by Steven on 1/13/2018.
+ * Created by frc3824
  */
-
 public class SavableRadioButtons extends LinearLayout
 {
 

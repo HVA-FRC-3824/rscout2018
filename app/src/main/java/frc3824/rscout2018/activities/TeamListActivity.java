@@ -1,10 +1,8 @@
 package frc3824.rscout2018.activities;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +12,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.Locale;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
@@ -24,6 +22,8 @@ import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.ScoutHeader;
 import frc3824.rscout2018.views.ScoutHeaderInterface;
+
+import static java.lang.String.format;
 
 /**
  * @class TeamListActivity
@@ -90,7 +90,7 @@ public class TeamListActivity extends Activity implements View.OnClickListener
         @Override
         public void home()
         {
-            HomeActivityStarter.start(TeamListActivity.this);
+            HomeActivityStarter.startWithFlags(TeamListActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         }
 
         @Override
@@ -128,7 +128,7 @@ public class TeamListActivity extends Activity implements View.OnClickListener
          * {@inheritDoc}
          */
         @Override
-        public View getView(int i, View view, ViewGroup viewGroup)
+        public View getView(int i, View view, ViewGroup parent)
         {
             if(view == null)
             {
@@ -137,7 +137,7 @@ public class TeamListActivity extends Activity implements View.OnClickListener
 
             int teamNumber = getItem(i);
 
-            ((TextView)view).setText(String.format("Team: %d", teamNumber));
+            ((TextView)view).setText(format(Locale.US, "Team: %d", teamNumber));
 
             view.setId(teamNumber);
             view.setOnClickListener(this);
@@ -160,7 +160,7 @@ public class TeamListActivity extends Activity implements View.OnClickListener
                     TeamStatsActivityStarter.start(TeamListActivity.this, view.getId());
                     break;
                 default:
-                    assert(false);
+                    throw new AssertionError();
             }
         }
     }

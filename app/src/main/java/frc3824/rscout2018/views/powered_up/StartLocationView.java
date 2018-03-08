@@ -2,12 +2,12 @@ package frc3824.rscout2018.views.powered_up;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
 
@@ -27,7 +27,7 @@ public class StartLocationView extends HeatMap
     Paint mCanvasPaint;
     int mWidth;
     int mHeight;
-    ArrayList<TeamMatchData> mTeamMatchData;
+    SparseArray<TeamMatchData> mTeamMatchData;
 
     public StartLocationView(Context context, AttributeSet attrs)
     {
@@ -38,12 +38,12 @@ public class StartLocationView extends HeatMap
         mCanvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
-    public ArrayList<TeamMatchData> getData()
+    public SparseArray<TeamMatchData> getData()
     {
         return mTeamMatchData;
     }
 
-    public void setData(ArrayList<TeamMatchData> teamMatchData)
+    public void setData(SparseArray<TeamMatchData> teamMatchData)
     {
         mTeamMatchData = teamMatchData;
         new UpdateTask().execute();
@@ -86,8 +86,10 @@ public class StartLocationView extends HeatMap
             {
                 clearData();
 
-                for (TeamMatchData tmd : mTeamMatchData)
+                TeamMatchData tmd;
+                for (int i = 0, end = mTeamMatchData.size(); i < end; i++)
                 {
+                    tmd = mTeamMatchData.valueAt(i);
                     if(tmd.getStartLocationX() < 0.5)
                     {
                         addData(new HeatMap.DataPoint((float) tmd.getStartLocationX(),

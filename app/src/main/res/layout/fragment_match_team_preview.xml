@@ -147,13 +147,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/yellow_card"
-                android:visibility="@{team.yellowCard ? View.VISIBLE : View.GONE}"/>
+                android:visibility="@{team.yellowCard ? View.VISIBLE : View.GONE}"
+                android:contentDescription="If the robot has a yellow card"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/red_card"
-                android:visibility="@{team.redCard ? View.VISIBLE : View.GONE}"/>
+                android:visibility="@{team.redCard ? View.VISIBLE : View.GONE}"
+                android:contentDescription="If the robot has a red card"/>
         </LinearLayout>
         
         <info.hoang8f.widget.FButton

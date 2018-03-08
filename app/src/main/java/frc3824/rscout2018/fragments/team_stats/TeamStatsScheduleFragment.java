@@ -1,6 +1,5 @@
 package frc3824.rscout2018.fragments.team_stats;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import activitystarter.Arg;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.database.data_models.MatchLogistics;
@@ -23,28 +21,31 @@ import frc3824.rscout2018.database.data_models.TeamLogistics;
  * A fragment for display a team's schedule
  * @author frc3824
  */
-public class TeamStatsScheduleFragment extends Fragment
+public class TeamStatsScheduleFragment extends TeamStatsFragment
 {
-    int mTeamNumber;
     TeamLogistics mTeamLogistics;
+    ListView mListView;
 
-    public void setTeamNumber(int teamNumber)
+    protected void bind()
     {
-        mTeamNumber = teamNumber;
-        mTeamLogistics = Database.getInstance().getTeamLogistics(teamNumber);
+        mTeamLogistics = Database.getInstance().getTeamLogistics(mTeamNumber);
+        if(mTeamLogistics != null && mListView != null)
+        {
+            mListView.setAdapter(new ScheduleListAdapter(
+                    getContext(),
+                    mTeamLogistics.getMatchNumbers()));
+        }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_team_stats_schedule, null);
 
-        if(mTeamLogistics != null)
-        {
-            ((ListView) view.findViewById(R.id.list_view)).setAdapter(new ScheduleListAdapter(
-                    getContext(),
-                    mTeamLogistics.getMatchNumbers()));
-        }
+        mListView = view.findViewById(R.id.list_view);
+
+        bind();
 
         return view;
     }

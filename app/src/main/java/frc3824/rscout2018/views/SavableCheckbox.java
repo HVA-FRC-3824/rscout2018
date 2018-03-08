@@ -38,6 +38,7 @@ public class SavableCheckbox extends LinearLayout
         // Set label
         TextView label = findViewById(R.id.label);
         label.setText(typedArray.getString(R.styleable.SavableView_label));
+        typedArray.recycle();
 
         mCheckBox = findViewById(R.id.checkbox);
     }

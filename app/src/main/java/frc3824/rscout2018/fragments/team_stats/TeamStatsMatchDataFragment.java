@@ -22,15 +22,18 @@ import frc3824.rscout2018.database.data_models.TeamLogistics;
 /**
  * A fragment used to display the data collect on this team during each of its matches
  */
-public class TeamStatsMatchDataFragment extends Fragment
+public class TeamStatsMatchDataFragment extends TeamStatsFragment
 {
-    int mTeamNumber;
     TeamStatsMatchFragmentPagerAdapter mFPA;
+    ViewPager mViewPager;
 
-
-    public void setTeamNumber(int teamNumber)
+    protected void bind()
     {
-        mTeamNumber = teamNumber;
+        if(mViewPager != null)
+        {
+            mFPA.update();
+            mViewPager.setCurrentItem(0);
+        }
     }
 
     @Override
@@ -38,17 +41,17 @@ public class TeamStatsMatchDataFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_team_stats_match_data, null);
 
-        // Setup the TABS and fragment pages
-        mFPA = new TeamStatsMatchDataFragment.TeamStatsMatchFragmentPagerAdapter(getFragmentManager());
+        mFPA = new TeamStatsMatchFragmentPagerAdapter(getChildFragmentManager());
 
         // Setup view pager
-        ViewPager viewPager = view.findViewById(R.id.inner_view_pager);
-        viewPager.setAdapter(mFPA);
-        //viewPager.setOffscreenPageLimit(mFPA.getCount());
+        mViewPager = view.findViewById(R.id.inner_view_pager);
+        mViewPager.setAdapter(mFPA);
+
+        bind();
 
         SmartTabLayout tabLayout = view.findViewById(R.id.inner_tab_layout);
         tabLayout.setBackgroundColor(Color.BLUE);
-        tabLayout.setViewPager(viewPager);
+        tabLayout.setViewPager(mViewPager);
 
         return view;
     }
@@ -60,17 +63,7 @@ public class TeamStatsMatchDataFragment extends Fragment
         public TeamStatsMatchFragmentPagerAdapter(FragmentManager fm)
         {
             super(fm);
-            TeamLogistics teamLogistics = Database.getInstance().getTeamLogistics(mTeamNumber);
-            if(teamLogistics == null)
-            {
-                // No nulls
-                mMatchNumbers = new ArrayList<>();
-            }
-            else
-            {
-                mMatchNumbers = teamLogistics.getMatchNumbers();
-                Collections.sort(mMatchNumbers);
-            }
+            update();
         }
 
         @Override
@@ -97,6 +90,21 @@ public class TeamStatsMatchDataFragment extends Fragment
         public String getPageTitle(int position)
         {
             return String.valueOf(mMatchNumbers.get(position));
+        }
+
+        public void update()
+        {
+            TeamLogistics teamLogistics = Database.getInstance().getTeamLogistics(mTeamNumber);
+            if(teamLogistics == null)
+            {
+                // No nulls
+                mMatchNumbers = new ArrayList<>();
+            }
+            else
+            {
+                mMatchNumbers = teamLogistics.getMatchNumbers();
+                Collections.sort(mMatchNumbers);
+            }
         }
     }
 }

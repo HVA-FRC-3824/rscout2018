@@ -3,6 +3,10 @@ package frc3824.rscout2018.database.data_models;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
+import java.util.Locale;
+
+import static java.lang.String.format;
+
 /**
  * Created by frc3824.
  */
@@ -167,7 +171,7 @@ public class MatchPreviewTeam extends BaseObservable
             return "N/A";
         }
 
-        return String.format("%.2f", (float)shortCycleSum / 1000.0f / (float)shortCycleNum);
+        return format(Locale.US, "%.2f", (float)shortCycleSum / 1000.0f / (float)shortCycleNum);
     }
 
     public void addToShortCycleSum(long shortCycleSum)
@@ -189,7 +193,7 @@ public class MatchPreviewTeam extends BaseObservable
             return "N/A";
         }
 
-        return String.format("%.2f", (float)mediumCycleSum / 1000.0f / (float)mediumCycleNum);
+        return format(Locale.US, "%.2f", (float)mediumCycleSum / 1000.0f / (float)mediumCycleNum);
     }
 
     public void addToMediumCycleSum(long mediumCycleSum)
@@ -211,7 +215,7 @@ public class MatchPreviewTeam extends BaseObservable
             return "N/A";
         }
 
-        return String.format("%.2f", (float)longCycleSum / 1000.0f / (float)longCycleNum);
+        return format(Locale.US, "%.2f", (float)longCycleSum / 1000.0f / (float)longCycleNum);
     }
 
     public void addToLongCycleSum(long longCycleSum)
@@ -249,7 +253,7 @@ public class MatchPreviewTeam extends BaseObservable
             return "N/A";
         }
 
-        return String.format("%.2f", (float)numDrops / (float)numMatches);
+        return format(Locale.US, "%.2f", (float)numDrops / (float)numMatches);
     }
 
     public void incrementNumDrops()
@@ -269,7 +273,7 @@ public class MatchPreviewTeam extends BaseObservable
             return "N/A";
         }
 
-        return String.format("%.2f", (float)numLaunchFails / (float)numMatches);
+        return format(Locale.US, "%.2f", (float)numLaunchFails / (float)numMatches);
     }
 
     public void incrementNumLaunchFails()
@@ -289,7 +293,7 @@ public class MatchPreviewTeam extends BaseObservable
             return "N/A";
         }
 
-        return String.format("%.2f", (float)numFouls / (float)numMatches);
+        return format(Locale.US, "%.2f", (float)numFouls / (float)numMatches);
     }
 
     public void addToFouls(int fouls)
@@ -308,7 +312,7 @@ public class MatchPreviewTeam extends BaseObservable
             return "0.00";
         }
 
-        return String.format("%.2f", (float)numTechFouls / (float)numMatches);
+        return format(Locale.US, "%.2f", (float)numTechFouls / (float)numMatches);
     }
 
     public void addToTechFouls(int techFouls)
@@ -328,7 +332,7 @@ public class MatchPreviewTeam extends BaseObservable
     {
         if(yellowCard)
         {
-            yellowCard = true;
+            this.yellowCard = true;
             notifyChange();
         }
     }
@@ -345,7 +349,7 @@ public class MatchPreviewTeam extends BaseObservable
     {
         if(redCard)
         {
-            redCard = true;
+            this.redCard = true;
             notifyChange();
         }
     }

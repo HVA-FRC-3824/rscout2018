@@ -11,7 +11,11 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.Utils;
 
+import java.util.Locale;
+
 import frc3824.rscout2018.R;
+
+import static java.lang.String.format;
 
 
 public class LLDMarkerView extends MarkerView
@@ -54,11 +58,11 @@ public class LLDMarkerView extends MarkerView
     {
         LLDEntry le = (LLDEntry) e;
 
-        mTeamNumber.setText(String.format("%d", le.getTeamNumber()));
-        mMax.setText(String.format(java.util.Locale.US, "Max: %.2f", le.getMax()));
-        mMin.setText(String.format(java.util.Locale.US, "Min: %.2f", le.getMin()));
-        mAvg.setText(String.format(java.util.Locale.US, "Average: %.2f", le.getAvg()));
-        mStd.setText(String.format(java.util.Locale.US, "Std: %.2f", le.getStd()));
+        mTeamNumber.setText(format(Locale.US, "%d", le.getTeamNumber()));
+        mMax.setText(format(Locale.US, "Max: %.2f", le.getMax()));
+        mMin.setText(format(Locale.US, "Min: %.2f", le.getMin()));
+        mAvg.setText(format(Locale.US, "Average: %.2f", le.getAvg()));
+        mStd.setText(format(Locale.US, "Std: %.2f", le.getStd()));
     }
 
     @Override

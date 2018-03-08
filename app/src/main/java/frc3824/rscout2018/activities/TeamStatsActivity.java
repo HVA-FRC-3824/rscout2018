@@ -2,14 +2,17 @@ package frc3824.rscout2018.activities;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.SparseArray;
 
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
@@ -17,6 +20,7 @@ import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.Database;
 import frc3824.rscout2018.fragments.team_stats.TeamStatsChartsFragment;
+import frc3824.rscout2018.fragments.team_stats.TeamStatsFragment;
 import frc3824.rscout2018.fragments.team_stats.TeamStatsMatchDataFragment;
 import frc3824.rscout2018.fragments.team_stats.TeamStatsNotesFragment;
 import frc3824.rscout2018.fragments.team_stats.TeamStatsPitDataFragment;
@@ -24,6 +28,8 @@ import frc3824.rscout2018.fragments.team_stats.TeamStatsScheduleFragment;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.ScoutHeader;
 import frc3824.rscout2018.views.ScoutHeaderInterface;
+
+import static java.lang.String.format;
 
 /**
  *
@@ -34,6 +40,10 @@ public class TeamStatsActivity extends RScoutActivity
     @Arg
     protected int mTeamNumber;
     TeamStatsFragmentPagerAdapter mFPA;
+    ScoutHeader mHeader;
+    ViewPager mViewPager;
+    ArrayList<Integer> mTeamNumbers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -41,37 +51,47 @@ public class TeamStatsActivity extends RScoutActivity
         setContentView(R.layout.activity_scout);
         ActivityStarter.fill(this);
 
-        ScoutHeader header = findViewById(R.id.header);
-        header.setInterface(new TeamStatsActivity.TeamStatsHeader());
-        header.setTitle(String.format("Team: %d", mTeamNumber));
-        header.removeSave();
+        mHeader = findViewById(R.id.header);
+        mHeader.setInterface(new TeamStatsActivity.TeamStatsHeader());
+        mHeader.removeSave();
 
         // If first team then remove the previous button
-        ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
-        int index = teamNumbers.indexOf(mTeamNumber);
-        if (index <= 0)
-        {
-            header.removePrevious();
-        }
-
-        // If last team then remove the next button
-        index = teamNumbers.indexOf(mTeamNumber);
-        if (index >= teamNumbers.size() - 1)
-        {
-            header.removeNext();
-        }
+        mTeamNumbers = Database.getInstance().getTeamNumbers();
 
         // Setup the TABS and fragment pages
         mFPA = new TeamStatsActivity.TeamStatsFragmentPagerAdapter(getFragmentManager());
 
         // Setup view pager
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(mFPA);
+        mViewPager = findViewById(R.id.view_pager);
+        mViewPager.setAdapter(mFPA);
         //viewPager.setOffscreenPageLimit(mFPA.getCount());
+
+        setup();
 
         SmartTabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setBackgroundColor(Color.BLUE);
-        tabLayout.setViewPager(viewPager);
+        tabLayout.setViewPager(mViewPager);
+    }
+
+    private void setup()
+    {
+        mHeader.setTitle(format(Locale.US, "Team: %d", mTeamNumber));
+
+        int index = mTeamNumbers.indexOf(mTeamNumber);
+        if (index <= 0)
+        {
+            mHeader.removePrevious();
+        }
+
+        // If last team then remove the next button
+        index = mTeamNumbers.indexOf(mTeamNumber);
+        if (index >= mTeamNumbers.size() - 1)
+        {
+            mHeader.removeNext();
+        }
+
+        mFPA.update();
+        mViewPager.setCurrentItem(0);
     }
 
     private class TeamStatsHeader implements ScoutHeaderInterface
@@ -80,35 +100,35 @@ public class TeamStatsActivity extends RScoutActivity
         @Override
         public void previous()
         {
-            ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
-            int index = teamNumbers.indexOf(mTeamNumber);
+            int index = mTeamNumbers.indexOf(mTeamNumber);
             if (index > 0) // If null then this function shouldn't be possible to call as the button should have been hidden
             {
-                TeamStatsActivityStarter.start(TeamStatsActivity.this, teamNumbers.get(index - 1));
+                mTeamNumber = mTeamNumbers.get(index - 1);
+                setup();
             }
         }
 
         @Override
         public void next()
         {
-            ArrayList<Integer> teamNumbers = Database.getInstance().getTeamNumbers();
-            int index = teamNumbers.indexOf(mTeamNumber);
-            if (index < teamNumbers.size() - 1) // If null then this function shouldn't be possible to call as the button should have been hidden
+            int index = mTeamNumbers.indexOf(mTeamNumber);
+            if (index < mTeamNumbers.size() - 1) // If null then this function shouldn't be possible to call as the button should have been hidden
             {
-                TeamStatsActivityStarter.start(TeamStatsActivity.this, teamNumbers.get(index + 1));
+                mTeamNumber = mTeamNumbers.get(index + 1);
+                setup();
             }
         }
 
         @Override
         public void home()
         {
-            HomeActivityStarter.start(TeamStatsActivity.this);
+            HomeActivityStarter.startWithFlags(TeamStatsActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         }
 
         @Override
         public void list()
         {
-            TeamListActivityStarter.start(TeamStatsActivity.this, Constants.IntentExtras.NextPageOptions.TEAM_STATS);
+            onBackPressed();
         }
 
         @Override
@@ -120,9 +140,12 @@ public class TeamStatsActivity extends RScoutActivity
 
     private class TeamStatsFragmentPagerAdapter extends FragmentPagerAdapter
     {
+        SparseArray<TeamStatsFragment> mFragments;
+
         public TeamStatsFragmentPagerAdapter(FragmentManager fm)
         {
             super(fm);
+            mFragments = new SparseArray<>();
         }
 
         /**
@@ -134,34 +157,38 @@ public class TeamStatsActivity extends RScoutActivity
         @Override
         public Fragment getItem(int position)
         {
-            assert(position >= 0 && position < Constants.TeamStats.TABS.length);
+            if (!(position >= 0 && position < Constants.TeamStats.TABS.length))
+            {
+                throw new AssertionError();
+            }
+            if(mFragments.get(position) != null)
+            {
+                return mFragments.get(position);
+            }
+            TeamStatsFragment f;
             switch (position)
             {
                 case 0:
-                    TeamStatsChartsFragment tscf = new TeamStatsChartsFragment();
-                    tscf.setTeamNumber(mTeamNumber);
-                    return tscf;
+                    f = new TeamStatsChartsFragment();
+                    break;
                 case 1:
-                    TeamStatsMatchDataFragment tsmdf = new TeamStatsMatchDataFragment();
-                    tsmdf.setTeamNumber(mTeamNumber);
-                    return tsmdf;
+                    f = new TeamStatsMatchDataFragment();
+                    break;
                 case 2:
-                    TeamStatsPitDataFragment tspdf = new TeamStatsPitDataFragment();
-                    tspdf.setTeamNumber(mTeamNumber);
-                    return tspdf;
+                    f = new TeamStatsPitDataFragment();
+                    break;
                 case 3:
-                    TeamStatsNotesFragment tsnf = new TeamStatsNotesFragment();
-                    tsnf.setTeamNumber(mTeamNumber);
-                    return tsnf;
+                    f = new TeamStatsNotesFragment();
+                    break;
                 case 4:
-                    TeamStatsScheduleFragment tssf = new TeamStatsScheduleFragment();
-                    tssf.setTeamNumber(mTeamNumber);
-                    return tssf;
+                    f = new TeamStatsScheduleFragment();
+                    break;
                 default:
-                    assert(false);
+                    throw new AssertionError();
             }
-            return null;
-
+            f.setTeamNumber(mTeamNumber);
+            mFragments.put(position, f);
+            return f;
         }
 
         /**
@@ -182,8 +209,20 @@ public class TeamStatsActivity extends RScoutActivity
         @Override
         public String getPageTitle(int position)
         {
-            assert(position >= 0 && position < Constants.TeamStats.TABS.length);
+            if (!(position >= 0 && position < Constants.TeamStats.TABS.length))
+            {
+                throw new AssertionError();
+            }
             return Constants.TeamStats.TABS[position];
+        }
+
+        public void update()
+        {
+            for(int i = 0, end = mFragments.size(); i < end; i++)
+            {
+                TeamStatsFragment fragment = mFragments.valueAt(i);
+                fragment.setTeamNumber(mTeamNumber);
+            }
         }
     }
 }

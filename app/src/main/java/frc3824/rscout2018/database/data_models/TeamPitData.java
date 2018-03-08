@@ -184,9 +184,8 @@ public class TeamPitData extends DataModel
             @Override
             public void afterTextChanged(Editable s)
             {
-                if (s.toString().equals("")) {
-
-                } else {
+                if (!s.toString().isEmpty())
+                {
                     setRobotWidth(Double.parseDouble(s.toString()));
                 }
             }

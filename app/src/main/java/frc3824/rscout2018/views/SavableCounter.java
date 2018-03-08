@@ -42,10 +42,12 @@ public class SavableCounter extends LinearLayout implements View.OnClickListener
         // Set label
         TextView label = findViewById(R.id.label);
         label.setText(typedArray.getString(R.styleable.SavableView_label));
+        typedArray.recycle();
 
         typedArray = context.obtainStyledAttributes(attrs, R.styleable.SavableCounter);
         mMin = typedArray.getInt(R.styleable.SavableCounter_min, Integer.MIN_VALUE);
         mMax = typedArray.getInt(R.styleable.SavableCounter_max, Integer.MAX_VALUE);
+        typedArray.recycle();
 
         mButton = findViewById(R.id.button);
 

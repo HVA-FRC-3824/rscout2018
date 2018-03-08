@@ -1,6 +1,6 @@
 package frc3824.rscout2018.custom_charts;
 
-import com.github.mikephil.charting.data.BarEntry;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -71,7 +71,7 @@ public class SecondaryOption
         return null;
     }
 
-    public ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map)
+    public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
     {
         if(mFilter != null)
         {
@@ -86,7 +86,7 @@ public class SecondaryOption
 
         LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds);
 
-        ArrayList<Integer> sort(Map<Integer, ArrayList<TeamMatchData>> map);
+        ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map);
     }
 
 }

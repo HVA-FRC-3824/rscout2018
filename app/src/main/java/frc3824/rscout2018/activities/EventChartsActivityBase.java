@@ -3,6 +3,7 @@ package frc3824.rscout2018.activities;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import activitystarter.ActivityStarter;
-import activitystarter.MakeActivityStarter;
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.custom_charts.MainOption;
 import frc3824.rscout2018.custom_charts.SecondaryOption;
@@ -58,7 +57,7 @@ public class EventChartsActivityBase extends RScoutActivity implements AdapterVi
     EventChartDrawListViewAdapter mDrawerAdapter;
 
     private ArrayList<Integer> mTeamNumbers;
-    private Map<Integer, ArrayList<TeamMatchData>> mTeamMatches;
+    private SparseArray< ArrayList<TeamMatchData> > mTeamMatches;
     private ArrayList<TeamNumberCheck> mTeamNumbersSelect;
     private ArrayList<String> mCurrentTeamNumbers;
     private ArrayList<Integer> mSortedTeamNumbers;
@@ -124,11 +123,17 @@ public class EventChartsActivityBase extends RScoutActivity implements AdapterVi
         mSecondaryDropdown = findViewById(R.id.secondary_dropdown);
 
         mTeamNumbers = Database.getInstance().getTeamNumbers();
-        mTeamMatches = new HashMap<>();
+        mTeamMatches = new SparseArray<>();
         for (int teamNumber : mTeamNumbers)
         {
             Team team = new Team(teamNumber);
-            mTeamMatches.put(teamNumber, new ArrayList(team.getMatches().values()));
+            ArrayList<TeamMatchData> matches_list = new ArrayList<>();
+            SparseArray<TeamMatchData> matches = team.getMatches();
+            for(int i = 0, end = matches.size(); i < end; i++)
+            {
+                matches_list.add(matches.valueAt(i));
+            }
+            mTeamMatches.put(teamNumber, matches_list);
         }
 
         //region Drawer Setup

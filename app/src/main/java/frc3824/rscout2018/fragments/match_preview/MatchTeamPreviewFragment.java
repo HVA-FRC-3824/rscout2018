@@ -2,9 +2,9 @@ package frc3824.rscout2018.fragments.match_preview;
 
 import android.app.Fragment;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -48,14 +48,25 @@ public class MatchTeamPreviewFragment extends Fragment implements OnClickListene
     ArrayList<String> mPictureFilepaths = null;
     CarouselView mCarouselView = null;
 
-    public void setTeamNumber(int teamNumber, boolean red)
+    public void setTeamNumber(int teamNumber)
     {
         mTeam = new Team(teamNumber);
         mPreviewTeam = new MatchPreviewTeam();
         mPreviewTeam.setTeamNumber(teamNumber);
-        mRed = red;
 
         mTeamPitData = mTeam.getPit();
+        setupCarousel();
+
+
+        if (mView != null)
+        {
+            mBinding.setTeam(mPreviewTeam);
+            new UpdateTask().execute();
+        }
+    }
+
+    private void setupCarousel()
+    {
         if(mTeamPitData != null)
         {
             mPictureFilepaths = mTeamPitData.getPictureFilepaths();
@@ -96,22 +107,8 @@ public class MatchTeamPreviewFragment extends Fragment implements OnClickListene
                 }
             }
         }
-
-
-        if (mView != null)
-        {
-            if (mRed)
-            {
-                mView.setBackgroundColor(Color.RED);
-            }
-            else
-            {
-                mView.setBackgroundColor(Color.BLUE);
-            }
-            mBinding.setTeam(mPreviewTeam);
-            new UpdateTask().execute();
-        }
     }
+
 
     /**
      * {@inheritDoc}
@@ -133,55 +130,12 @@ public class MatchTeamPreviewFragment extends Fragment implements OnClickListene
         }
         mView = mBinding.getRoot();
 
-        if (mRed)
-        {
-            mView.setBackgroundColor(Color.RED);
-        }
-        else
-        {
-            mView.setBackgroundColor(Color.BLUE);
-        }
-
         // Inflate the carousel
         mCarouselView = mView.findViewById(R.id.carousel);
         mCarouselView.setImageListener(this);
 
 
-        if(mTeamPitData != null)
-        {
-            // If there are pictures then display the default image
-            if (mTeamPitData.numberOfPictures() > 0)
-            {
-                String defaultFilepath = mTeamPitData.getDefaultPictureFilepath();
-                mCarouselView.setPageCount(mPictureFilepaths.size());
-
-                // If there is a default image
-                if (!defaultFilepath.isEmpty())
-                {
-                    int index = mPictureFilepaths.indexOf(defaultFilepath);
-                    // Show the default image
-                    if (index > -1)
-                    {
-                        mCarouselView.setCurrentItem(index);
-                    }
-                    // if the default picture isn't in the list then show the first one
-                    else
-                    {
-                        mCarouselView.setCurrentItem(0);
-                    }
-                }
-                // if there is no default picture then show the first one
-                else
-                {
-                    mCarouselView.setCurrentItem(0);
-                }
-            }
-            // Otherwise hide the carousel and N/A buttons
-            else
-            {
-                mCarouselView.setVisibility(View.GONE);
-            }
-        }
+       setupCarousel();
 
         mView.findViewById(R.id.view_team).setOnClickListener(this);
 
@@ -212,8 +166,10 @@ public class MatchTeamPreviewFragment extends Fragment implements OnClickListene
         @Override
         protected Object doInBackground(Object[] objects)
         {
-            for (TeamMatchData teamMatchData : mTeam.getMatches().values())
+            SparseArray<TeamMatchData> matches = mTeam.getMatches();
+            for (int matchIndex = 0, end = matches.size(); matchIndex < end; matchIndex++)
             {
+                TeamMatchData teamMatchData = matches.valueAt(matchIndex);
                 mPreviewTeam.setYellowCard(teamMatchData.isYellowCard());
                 mPreviewTeam.setRedCard(teamMatchData.isRedCard());
 

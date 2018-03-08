@@ -189,7 +189,7 @@ public class SavableCubes extends View implements View.OnClickListener
                                           mCanvasPaint);
                         break;
                     default:
-                        assert (false);
+                        throw new AssertionError();
                 }
             }
         }
@@ -274,7 +274,7 @@ public class SavableCubes extends View implements View.OnClickListener
                     }
                 }
             }
-            else if(mCubeEvents.get(mCubeEvents.size() - 1).equals(Constants.MatchScouting.CubeEvents.PICK_UP))
+            else if(mCubeEvents.get(mCubeEvents.size() - 1).getEvent().equals(Constants.MatchScouting.CubeEvents.PICK_UP))
             {
                 mPickedUp = true;
             }

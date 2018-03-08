@@ -49,7 +49,7 @@ public class SavableAutoCompleteTextView extends LinearLayout implements TextWat
         mResourceStrings = context.getResources().getStringArray(autocompleteValueId);
         typedArray.recycle();
 
-        mAutoCompleteTextView = findViewById(R.id.autocompletetextview);
+        mAutoCompleteTextView = findViewById(R.id.autocomplete_textview);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, mResourceStrings);
         mAutoCompleteTextView.setAdapter(adapter);
         mAutoCompleteTextView.addTextChangedListener(this);

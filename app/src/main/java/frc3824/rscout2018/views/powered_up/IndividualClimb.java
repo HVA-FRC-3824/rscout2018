@@ -6,8 +6,12 @@ import android.view.LayoutInflater;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
+
+import static java.lang.String.format;
 
 /**
  * Created by frc3824
@@ -53,7 +57,7 @@ public class IndividualClimb extends TableLayout
             }
             if (mTeamMatchData.getClimbTime() > 0)
             {
-                mTime.setText(String.format("%.2fs", (float)mTeamMatchData.getClimbTime() / 1000.0));
+                mTime.setText(format(Locale.US, "%.2fs", (float)mTeamMatchData.getClimbTime() / 1000.0));
             }
         }
     }

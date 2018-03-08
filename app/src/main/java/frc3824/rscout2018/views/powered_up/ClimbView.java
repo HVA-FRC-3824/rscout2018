@@ -6,8 +6,8 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
-import android.widget.LinearLayout;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -40,7 +40,7 @@ public class ClimbView extends ConstraintLayout
     PieChart mMethodChart;
 
     Team mTeam;
-    ArrayList<TeamMatchData> mMatches;
+    SparseArray<TeamMatchData> mMatches;
 
     public ClimbView(Context context, @Nullable AttributeSet attrs)
     {
@@ -63,7 +63,7 @@ public class ClimbView extends ConstraintLayout
     public void setTeam(Team team)
     {
         mTeam = team;
-        mMatches = new ArrayList<>(mTeam.getMatches().values());
+        mMatches = mTeam.getMatches();
         if(mTimeChart != null)
         {
             new UpdateTask().execute();
@@ -110,7 +110,6 @@ public class ClimbView extends ConstraintLayout
         @Override
         protected Object doInBackground(Object[] objects)
         {
-
             ArrayList<Entry> statusEntries = new ArrayList<>();
             ArrayList<Entry> methodEntries = new ArrayList<>();
             ArrayList<Entry> timeEntries = new ArrayList<>();
@@ -125,8 +124,9 @@ public class ClimbView extends ConstraintLayout
             float timeSum = 0;
             float timeNum = 0;
             ArrayList<String> matchLabels = new ArrayList<>();
-            for (TeamMatchData tmd : mMatches)
+            for (int i = 0, end = mMatches.size(); i < end; i++)
             {
+                TeamMatchData tmd = mMatches.valueAt(i);
                 int statusIndex = statusOptions.indexOf(tmd.getClimbStatus());
                 if(statusIndex > -1)
                 {

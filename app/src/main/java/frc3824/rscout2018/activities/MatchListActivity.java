@@ -1,12 +1,12 @@
 package frc3824.rscout2018.activities;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +14,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Locale;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
@@ -26,6 +25,8 @@ import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.ScoutHeader;
 import frc3824.rscout2018.views.ScoutHeaderInterface;
+
+import static java.lang.String.format;
 
 /**
  * @class MatchListActivity
@@ -122,7 +123,7 @@ public class MatchListActivity extends Activity implements View.OnClickListener
         @Override
         public void home()
         {
-            HomeActivityStarter.start(MatchListActivity.this);
+            HomeActivityStarter.startWithFlags(MatchListActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         }
 
         @Override
@@ -146,7 +147,7 @@ public class MatchListActivity extends Activity implements View.OnClickListener
     {
         LayoutInflater mLayoutInflator;
         int mNumberOfMatches;
-        Map<Integer, Integer> mTeamNumbers;
+        SparseIntArray mTeamNumbers;
 
         /**
          * Constructor
@@ -156,7 +157,7 @@ public class MatchListActivity extends Activity implements View.OnClickListener
             mLayoutInflator = getLayoutInflater();
             if (mNextPage.equals(Constants.IntentExtras.NextPageOptions.MATCH_SCOUTING))
             {
-                mTeamNumbers = new HashMap<>();
+                mTeamNumbers = new SparseIntArray();
             }
             mNumberOfMatches = Database.getInstance().numberOfMatches();
         }
@@ -235,7 +236,7 @@ public class MatchListActivity extends Activity implements View.OnClickListener
          * {@inheritDoc}
          */
         @Override
-        public View getView(int position, View view, ViewGroup viewGroup)
+        public View getView(int position, View view, ViewGroup parent)
         {
             // Inflate the view if it is null
             if (view == null)
@@ -247,10 +248,8 @@ public class MatchListActivity extends Activity implements View.OnClickListener
                         {
                             view = mLayoutInflator.inflate(R.layout.list_item_fbutton, null);
                         }
-                        else // mMatchScoutPosition == 6 (all)
-                        {
-                            // TODO: 9/20/17  Admin
-                        }
+                        // mMatchScoutPosition == 6 (all)
+                        // TODO: 9/20/17  Admin
                         break;
                     case Constants.IntentExtras.NextPageOptions.MATCH_PREVIEW:
                     case Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING:
@@ -265,7 +264,7 @@ public class MatchListActivity extends Activity implements View.OnClickListener
                     if (mMatchScoutPosition < 6)
                     {
                         int teamNumber;
-                        if (mTeamNumbers.containsKey(position + 1))
+                        if (mTeamNumbers.get(position + 1, -1) != -1)
                         {
                             teamNumber = mTeamNumbers.get(position + 1);
                         }
@@ -275,18 +274,15 @@ public class MatchListActivity extends Activity implements View.OnClickListener
                             teamNumber = m.getTeamNumber(mMatchScoutPosition);
                             mTeamNumbers.put(position + 1, teamNumber);
                         }
-                        ((TextView) view).setText(String.format("Match: %d Team: %d",
-                                                                position + 1,
-                                                                teamNumber));
+                        ((TextView) view).setText(format(Locale.US, "Match: %d Team: %d",
+                                                         position + 1,
+                                                         teamNumber));
                     }
-                    else
-                    {
-                        // TODO: 9/20/17  Admin
-                    }
+                    // TODO: 9/20/17  Admin
                     break;
                 case Constants.IntentExtras.NextPageOptions.MATCH_PREVIEW:
                 case Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING:
-                    ((TextView) view).setText(String.format("Match: %d", position + 1));
+                    ((TextView) view).setText(format(Locale.US, "Match: %d", position + 1));
                     break;
             }
 
@@ -344,17 +340,8 @@ public class MatchListActivity extends Activity implements View.OnClickListener
                     MatchPreviewActivityStarter.start(MatchListActivity.this, view.getId());
                     break;
                 default:
-                    assert (false);
+                    throw new AssertionError();
             }
         }
-    }
-
-    /**
-     * Removes back pressed option
-     */
-    @Override
-    public void onBackPressed()
-    {
-        return;
     }
 }

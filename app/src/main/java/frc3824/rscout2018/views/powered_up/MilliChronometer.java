@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 import java.text.DecimalFormat;
 
@@ -14,7 +13,7 @@ import java.text.DecimalFormat;
  *
  * Variant of the android chronometer so that it shows millisecond
  */
-public class MilliChronometer extends TextView
+public class MilliChronometer extends android.support.v7.widget.AppCompatTextView
 {
     public interface OnChronometerTickListener
     {
@@ -28,6 +27,7 @@ public class MilliChronometer extends TextView
     private static final int TICK_WHAT = 2;
     long timeElapsed;
     OnChronometerTickListener mOnChronometerTickListener;
+    private Handler mHandler;
 
     public MilliChronometer(Context context)
     {
@@ -50,6 +50,19 @@ public class MilliChronometer extends TextView
     {
         mBase = SystemClock.elapsedRealtime();
         updateText(mBase);
+        mHandler = new Handler()
+        {
+            public void handleMessage(Message m)
+            {
+                if (mRunning)
+                {
+                    updateText(SystemClock.elapsedRealtime());
+                    dispatchChronometerTick();
+                    sendMessageDelayed(Message.obtain(this, TICK_WHAT),
+                                       100);
+                }
+            }
+        };
     }
 
     public void setBase(long base)
@@ -203,20 +216,6 @@ public class MilliChronometer extends TextView
             mRunning = running;
         }
     }
-
-    private Handler mHandler = new Handler()
-    {
-        public void handleMessage(Message m)
-        {
-            if (mRunning)
-            {
-                updateText(SystemClock.elapsedRealtime());
-                dispatchChronometerTick();
-                sendMessageDelayed(Message.obtain(this, TICK_WHAT),
-                                   100);
-            }
-        }
-    };
 
     void dispatchChronometerTick()
     {

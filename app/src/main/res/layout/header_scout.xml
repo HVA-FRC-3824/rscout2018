@@ -9,19 +9,22 @@
         android:id="@+id/previous"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/left" />
+        android:src="@drawable/left"
+        android:contentDescription="Previous"/>
 
     <ImageButton
         android:id="@+id/home"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:src="@drawable/home" />
+        android:src="@drawable/home"
+        android:contentDescription="Home"/>
 
     <ImageButton
         android:id="@+id/list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/list" />
+        android:src="@drawable/list"
+        android:contentDescription="List"/>
 
     <View
         android:layout_width="0dp"
@@ -49,12 +52,14 @@
         android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/save" />
+        android:src="@drawable/save"
+        android:contentDescription="Save"/>
 
     <ImageButton
         android:id="@+id/next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/right" />
+        android:src="@drawable/right"
+        android:contentDescription="Next"/>
 
 </LinearLayout>

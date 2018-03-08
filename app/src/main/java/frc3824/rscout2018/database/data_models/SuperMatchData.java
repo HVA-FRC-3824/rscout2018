@@ -6,8 +6,6 @@ import android.text.TextWatcher;
 
 import com.google.firebase.database.Exclude;
 
-import java.util.Arrays;
-
 import frc3824.rscout2018.views.SavableCounter;
 
 public class SuperMatchData extends DataModel

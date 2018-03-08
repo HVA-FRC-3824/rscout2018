@@ -14,6 +14,7 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 import frc3824.rscout2018.R;
@@ -81,7 +82,7 @@ public class ChartFragment extends Fragment
         mBarChart.setVisibility(View.GONE);
         mLLDChart.setVisibility(View.VISIBLE);
 
-        list.sort(new Comparator<TeamLLDItem>()
+        Collections.sort(list, new Comparator<TeamLLDItem>()
         {
             @Override
             public int compare(TeamLLDItem lhs, TeamLLDItem rhs)
@@ -122,7 +123,7 @@ public class ChartFragment extends Fragment
         mLLDChart.setVisibility(View.GONE);
         mBarChart.setVisibility(View.VISIBLE);
 
-        list.sort(new Comparator<TeamPickListItem>()
+        Collections.sort(list, new Comparator<TeamPickListItem>()
         {
             @Override
             public int compare(TeamPickListItem lhs, TeamPickListItem rhs)

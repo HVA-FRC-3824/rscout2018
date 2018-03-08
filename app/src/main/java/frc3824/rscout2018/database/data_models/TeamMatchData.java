@@ -678,7 +678,7 @@ public class TeamMatchData extends DataModel
             return "No scout name";
         }
 
-        if(climbStatus == Constants.MatchScouting.Climb.Status.CLIMB && climbMethod.isEmpty())
+        if(climbStatus.equals(Constants.MatchScouting.Climb.Status.CLIMB) && climbMethod.isEmpty())
         {
             return "Climb status set to 'Climb', but no method is selected";
         }

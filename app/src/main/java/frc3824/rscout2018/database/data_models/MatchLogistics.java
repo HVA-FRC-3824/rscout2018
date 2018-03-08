@@ -37,7 +37,10 @@ public class MatchLogistics extends DataModel
     @Exclude
     public int getTeamNumber(int position)
     {
-        assert(position >= 0 && position < teamNumbers.size());
+        if (!(position >= 0 && position < teamNumbers.size()))
+        {
+            throw new AssertionError();
+        }
         return teamNumbers.get(position);
     }
 
@@ -48,7 +51,10 @@ public class MatchLogistics extends DataModel
     @Bindable
     public ArrayList<Integer> getTeamNumbers()
     {
-        assert(teamNumbers.size() == 6);
+        if (teamNumbers.size() != 6)
+        {
+            throw new AssertionError();
+        }
         return teamNumbers;
     }
 
@@ -58,7 +64,10 @@ public class MatchLogistics extends DataModel
     @Exclude
     public void setTeamNumbers(ArrayList<Integer> teamNumbers)
     {
-        assert(teamNumbers.size() == 6);
+        if (teamNumbers.size() != 6)
+        {
+            throw new AssertionError();
+        }
         this.teamNumbers = teamNumbers;
         notifyChange();
     }
@@ -67,58 +76,80 @@ public class MatchLogistics extends DataModel
     @Exclude
     public boolean isRed(int teamNumber)
     {
-        assert(teamNumbers.size() == 6);
-        assert(this.teamNumbers.indexOf(teamNumber) != -1);
+        if (teamNumbers.size() != 6 || teamNumbers.indexOf(teamNumber) == -1)
+        {
+            throw new AssertionError();
+        }
         return this.teamNumbers.indexOf(teamNumber) >= 3;
     }
 
     @Exclude
     public boolean isBlue(int teamNumber)
     {
-        assert(teamNumbers.size() == 6);
-        assert(this.teamNumbers.indexOf(teamNumber) != -1);
+        if (teamNumbers.size() != 6 || teamNumbers.indexOf(teamNumber) == -1)
+        {
+            throw new AssertionError();
+        }
         return this.teamNumbers.indexOf(teamNumber) < 3;
     }
 
     @Exclude
     public int getBlue1()
     {
-        assert(teamNumbers.size() == 6);
+        if (teamNumbers.size() != 6)
+        {
+            throw new AssertionError();
+        }
         return teamNumbers.get(0);
     }
 
     @Exclude
     public int getBlue2()
     {
-        assert(teamNumbers.size() == 6);
+        if (teamNumbers.size() != 6)
+        {
+            throw new AssertionError();
+        }
         return teamNumbers.get(1);
     }
 
     @Exclude
     public int getBlue3()
     {
-        assert(teamNumbers.size() == 6);
+        if (teamNumbers.size() != 6)
+        {
+            throw new AssertionError();
+        }
         return teamNumbers.get(2);
     }
 
     @Exclude
     public int getRed1()
     {
-        assert(teamNumbers.size() == 6);
+        if (teamNumbers.size() != 6)
+        {
+            throw new AssertionError();
+        }
         return teamNumbers.get(3);
     }
 
     @Exclude
     public int getRed2()
     {
-        assert(teamNumbers.size() == 6);
+        if (teamNumbers.size() != 6)
+        {
+            throw new AssertionError();
+        }
         return teamNumbers.get(4);
     }
 
     @Exclude
     public int getRed3()
     {
-        assert(teamNumbers.size() == 6);
+        if (teamNumbers.size() != 6)
+        {
+            throw new AssertionError();
+        }
         return teamNumbers.get(5);
     }
 

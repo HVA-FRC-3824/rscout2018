@@ -77,9 +77,6 @@ public class MatchStartFragment extends MatchScoutFragment implements ImageListe
         {
             Glide.with(this).load(mPictureFilepaths.get(position)).into(imageView);
         }
-        else
-        {
-            // todo(Andrew): error
-        }
+        // todo(Andrew): error
     }
 }

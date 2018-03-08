@@ -1,7 +1,6 @@
 package frc3824.rscout2018.database.data_models;
 
-import java.util.HashMap;
-import java.util.Map;
+import android.util.SparseArray;
 
 import frc3824.rscout2018.database.Database;
 
@@ -33,20 +32,16 @@ public class Team
     }
     //endregion
     //region Matches
-    Map<Integer, TeamMatchData> mMatches = new HashMap<>();
+    SparseArray<TeamMatchData> mMatches = new SparseArray<>();
 
-    public Map<Integer, TeamMatchData> getMatches()
+    public SparseArray<TeamMatchData> getMatches()
     {
         return mMatches;
     }
 
     public TeamMatchData getMatch(int matchNumber)
     {
-        if(mMatches.containsKey(matchNumber))
-        {
-            return mMatches.get(matchNumber);
-        }
-        return null;
+        return mMatches.get(matchNumber);
     }
 
     public void addMatch(TeamMatchData teamMatchData)
@@ -55,20 +50,16 @@ public class Team
     }
     //endregion
     //region Super Matches
-    Map<Integer, SuperMatchData> mSuperMatches = new HashMap<>();
+    SparseArray<SuperMatchData> mSuperMatches = new SparseArray<>();
 
-    public Map<Integer, SuperMatchData> getSuperMatches()
+    public SparseArray<SuperMatchData> getSuperMatches()
     {
         return mSuperMatches;
     }
 
     public SuperMatchData getSuperMatch(int matchNumber)
     {
-        if(mSuperMatches.containsKey(matchNumber))
-        {
-            return mSuperMatches.get(matchNumber);
-        }
-        return null;
+        return mSuperMatches.get(matchNumber);
     }
 
     public void addSuperMatch(SuperMatchData superMatchData)
@@ -96,7 +87,8 @@ public class Team
 
         mLogistics = Database.getInstance().getTeamLogistics(teamNumber);
         mPit = Database.getInstance().getTeamPitData(teamNumber);
-        mMatches = new HashMap<>();
+        mMatches = new SparseArray<>();
+        mSuperMatches = new SparseArray<>();
 
         if(mLogistics != null)
         {

@@ -14,7 +14,7 @@ import com.sdsmdg.tastytoast.TastyToast;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import frc3824.rscout2018.buses.ToastBus;
@@ -34,6 +34,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+
+import static java.lang.String.format;
 
 /**
  * @author frc3824
@@ -83,7 +85,7 @@ public class CommunicationService extends IntentService
         String port = sharedPreferences.getString(Constants.Settings.SERVER_PORT, "38241");
         if(!url.isEmpty() && !port.isEmpty())
         {
-            mUrl = String.format("http://%s:%s", url, port);
+            mUrl = format(Locale.US, "http://%s:%s", url, port);
         }
     }
 
@@ -106,10 +108,6 @@ public class CommunicationService extends IntentService
         else if (intent.hasExtra(Constants.IntentExtras.DOWNLOAD_SCHEDULE))
         {
             getSchedule();
-        }
-        else if (intent.hasExtra(Constants.IntentExtras.DOWNLOAD_FULL_UPDATE))
-        {
-            // getFullUpdate();
         }
         else if (intent.hasExtra(Constants.IntentExtras.UPLOAD_PIT_DATA))
         {
@@ -167,7 +165,7 @@ public class CommunicationService extends IntentService
             }
             else
             {
-                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
+                ToastBus.getInstance().publish(new ToastRequest(format(Locale.US, "Error: Response code: %d", response.code()),
                                                                 TastyToast.LENGTH_LONG,
                                                                 TastyToast.ERROR));
             }
@@ -203,9 +201,9 @@ public class CommunicationService extends IntentService
             }
             else
             {
-                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
-                        TastyToast.LENGTH_LONG,
-                        TastyToast.ERROR));
+                ToastBus.getInstance().publish(new ToastRequest(format(Locale.US, "Error: Response code: %d", response.code()),
+                                                                TastyToast.LENGTH_LONG,
+                                                                TastyToast.ERROR));
             }
         }
         catch (IOException e)
@@ -248,7 +246,7 @@ public class CommunicationService extends IntentService
             }
             else
             {
-                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
+                ToastBus.getInstance().publish(new ToastRequest(format(Locale.US, "Error: Response code: %d", response.code()),
                                                                 TastyToast.LENGTH_LONG,
                                                                 TastyToast.ERROR));
                 // If failure then add to the queue for when connection is back
@@ -288,9 +286,9 @@ public class CommunicationService extends IntentService
             }
             else
             {
-                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
-                        TastyToast.LENGTH_LONG,
-                        TastyToast.ERROR));
+                ToastBus.getInstance().publish(new ToastRequest(format(Locale.US, "Error: Response code: %d", response.code()),
+                                                                TastyToast.LENGTH_LONG,
+                                                                TastyToast.ERROR));
             }
         }
         catch (IOException e)
@@ -324,9 +322,9 @@ public class CommunicationService extends IntentService
             }
             else
             {
-                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
-                        TastyToast.LENGTH_LONG,
-                        TastyToast.ERROR));
+                ToastBus.getInstance().publish(new ToastRequest(format(Locale.US, "Error: Response code: %d", response.code()),
+                                                                TastyToast.LENGTH_LONG,
+                                                                TastyToast.ERROR));
             }
         }
         catch (IOException e)
@@ -368,7 +366,7 @@ public class CommunicationService extends IntentService
             }
             else
             {
-                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
+                ToastBus.getInstance().publish(new ToastRequest(format(Locale.US, "Error: Response code: %d", response.code()),
                                                                 TastyToast.LENGTH_LONG,
                                                                 TastyToast.ERROR));
                 // If failure then add to the queue for when connection is back
@@ -419,8 +417,8 @@ public class CommunicationService extends IntentService
                 else
                 {
                     ToastBus.getInstance()
-                            .publish(new ToastRequest(String.format("Error: Response code: %d",
-                                                                    response.code()),
+                            .publish(new ToastRequest(format(Locale.US, "Error: Response code: %d",
+                                                             response.code()),
                                                       TastyToast.LENGTH_LONG,
                                                       TastyToast.ERROR));
                 }
@@ -456,8 +454,8 @@ public class CommunicationService extends IntentService
                 else
                 {
                     ToastBus.getInstance()
-                            .publish(new ToastRequest(String.format("Error: Response code: %d",
-                                                                    response.code()),
+                            .publish(new ToastRequest(format(Locale.US, "Error: Response code: %d",
+                                                             response.code()),
                                                       TastyToast.LENGTH_LONG,
                                                       TastyToast.ERROR));
                 }
@@ -492,10 +490,10 @@ public class CommunicationService extends IntentService
                 else
                 {
                     ToastBus.getInstance()
-                            .publish(new ToastRequest(String.format("Error: Response code: %d",
-                                    response.code()),
-                                    TastyToast.LENGTH_LONG,
-                                    TastyToast.ERROR));
+                            .publish(new ToastRequest(format(Locale.US, "Error: Response code: %d",
+                                                             response.code()),
+                                                      TastyToast.LENGTH_LONG,
+                                                      TastyToast.ERROR));
                 }
             }
             catch (IOException e)
@@ -531,7 +529,7 @@ public class CommunicationService extends IntentService
             }
             else
             {
-                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
+                ToastBus.getInstance().publish(new ToastRequest(format(Locale.US, "Error: Response code: %d", response.code()),
                                                                 TastyToast.LENGTH_LONG,
                                                                 TastyToast.ERROR));
             }
@@ -568,7 +566,7 @@ public class CommunicationService extends IntentService
             }
             else
             {
-                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
+                ToastBus.getInstance().publish(new ToastRequest(format(Locale.US, "Error: Response code: %d", response.code()),
                                                                 TastyToast.LENGTH_LONG,
                                                                 TastyToast.ERROR));
             }
@@ -605,7 +603,7 @@ public class CommunicationService extends IntentService
             }
             else
             {
-                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
+                ToastBus.getInstance().publish(new ToastRequest(format(Locale.US, "Error: Response code: %d", response.code()),
                                                                 TastyToast.LENGTH_LONG,
                                                                 TastyToast.ERROR));
             }
@@ -649,9 +647,9 @@ public class CommunicationService extends IntentService
             }
             else
             {
-                ToastBus.getInstance().publish(new ToastRequest(String.format("Error: Response code: %d", response.code()),
-                        TastyToast.LENGTH_LONG,
-                        TastyToast.ERROR));
+                ToastBus.getInstance().publish(new ToastRequest(format(Locale.US, "Error: Response code: %d", response.code()),
+                                                                TastyToast.LENGTH_LONG,
+                                                                TastyToast.ERROR));
             }
         }
         catch (IOException e)

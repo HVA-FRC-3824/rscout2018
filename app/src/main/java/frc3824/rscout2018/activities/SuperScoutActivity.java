@@ -9,9 +9,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.SparseArray;
 
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
-import com.sdsmdg.tastytoast.TastyToast;
+
+import java.util.Locale;
 
 import activitystarter.ActivityStarter;
 import activitystarter.Arg;
@@ -21,10 +23,13 @@ import frc3824.rscout2018.database.data_models.MatchLogistics;
 import frc3824.rscout2018.database.data_models.SuperMatchData;
 import frc3824.rscout2018.fragments.super_scout.SuperNotesFragment;
 import frc3824.rscout2018.fragments.super_scout.SuperPowerUpFragment;
+import frc3824.rscout2018.fragments.super_scout.SuperScoutFragment;
 import frc3824.rscout2018.services.CommunicationService;
 import frc3824.rscout2018.utilities.Constants;
 import frc3824.rscout2018.views.ScoutHeader;
 import frc3824.rscout2018.views.ScoutHeaderInterface;
+
+import static java.lang.String.format;
 
 
 public class SuperScoutActivity extends RScoutActivity
@@ -33,8 +38,10 @@ public class SuperScoutActivity extends RScoutActivity
     protected int mMatchNumber = -1;
     private boolean mPractice = false;
     SuperScoutFragmentPagerAdapter mFPA;
+    ViewPager mViewPager;
+    ScoutHeader mHeader;
 
-    private SuperMatchData mSMD;
+    private SuperMatchData mSuperMatchData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,59 +51,77 @@ public class SuperScoutActivity extends RScoutActivity
         ActivityStarter.fill(this);
 
 
-        ScoutHeader header = findViewById(R.id.header);
-        header.setInterface(new SuperScoutActivity.SuperScoutHeader());
-
-        // Normal match
-        if (mMatchNumber > 0)
-        {
-            MatchLogistics m = new MatchLogistics(mMatchNumber);
-            header.setTitle(String.format("Match Number: %d",
-                                          mMatchNumber));
-
-            // If on the first match then the previous button should be hidden
-            if (mMatchNumber == 1)
-            {
-                header.removePrevious();
-            }
-
-            // If on the final match then next button should be hidden
-            if (mMatchNumber == Database.getInstance().numberOfMatches())
-            {
-                header.removeNext();
-            }
-
-            mSMD = Database.getInstance().getSuperMatchData(mMatchNumber);
-            if(mSMD == null)
-            {
-                mSMD = new SuperMatchData(mMatchNumber);
-            }
-        }
-        // Practice Match
-        else
-        {
-            mPractice = true;
-            header.setTitle("Practice Match");
-            mSMD = new SuperMatchData( -1);
-            header.removeSave();
-        }
+        mHeader = findViewById(R.id.header);
+        mHeader.setInterface(new SuperScoutActivity.SuperScoutHeader());
 
         // Keep screen on while scouting
         findViewById(android.R.id.content).setKeepScreenOn(true);
 
         // Setup the TABS and fragment pages
-        mFPA = new SuperScoutActivity.SuperScoutFragmentPagerAdapter(getFragmentManager(),
-                                                                     mSMD);
+        mFPA = new SuperScoutActivity.SuperScoutFragmentPagerAdapter(getFragmentManager());
 
         // Setup view pager
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(mFPA);
-        viewPager.setOffscreenPageLimit(mFPA.getCount());
+        mViewPager = findViewById(R.id.view_pager);
+        mViewPager.setAdapter(mFPA);
+        mViewPager.setOffscreenPageLimit(mFPA.getCount());
+
+        // Normal match
+        if (mMatchNumber > 0)
+        {
+            setup();
+        }
+        // Practice Match
+        else
+        {
+            mPractice = true;
+            mHeader.setTitle("Practice Match");
+            mSuperMatchData = new SuperMatchData(-1);
+            mHeader.removeSave();
+        }
 
         SmartTabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setBackgroundColor(Color.BLUE);
-        tabLayout.setViewPager(viewPager);
+        tabLayout.setViewPager(mViewPager);
     }
+
+    private void setup()
+    {
+        if (mMatchNumber > 0)
+        {
+            MatchLogistics m = new MatchLogistics(mMatchNumber);
+            mHeader.setTitle(format(Locale.US, "Match Number: %d",
+                                    mMatchNumber));
+
+            // If on the first match then the previous button should be hidden
+            if (mMatchNumber == 1)
+            {
+                mHeader.removePrevious();
+            }
+            else
+            {
+                mHeader.addPrevious();
+            }
+
+            // If on the final match then next button should be hidden
+            if (mMatchNumber == Database.getInstance().numberOfMatches())
+            {
+                mHeader.removeNext();
+            }
+            else
+            {
+                mHeader.addNext();
+            }
+
+            mSuperMatchData = Database.getInstance().getSuperMatchData(mMatchNumber);
+            if(mSuperMatchData == null)
+            {
+                mSuperMatchData = new SuperMatchData(mMatchNumber);
+            }
+            mFPA.update();
+            mViewPager.setCurrentItem(0);
+        }
+    }
+
 
     /**
      * Inner class that handles pressing the buttons on the header
@@ -111,11 +136,11 @@ public class SuperScoutActivity extends RScoutActivity
         {
             if (mPractice) // Don't need to worry about saving for practice
             {
-                MatchScoutActivityStarter.start(SuperScoutActivity.this, -1);
+                setup();
             }
             else
             {
-                if (mSMD.isDirty())
+                if (mSuperMatchData.isDirty())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(SuperScoutActivity.this)
                             .setTitle("Unsaved Changes")
@@ -126,7 +151,7 @@ public class SuperScoutActivity extends RScoutActivity
                                 public void onClick(DialogInterface dialog, int which)
                                 {
                                     // Save to local database
-                                    Database.getInstance().updateSuperMatchData(mSMD);
+                                    Database.getInstance().updateSuperMatchData(mSuperMatchData);
 
                                     // Send to the background service to be sent to server
                                     Intent intent = new Intent(SuperScoutActivity.this, CommunicationService.class);
@@ -134,7 +159,8 @@ public class SuperScoutActivity extends RScoutActivity
                                     intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
                                     startService(intent);
 
-                                    SuperScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber - 1);
+                                    mMatchNumber --;
+                                    setup();
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -142,7 +168,8 @@ public class SuperScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    SuperScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber - 1);
+                                    mMatchNumber --;
+                                    setup();
                                 }
                             })
                             .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
@@ -157,7 +184,8 @@ public class SuperScoutActivity extends RScoutActivity
                 }
                 else
                 {
-                    SuperScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber - 1);
+                    mMatchNumber --;
+                    setup();
                 }
             }
         }
@@ -169,11 +197,11 @@ public class SuperScoutActivity extends RScoutActivity
         {
             if (mPractice) // Don't need to worry about saving for practice
             {
-                MatchScoutActivityStarter.start(SuperScoutActivity.this, -1);
+                setup();
             }
             else
             {
-                if (mSMD.isDirty())
+                if (mSuperMatchData.isDirty())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(SuperScoutActivity.this)
                             .setTitle("Unsaved Changes")
@@ -184,7 +212,7 @@ public class SuperScoutActivity extends RScoutActivity
                                 public void onClick(DialogInterface dialog, int which)
                                 {
                                     // Save to local database
-                                    Database.getInstance().updateSuperMatchData(mSMD);
+                                    Database.getInstance().updateSuperMatchData(mSuperMatchData);
 
                                     // Send to the background service to be sent to server
                                     Intent intent = new Intent(SuperScoutActivity.this, CommunicationService.class);
@@ -192,7 +220,8 @@ public class SuperScoutActivity extends RScoutActivity
                                     intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
                                     startService(intent);
 
-                                    SuperScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber + 1);
+                                    mMatchNumber ++;
+                                    setup();
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -200,7 +229,8 @@ public class SuperScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    SuperScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber + 1);
+                                    mMatchNumber ++;
+                                    setup();
                                 }
                             })
                             .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
@@ -215,7 +245,8 @@ public class SuperScoutActivity extends RScoutActivity
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
-                    SuperScoutActivityStarter.start(SuperScoutActivity.this, mMatchNumber + 1);
+                    mMatchNumber ++;
+                    setup();
                 }
             }
         }
@@ -227,11 +258,11 @@ public class SuperScoutActivity extends RScoutActivity
         {
             if (mPractice) // Don't need to worry about saving for practice
             {
-                HomeActivityStarter.start(SuperScoutActivity.this);
+                HomeActivityStarter.startWithFlags(SuperScoutActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             }
             else
             {
-                if (mSMD.isDirty())
+                if (mSuperMatchData.isDirty())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(SuperScoutActivity.this)
                             .setTitle("Unsaved Changes")
@@ -243,7 +274,7 @@ public class SuperScoutActivity extends RScoutActivity
                                 public void onClick(DialogInterface dialog, int which)
                                 {
                                     // Save to local database
-                                    Database.getInstance().updateSuperMatchData(mSMD);
+                                    Database.getInstance().updateSuperMatchData(mSuperMatchData);
 
                                     // Send to the background service to be sent to server
                                     Intent intent = new Intent(SuperScoutActivity.this, CommunicationService.class);
@@ -251,7 +282,7 @@ public class SuperScoutActivity extends RScoutActivity
                                     intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
                                     startService(intent);
 
-                                    HomeActivityStarter.start(SuperScoutActivity.this);
+                                    HomeActivityStarter.startWithFlags(SuperScoutActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -259,7 +290,7 @@ public class SuperScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    HomeActivityStarter.start(SuperScoutActivity.this);
+                                    HomeActivityStarter.startWithFlags(SuperScoutActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 }
                             })
                             .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
@@ -274,7 +305,7 @@ public class SuperScoutActivity extends RScoutActivity
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
-                    HomeActivityStarter.start(SuperScoutActivity.this);
+                    HomeActivityStarter.startWithFlags(SuperScoutActivity.this, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 }
             }
         }
@@ -286,11 +317,11 @@ public class SuperScoutActivity extends RScoutActivity
         {
             if (mPractice) // Don't need to worry about saving for practice
             {
-                MatchListActivityStarter.start(SuperScoutActivity.this, Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING);
+                onBackPressed();
             }
             else
             {
-                if (mSMD.isDirty())
+                if (mSuperMatchData.isDirty())
                 {
                     AlertDialog.Builder builder = new AlertDialog.Builder(SuperScoutActivity.this)
                             .setTitle("Unsaved Changes")
@@ -301,7 +332,7 @@ public class SuperScoutActivity extends RScoutActivity
                                 public void onClick(DialogInterface dialog, int which)
                                 {
                                     // Save to local database
-                                    Database.getInstance().updateSuperMatchData(mSMD);
+                                    Database.getInstance().updateSuperMatchData(mSuperMatchData);
 
                                     // Send to the background service to be sent to server
                                     Intent intent = new Intent(SuperScoutActivity.this, CommunicationService.class);
@@ -309,7 +340,7 @@ public class SuperScoutActivity extends RScoutActivity
                                     intent.putExtra(Constants.IntentExtras.MATCH_NUMBER, mMatchNumber);
                                     startService(intent);
 
-                                    MatchListActivityStarter.start(SuperScoutActivity.this, Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING);
+                                    onBackPressed();
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -317,7 +348,7 @@ public class SuperScoutActivity extends RScoutActivity
                                 @Override
                                 public void onClick(DialogInterface dialog, int which)
                                 {
-                                    MatchListActivityStarter.start(SuperScoutActivity.this, Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING);
+                                    onBackPressed();
                                 }
                             })
                             .setNeutralButton("Cancel", new DialogInterface.OnClickListener()
@@ -332,7 +363,7 @@ public class SuperScoutActivity extends RScoutActivity
                 }
                 else // Don't need to worry about saving if nothing has changed
                 {
-                    MatchListActivityStarter.start(SuperScoutActivity.this, Constants.IntentExtras.NextPageOptions.SUPER_SCOUTING);
+                    onBackPressed();
                 }
             }
         }
@@ -345,7 +376,7 @@ public class SuperScoutActivity extends RScoutActivity
             if(!mPractice) // Don't need to worry about saving for practice
             {
                 // Save to local database
-                Database.getInstance().updateSuperMatchData(mSMD);
+                Database.getInstance().updateSuperMatchData(mSuperMatchData);
 
                 // Send to the background service to be sent to server
                 Intent intent = new Intent(SuperScoutActivity.this, CommunicationService.class);
@@ -365,13 +396,13 @@ public class SuperScoutActivity extends RScoutActivity
     {
         static final String TAG = "MatchScoutFragmentPagerAdapter";
 
-        SuperMatchData mSuperMatchData;
+        SparseArray<SuperScoutFragment> mFragments;
 
 
-        public SuperScoutFragmentPagerAdapter(FragmentManager fm, SuperMatchData superMatchData)
+        public SuperScoutFragmentPagerAdapter(FragmentManager fm)
         {
             super(fm);
-            mSuperMatchData = superMatchData;
+            mFragments = new SparseArray<>();
         }
 
         /**
@@ -383,21 +414,30 @@ public class SuperScoutActivity extends RScoutActivity
         @Override
         public Fragment getItem(int position)
         {
-            assert(position >= 0 && position < Constants.MatchScouting.TABS.length);
+            if (!(position >= 0 && position < Constants.MatchScouting.TABS.length))
+            {
+                throw new AssertionError();
+            }
+            if(mFragments.get(position) != null)
+            {
+                return mFragments.get(position);
+            }
+
+            SuperScoutFragment f;
             switch (position)
             {
                 case 0:
-                    SuperPowerUpFragment spuf = new SuperPowerUpFragment();
-                    spuf.setSuperMatchData(mSuperMatchData);
-                    return spuf;
+                    f = new SuperPowerUpFragment();
+                    break;
                 case 1:
-                    SuperNotesFragment snf = new SuperNotesFragment();
-                    snf.setSuperMatchData(mSuperMatchData);
-                    return snf;
+                    f = new SuperNotesFragment();
+                    break;
                 default:
-                    assert(false);
+                    throw new AssertionError();
             }
-            return null;
+            f.setSuperMatchData(mSuperMatchData);
+            mFragments.put(position, f);
+            return f;
         }
 
         /**
@@ -418,17 +458,21 @@ public class SuperScoutActivity extends RScoutActivity
         @Override
         public String getPageTitle(int position)
         {
-            assert(position >= 0 && position < Constants.SuperScouting.TABS.length);
+            if (!(position >= 0 && position < Constants.SuperScouting.TABS.length))
+            {
+                throw new AssertionError();
+            }
             return Constants.SuperScouting.TABS[position];
         }
-    }
 
-    /**
-     * Removes back pressed option
-     */
-    @Override
-    public void onBackPressed()
-    {
-        return;
+        public void update()
+        {
+            for(int i = 0, end = mFragments.size(); i < end; i++)
+            {
+                SuperScoutFragment fragment = mFragments.valueAt(i);
+                fragment.setSuperMatchData(mSuperMatchData);
+            }
+        }
+
     }
 }

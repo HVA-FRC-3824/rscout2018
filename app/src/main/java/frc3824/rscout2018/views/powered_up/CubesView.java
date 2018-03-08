@@ -5,17 +5,21 @@ import android.os.AsyncTask;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.util.Pair;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import frc3824.rscout2018.R;
 import frc3824.rscout2018.database.data_models.Team;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.database.data_models.powered_up.CubeEvent;
 import frc3824.rscout2018.utilities.Constants;
+
+import static java.lang.String.format;
 
 /**
  * Created by frc3824
@@ -25,7 +29,7 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
     CubesInnerView mCubes;
     RadioGroup mOption;
 
-    ArrayList<TeamMatchData> mMatches;
+    SparseArray<TeamMatchData> mMatches;
 
     ArrayList<Pair<Float, Float>> mAutoPickUp;
     ArrayList<Pair<Float, Float>> mAutoPlaced;
@@ -66,7 +70,7 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
 
     public void setTeam(Team team)
     {
-        mMatches = new ArrayList<>(team.getMatches().values());
+        mMatches = team.getMatches();
         if(mCubes != null)
         {
             new UpdateTask().execute();
@@ -76,6 +80,11 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId)
     {
+        if(checkedId == -1)
+        {
+            return;
+        }
+
         switch (checkedId)
         {
             case R.id.auto_pickup:
@@ -139,7 +148,7 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
                 }
                 return;
             default:
-                assert(false);
+                throw new AssertionError();
         }
     }
 
@@ -167,8 +176,9 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
             mTeleopLaunchSuccess = new ArrayList<>();
             mTeleopLaunchFailure = new ArrayList<>();
 
-            for(TeamMatchData tmd : mMatches)
+            for(int matchIndex = 0, end = mMatches.size(); matchIndex < end; matchIndex++)
             {
+                TeamMatchData tmd = mMatches.valueAt(matchIndex);
                 // Shouldn't ever happen
                 if(tmd == null)
                 {
@@ -195,7 +205,7 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
                             mAutoLaunchFailure.add(new Pair<>(cubeEvent.getLocationX(), cubeEvent.getLocationY()));
                             break;
                         default:
-                            assert(false);
+                            throw new AssertionError();
                     }
                 }
 
@@ -286,7 +296,7 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
                             mTeleopLaunchFailure.add(new Pair<>(cubeEvent.getLocationX(), cubeEvent.getLocationY()));
                             break;
                         default:
-                            assert(false);
+                            throw new AssertionError();
                     }
                 }
             }
@@ -305,7 +315,7 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
             }
             else
             {
-                mShortCycleTime.setText(String.format("%.2fs", (double)shortCycleSum / 1000.0f / (double)shortCycleNum));
+                mShortCycleTime.setText(format(Locale.US, "%.2fs", (double)shortCycleSum / 1000.0f / (double)shortCycleNum));
             }
 
             if(mediumCycleNum == 0)
@@ -314,7 +324,7 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
             }
             else
             {
-                mMediumCycleTime.setText(String.format("%.2fs", (double)mediumCycleSum / 1000.0f / (double)mediumCycleNum));
+                mMediumCycleTime.setText(format(Locale.US, "%.2fs", (double)mediumCycleSum / 1000.0f / (double)mediumCycleNum));
             }
 
             if(longCycleNum == 0)
@@ -323,7 +333,7 @@ public class CubesView extends ConstraintLayout implements RadioGroup.OnCheckedC
             }
             else
             {
-                mLongCycleTime.setText(String.format("%.2fs", (double)longCycleSum / 1000.0f / (double)longCycleNum));
+                mLongCycleTime.setText(format(Locale.US, "%.2fs", (double)longCycleSum / 1000.0f / (double)longCycleNum));
             }
 
             onCheckedChanged(mOption, mOption.getCheckedRadioButtonId());

@@ -3,7 +3,6 @@ package frc3824.rscout2018.views.powered_up;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -52,6 +51,7 @@ public class SavableStartLocation extends View
     public void setData(TeamMatchData teamMatchData)
     {
         mTeamMatchData = teamMatchData;
+        invalidate();
     }
 
     @Override
