@@ -173,6 +173,11 @@ public class MatchTeamPreviewFragment extends Fragment implements OnClickListene
                 mPreviewTeam.setYellowCard(teamMatchData.isYellowCard());
                 mPreviewTeam.setRedCard(teamMatchData.isRedCard());
 
+                if(teamMatchData.getCrossedAutoLine())
+                {
+                    mPreviewTeam.incrementAutoCross();
+                }
+
                 mPreviewTeam.addToFouls(teamMatchData.getFouls());
                 mPreviewTeam.addToTechFouls(teamMatchData.getTechFouls());
 

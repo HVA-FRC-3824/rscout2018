@@ -28,6 +28,20 @@ public class MatchPreviewTeam extends BaseObservable
     }
     //endregion
 
+    //region Auto Cross
+    int autoCross;
+
+    @Bindable String getAutoCross()
+    {
+        return String.valueOf(autoCross);
+    }
+
+    public void incrementAutoCross()
+    {
+        autoCross ++;
+        notifyChange();
+    }
+    //endregion
 
     //region Auto Cubes
     //region Auto Switch Attempts

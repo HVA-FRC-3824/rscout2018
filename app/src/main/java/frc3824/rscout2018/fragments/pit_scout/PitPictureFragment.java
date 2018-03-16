@@ -235,7 +235,7 @@ public class PitPictureFragment extends PitScoutFragment implements View.OnClick
                 file.createNewFile();
                 output = new FileOutputStream(file);
 
-                result = result.createScaledBitmap(result, 640, 480, false);
+                result = Bitmap.createScaledBitmap(result, 640, 480, false);
                 result.compress(Bitmap.CompressFormat.PNG, 100, output);
             }
             catch(Exception e)
