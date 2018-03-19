@@ -205,14 +205,7 @@ public class SavableCubes extends View implements View.OnClickListener
 
             if (mFirst)
             {
-                if (mTeamMatchData.getStartedWithCube())
-                {
-                    mPickedUp = true;
-                }
-                else
-                {
-                    mPickedUp = false;
-                }
+                mPickedUp = mTeamMatchData.getStartedWithCube();
             }
 
             mTempCubeEvent = new CubeEvent();
@@ -263,25 +256,17 @@ public class SavableCubes extends View implements View.OnClickListener
                     }
                     else
                     {
-                        if(mTeamMatchData.getAutoCubeEvents().get(mTeamMatchData.getAutoCubeEvents().size() - 1).getEvent().equals(Constants.MatchScouting.CubeEvents.PICK_UP))
-                        {
-                            mPickedUp = false;
-                        }
-                        else
-                        {
-                            mPickedUp = true;
-                        }
+                        mPickedUp = !mTeamMatchData.getAutoCubeEvents()
+                                                   .get(mTeamMatchData.getAutoCubeEvents()
+                                                                      .size() - 1)
+                                                   .getEvent()
+                                                   .equals(Constants.MatchScouting.CubeEvents.PICK_UP);
                     }
                 }
             }
-            else if(mCubeEvents.get(mCubeEvents.size() - 1).getEvent().equals(Constants.MatchScouting.CubeEvents.PICK_UP))
-            {
-                mPickedUp = true;
-            }
-            else
-            {
-                mPickedUp = false;
-            }
+            else mPickedUp = mCubeEvents.get(mCubeEvents.size() - 1)
+                                        .getEvent()
+                                        .equals(Constants.MatchScouting.CubeEvents.PICK_UP);
             invalidate();
         }
     }

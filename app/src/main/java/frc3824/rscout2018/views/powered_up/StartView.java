@@ -31,6 +31,7 @@ public class StartView extends ConstraintLayout
 
     StartLocationView mStartLocationView = null;
     PieChart mStartWithCubeChart = null;
+    PieChart mAutoCrossChart = null;
 
     public StartView(Context context, @Nullable AttributeSet attrs)
     {
@@ -42,12 +43,18 @@ public class StartView extends ConstraintLayout
         mStartLocationView = findViewById(R.id.start_location_heatmap);
         mStartWithCubeChart = findViewById(R.id.start_with_cube_pie);
 
-        // Setup pie chart
+        // Setup pie charts
         mStartWithCubeChart.setUsePercentValues(true);
         mStartWithCubeChart.setDescription(null);
         mStartWithCubeChart.setDrawHoleEnabled(false);
         mStartWithCubeChart.setRotationEnabled(false);
         mStartWithCubeChart.setHighlightPerTapEnabled(true);
+
+        mAutoCrossChart.setUsePercentValues(true);
+        mAutoCrossChart.setDescription(null);
+        mAutoCrossChart.setDrawHoleEnabled(false);
+        mAutoCrossChart.setRotationEnabled(false);
+        mAutoCrossChart.setHighlightPerTapEnabled(true);
 
         if(mMatches != null)
         {
@@ -100,6 +107,32 @@ public class StartView extends ConstraintLayout
                     Color.RED
                 });
                 mStartWithCubeChart.setData(new PieData(new String[]{"Yes", "No"}, dataset));
+
+                entries = new ArrayList<>();
+                yes = 0;
+                no = 0;
+                for(int i = 0, end = mMatches.size(); i < end; i++)
+                {
+                    tmd  = mMatches.valueAt(i);
+                    if(tmd.getCrossedAutoLine())
+                    {
+                        yes++;
+                    }
+                    else
+                    {
+                        no++;
+                    }
+                }
+
+                entries.add(new Entry(yes, 0));
+                entries.add(new Entry(no, 1));
+                dataset = new PieDataSet(entries, "");
+                dataset.setColors(new int[]{
+                        Color.GREEN,
+                        Color.RED
+                });
+                mStartWithCubeChart.setData(new PieData(new String[]{"Yes", "No"}, dataset));
+
                 publishProgress();
             }
             return null;
@@ -110,6 +143,8 @@ public class StartView extends ConstraintLayout
         {
             mStartWithCubeChart.notifyDataSetChanged();
             mStartWithCubeChart.invalidate();
+            mAutoCrossChart.notifyDataSetChanged();
+            mAutoCrossChart.invalidate();
         }
     }
 }
