@@ -348,44 +348,24 @@ app.get('/populateMatches', function(req,res){
 app.get('/populateTeamMatches', function(req,res){
   console.log('filling');
   var matches = []
-  var sql = "SELECT * FROM " + serverEventKey + "matchschedule";
-  con.query(sql, function (err, result) {
-    if (err) {
-      logger.fatal(err);
-      throw err;
-    };
-    for (var i = 0; i < result.length; i++) {
-      result[i].teamNumbers = [result[i].blue1, result[i].blue2, result[i].blue3, result[i].red1, result[i].red2, result[i].red3];
-    }
+  Match.all().then(result => {
     matches = result;
     console.log('got matches');
   });
   var teams = []
-  var sql = "SELECT * FROM " + serverEventKey + "teamstats";
-  con.query(sql, function (err, result) {
-    if (err) {
-      logger.fatal(err);
-      throw err;
-    };
+  Team.all().then(result => {
     teams = result;
     for(var i = 0; i < teams.length; i++) {
       console.log('looping');
       var matchNumbers = [];
-	        for (var j = 0; j < matches.length; j++) {
-        console.log(matches[j].teamNumbers);
+	    for (var j = 0; j < matches.length; j++) {
         if (matches[j].teamNumbers.includes(teams[i].teamNumber)) {
           matchNumbers.push(matches[j].matchNumber);
           console.log(matches[j].matchNumber);
         }
       }
       console.log(matchNumbers);
-      var sql = "UPDATE " + serverEventKey + "teamstats SET matchNumbers = '" + JSON.stringify(matchNumbers) + "' WHERE teamNumber = '" + teams[i].teamNumber + "'";
-      con.query(sql, function (err, result) {
-        if (err) {
-          logger.fatal(err);
-          throw err;
-        };
-      });
+      Team.update({matchNumbers: JSON.stringify(matchNumbers)}, {where:{id: result[i].id}});
     }
   });
   res.sendStatus(200);
