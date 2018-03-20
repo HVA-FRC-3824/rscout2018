@@ -156,10 +156,10 @@ const TeamMatchData = sequelize.define('teammatchdata', {
     type: Sequelize.BOOLEAN
 }, 
   autoCubeEvents: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING(2047)
   },
   teleopCubeEvents: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING(2047)
   },
   climbTime: {
     type: Sequelize.FLOAT
@@ -429,10 +429,6 @@ app.get('/schedule', function (req, res) {
 app.get('/pitData', function (req, res) {
   logger.info('Recieved get pit data request');
   TeamPitData.all().then(result => {
-    if (err) {
-      logger.fatal(err);
-      throw err;
-    };
     JSONresult = JSON.stringify(result);
 	    console.log(JSONresult);
     res.send(JSONresult);
@@ -503,7 +499,7 @@ app.post('/updateTeamMatchData', function (req, res) {
     }
     if (alreadyExists) {
       console.log('Already exists. Deleting row');
-      TeamMatchData.destroy({where: {teamNumber: result[i].teamNumber, matchNumber: result[i].matchNumber}});
+      TeamMatchData.destroy({where: {teamNumber: requestData.teamNumber, matchNumber: requestData.matchNumber}});
     }
     addMatchData(res, serverEventKey, requestData.teamNumber, requestData.matchNumber, requestData.scoutName, requestData.startedWithCube, requestData.startLocationX, requestData.startLocationY, requestData.crossedAutoLine, requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbStatus, requestData.climbMethod, requestData.fouls, requestData.techFouls, requestData.yellowCard, requestData.redCard, requestData.noShow, requestData.dq, requestData.notes);
     res.sendStatus(200);
@@ -515,9 +511,11 @@ app.post('/updateTeamMatchDataList', function (req, res) {
   console.log('Got team match data list request');
   logger.info('Recieved insertMatchData');
   var reqDataArr = req.body;
+  TeamMatchData.all().then(result => {
   for (var j = 0; j < reqDataArr.length; j++) {
-    var requestData = reqDataArr[j];
-    TeamMatchData.all().then(result => {
+    
+		var requestData = reqDataArr[j];
+		var alreadyExists = false;
       for (var i = 0; i < result.length; i++) {
         if (result[i].teamNumber == requestData.teamNumber && result[i].matchNumber == requestData.matchNumber) {
           alreadyExists = true;
@@ -525,11 +523,11 @@ app.post('/updateTeamMatchDataList', function (req, res) {
       }
       if (alreadyExists) {
         console.log('Already exists. Deleting row');
-        TeamMatchData.destroy({where: {teamNumber: result[i].teamNumber, matchNumber: result[i].matchNumber}});
+        TeamMatchData.destroy({where: {teamNumber: requestData.teamNumber, matchNumber: requestData.matchNumber}});
 		      }
       addMatchData(res, serverEventKey, requestData.teamNumber, requestData.matchNumber, requestData.scoutName, requestData.startedWithCube, requestData.startLocationX, requestData.startLocationY, requestData.crossedAutoLine, requestData.autoCubeEvents, requestData.teleopCubeEvents, requestData.climbTime, requestData.climbStatus, requestData.climbMethod, requestData.fouls, requestData.techFouls, requestData.yellowCard, requestData.redCard, requestData.noShow, requestData.dq, requestData.notes);
-    });
-  }
+    }
+  });
   res.sendStatus(200);
 });
  
@@ -632,12 +630,12 @@ function addMatchData(res, eventKey, teamNumber, matchNumber, scoutName, started
     teamNumber: teamNumber,
     matchNumber: matchNumber,
     scoutName: scoutName,
-    startedWithCube: startWithCube,
+    startedWithCube: startedWithCube,
     startLocationX: startLocationX,
     startLocationY: startLocationY,
     crossedAutoLine: autoCrossed,
-    autoCubeEvents: autoEvents,
-    teleopCubeEvents: teleopEvents,
+    autoCubeEvents: JSON.stringify(autoEvents),
+    teleopCubeEvents: JSON.stringify(teleopEvents),
     climbTime: climbTime,
     climbStatus: climbingState,
     climbMethod: climbingMethod,
