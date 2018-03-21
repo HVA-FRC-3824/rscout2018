@@ -92,6 +92,11 @@ public class SavableCubes extends View implements View.OnClickListener
             if (mAuto)
             {
                 mCubeEvents = mTeamMatchData.getAutoCubeEvents();
+                if(mCubeEvents.isEmpty() && mTeamMatchData.getTeleopCubeEvents().isEmpty())
+                {
+                    mFirst = true;
+
+                }
             }
             else
             {

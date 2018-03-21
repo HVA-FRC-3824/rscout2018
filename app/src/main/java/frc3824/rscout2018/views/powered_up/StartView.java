@@ -42,6 +42,7 @@ public class StartView extends ConstraintLayout
 
         mStartLocationView = findViewById(R.id.start_location_heatmap);
         mStartWithCubeChart = findViewById(R.id.start_with_cube_pie);
+        mAutoCrossChart = findViewById(R.id.auto_cross_pie);
 
         // Setup pie charts
         mStartWithCubeChart.setUsePercentValues(true);
@@ -131,7 +132,7 @@ public class StartView extends ConstraintLayout
                         Color.GREEN,
                         Color.RED
                 });
-                mStartWithCubeChart.setData(new PieData(new String[]{"Yes", "No"}, dataset));
+                mAutoCrossChart.setData(new PieData(new String[]{"Yes", "No"}, dataset));
 
                 publishProgress();
             }

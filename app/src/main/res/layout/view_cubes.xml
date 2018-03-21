@@ -55,6 +55,7 @@
             android:text="Auto Dropped"
             android:textSize="20sp"
             android:textColor="@color/Black"/>
+        <!--
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -62,6 +63,7 @@
             android:text="Auto Launch Success"
             android:textSize="20sp"
             android:textColor="@color/Black"/>
+        -->
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -90,6 +92,7 @@
             android:text="Teleop Dropped"
             android:textSize="20sp"
             android:textColor="@color/Black"/>
+        <!--
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -97,6 +100,7 @@
             android:text="Teleop Launch Success"
             android:textSize="20sp"
             android:textColor="@color/Black"/>
+            -->
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -118,7 +122,7 @@
         android:background="@color/Black">
         <TableRow>
             <TextView
-                android:text="Short"
+                android:text="Vault"
                 android:gravity="center"
                 android:padding="3dip"
                 android:layout_margin="3dip"
@@ -126,7 +130,7 @@
                 android:textSize="20sp"
                 android:background="@color/White"/>
             <TextView
-                android:text="Medium"
+                android:text="Switch"
                 android:gravity="center"
                 android:padding="3dip"
                 android:layout_margin="3dip"
@@ -134,7 +138,7 @@
                 android:textSize="20sp"
                 android:background="@color/White"/>
             <TextView
-                android:text="Long"
+                android:text="Scale"
                 android:gravity="center"
                 android:padding="3dip"
                 android:layout_margin="3dip"
@@ -152,7 +156,7 @@
                 android:textColor="@color/Black"
                 android:textSize="20sp"
                 android:background="@color/White"
-                android:id="@+id/short_cycle"/>
+                android:id="@+id/vault_cycle"/>
             <TextView
                 android:text="0.0s"
                 android:gravity="center"
@@ -161,7 +165,7 @@
                 android:textColor="@color/Black"
                 android:textSize="20sp"
                 android:background="@color/White"
-                android:id="@+id/medium_cycle"/>
+                android:id="@+id/switch_cycle"/>
             <TextView
                 android:text="0.0s"
                 android:gravity="center"
@@ -170,7 +174,7 @@
                 android:textColor="@color/Black"
                 android:textSize="20sp"
                 android:background="@color/White"
-                android:id="@+id/long_cycle"/>
+                android:id="@+id/scale_cycle"/>
         </TableRow>
     </TableLayout>
 

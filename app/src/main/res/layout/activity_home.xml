@@ -414,7 +414,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/admin_row_2"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:id="@+id/admin_row_3">
         <info.hoang8f.widget.FButton
             android:id="@+id/generate_test_data"

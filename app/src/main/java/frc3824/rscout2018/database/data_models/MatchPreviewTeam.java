@@ -31,7 +31,7 @@ public class MatchPreviewTeam extends BaseObservable
     //region Auto Cross
     int autoCross;
 
-    @Bindable String getAutoCross()
+    @Bindable public String getAutoCross()
     {
         return String.valueOf(autoCross);
     }
@@ -108,6 +108,21 @@ public class MatchPreviewTeam extends BaseObservable
     //endregion
     //endregion
     //region Teleop Cubes
+    //region Teleop Exchange Successes
+    int teleopExchangeSuccesses;
+
+    @Bindable
+    public String getTeleopExchangeSuccesses()
+    {
+        return String.valueOf(teleopExchangeSuccesses);
+    }
+
+    public void incrementTeleopExchangeSuccesses()
+    {
+        teleopExchangeSuccesses ++;
+        notifyChange();
+    }
+    //endregion
     //region Teleop Switch Attempts
     int teleopSwitchAttempts;
 
@@ -173,69 +188,69 @@ public class MatchPreviewTeam extends BaseObservable
     //endregion
     //endregion
 
-    //region Short Cycle
-    long shortCycleSum = 0;
-    int shortCycleNum = 0;
+    //region Vault Cycle
+    long vaultCycleSum = 0;
+    int vaultCycleNum = 0;
 
     @Bindable
-    public String getAverageShortCycle()
+    public String getAverageVaultCycle()
     {
-        if(shortCycleNum == 0)
+        if(vaultCycleNum == 0)
         {
             return "N/A";
         }
 
-        return format(Locale.US, "%.2f", (float)shortCycleSum / 1000.0f / (float)shortCycleNum);
+        return format(Locale.US, "%.2f", (float) vaultCycleSum / 1000.0f / (float) vaultCycleNum);
     }
 
-    public void addToShortCycleSum(long shortCycleSum)
+    public void addToVaultCycleSum(long shortCycleSum)
     {
-        this.shortCycleSum += shortCycleSum;
-        this.shortCycleNum ++;
+        this.vaultCycleSum += shortCycleSum;
+        this.vaultCycleNum++;
         notifyChange();
     }
     //endregion
-    //region Medium Cycle
-    long mediumCycleSum = 0;
-    int mediumCycleNum = 0;
+    //region Switch Cycle
+    long switchCycleSum = 0;
+    int switchCycleNum = 0;
 
     @Bindable
-    public String getAverageMediumCycle()
+    public String getAverageSwitchCycle()
     {
-        if(mediumCycleNum == 0)
+        if(switchCycleNum == 0)
         {
             return "N/A";
         }
 
-        return format(Locale.US, "%.2f", (float)mediumCycleSum / 1000.0f / (float)mediumCycleNum);
+        return format(Locale.US, "%.2f", (float) switchCycleSum / 1000.0f / (float) switchCycleNum);
     }
 
-    public void addToMediumCycleSum(long mediumCycleSum)
+    public void addToSwitchCycleSum(long mediumCycleSum)
     {
-        this.mediumCycleSum += mediumCycleSum;
-        this.mediumCycleNum ++;
+        this.switchCycleSum += mediumCycleSum;
+        this.switchCycleNum++;
         notifyChange();
     }
     //endregion
-    //region Long Cycle
-    long longCycleSum = 0;
-    int longCycleNum = 0;
+    //region Scale Cycle
+    long scaleCycleSum = 0;
+    int scaleCycleNum = 0;
 
     @Bindable
-    public String getAverageLongCycle()
+    public String getAverageScaleCycle()
     {
-        if(longCycleNum == 0)
+        if(scaleCycleNum == 0)
         {
             return "N/A";
         }
 
-        return format(Locale.US, "%.2f", (float)longCycleSum / 1000.0f / (float)longCycleNum);
+        return format(Locale.US, "%.2f", (float) scaleCycleSum / 1000.0f / (float) scaleCycleNum);
     }
 
-    public void addToLongCycleSum(long longCycleSum)
+    public void addToScaleCycleSum(long longCycleSum)
     {
-        this.longCycleSum += longCycleSum;
-        this.longCycleNum ++;
+        this.scaleCycleSum += longCycleSum;
+        this.scaleCycleNum++;
         notifyChange();
     }
     //endregion

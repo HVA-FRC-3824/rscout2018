@@ -107,19 +107,9 @@ public interface Constants
                     // PICK_UP,
                     PLACED,
                     DROPPED,
-                    LAUNCH_SUCCESS,
+                    // LAUNCH_SUCCESS,
                     LAUNCH_FAILURE
             };
-
-            float NEAR_SWITCH_X = 0.0f;
-            float NEAR_SWITCH_Y = 0.0f;
-            float SCALE_X = 0.0f;
-            float SCALE_Y = 0.0f;
-            float FAR_SWITCH_X = 0.0f;
-            float FAR_SWITCH_Y = 0.0f;
-            float EXCHANGE_STATION_X = 0.0f;
-            float EXCHANGE_STATION_Y = 0.0f;
-
         }
 
         interface Climb
@@ -182,8 +172,8 @@ public interface Constants
 
         interface Cubes
         {
-            double SHORT_DISTANCE = 0.3;
-            double MEDIUM_DISTANCE = 0.7;
+            //double SHORT_DISTANCE = 0.3;
+            //double MEDIUM_DISTANCE = 0.7;
 
             double EXCHANGE_THESHOLD = 0.10;
             double SWITCH_THRESHOlD = 0.35;
@@ -248,20 +238,26 @@ public interface Constants
                 String SWITCH = "Switch";
                 String AUTO_SWITCH = "Auto Switch";
                 String TELEOP_SWITCH = "Teleop Switch";
+                String TELEOP_SWITCH_TIME = "Teleop Switch Time";
                 String SCALE = "Scale";
                 String AUTO_SCALE = "Auto Scale";
                 String TELEOP_SCALE = "Teleop Scale";
+                String TELEOP_SCALE_TIME = "Teleop Scale Time";
                 String EXCHANGE_STATION = "Exchange Station";
+                String EXCHANGE_STATION_TIME = "Exchange Station Time";
                 String DROP = "Drop";
                 String[] OPTIONS = {
                         ALL,
                         SWITCH,
                         AUTO_SWITCH,
                         TELEOP_SWITCH,
+                        TELEOP_SWITCH_TIME,
                         SCALE,
                         AUTO_SCALE,
                         TELEOP_SCALE,
+                        TELEOP_SCALE_TIME,
                         EXCHANGE_STATION,
+                        EXCHANGE_STATION_TIME,
                         DROP,
                 };
             }

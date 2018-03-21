@@ -29,7 +29,7 @@
 
     <TextView
         android:id="@+id/start_with_cube_label"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:text="Started with Cube"
         android:textAlignment="center"
@@ -40,14 +40,14 @@
 
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/start_with_cube_pie"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="400dp"
         app:layout_constraintLeft_toRightOf="@id/start_location_heatmap"
         app:layout_constraintTop_toBottomOf="@id/start_with_cube_label"/>
 
     <TextView
         android:id="@+id/auto_cross_label"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:text="Auto Cross"
         android:textAlignment="center"
@@ -58,7 +58,7 @@
 
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/auto_cross_pie"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="400dp"
         app:layout_constraintLeft_toRightOf="@id/start_with_cube_pie"
         app:layout_constraintTop_toBottomOf="@id/auto_cross_label"/>

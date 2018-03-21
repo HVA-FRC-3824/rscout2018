@@ -15,6 +15,7 @@ import frc3824.rscout2018.database.data_models.LowLevelStats;
 import frc3824.rscout2018.database.data_models.TeamMatchData;
 import frc3824.rscout2018.database.data_models.powered_up.CubeEvent;
 import frc3824.rscout2018.utilities.Constants;
+import frc3824.rscout2018.utilities.Utilities;
 
 /**
  * Created by frc3824
@@ -39,6 +40,9 @@ public class EventChartsActivity extends EventChartsActivityBase
         secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.TELEOP_SWITCH,
                                                  false,
                                                  new CubeTeleopSwitchOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.TELEOP_SWITCH_TIME,
+                                                  false,
+                                                 new CubeTeleopSwitchTimeOptionFilter()));
 
         secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.SCALE,
                                                  false,
@@ -49,9 +53,15 @@ public class EventChartsActivity extends EventChartsActivityBase
         secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.TELEOP_SCALE,
                                                  false,
                                                  new CubeTeleopScaleOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.TELEOP_SCALE_TIME,
+                                                 false,
+                                                 new CubeTeleopScaleTimeOptionFilter()));
         secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.EXCHANGE_STATION,
                                                  false,
                                                  new CubeExchangeStationOptionFilter()));
+        secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.EXCHANGE_STATION_TIME,
+                                                 false,
+                                                 new CubeTeleopExchangeStationTimeOptionFilter()));
         secondaryOptions.add(new SecondaryOption(Constants.PickList.SecondaryDropdown.PowerCubes.DROP,
                                                  false,
                                                  new CubeDropOptionFilter()));
@@ -183,10 +193,7 @@ public class EventChartsActivity extends EventChartsActivityBase
                 int total = 0;
                 for (CubeEvent cubeEvent : tmd.getAutoCubeEvents())
                 {
-                    if (((cubeEvent.getLocationX() > Constants.TeamStats.Cubes.EXCHANGE_THESHOLD &&
-                            cubeEvent.getLocationX() < Constants.TeamStats.Cubes.SWITCH_THRESHOlD) ||
-                            (cubeEvent.getLocationX() < 1 - Constants.TeamStats.Cubes.EXCHANGE_THESHOLD &&
-                                    cubeEvent.getLocationX() > 1 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD)) &&
+                    if ((Utilities.isSwitch(cubeEvent.getLocationX())) &&
                             (cubeEvent.getEvent()
                                       .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
                                     cubeEvent.getEvent()
@@ -198,10 +205,7 @@ public class EventChartsActivity extends EventChartsActivityBase
 
                 for (CubeEvent cubeEvent : tmd.getTeleopCubeEvents())
                 {
-                    if (((cubeEvent.getLocationX() > Constants.TeamStats.Cubes.EXCHANGE_THESHOLD &&
-                            cubeEvent.getLocationX() < Constants.TeamStats.Cubes.SWITCH_THRESHOlD) ||
-                            (cubeEvent.getLocationX() < 1 - Constants.TeamStats.Cubes.EXCHANGE_THESHOLD &&
-                                    cubeEvent.getLocationX() > 1 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD)) &&
+                    if ((Utilities.isSwitch(cubeEvent.getLocationX())) &&
                             (cubeEvent.getEvent()
                                       .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
                                     cubeEvent.getEvent()
@@ -379,6 +383,78 @@ public class EventChartsActivity extends EventChartsActivityBase
     }
     //endregion
 
+    //region Cube Teleop Switch Time Filter
+    private class CubeTeleopSwitchTimeOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            return 0;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            ArrayList<Double> list = new ArrayList<>();
+            for (TeamMatchData tmd : tmds)
+            {
+                CubeEvent pickup = null;
+                for (CubeEvent cubeEvent : tmd.getTeleopCubeEvents())
+                {
+                    if (pickup != null &&
+                            (cubeEvent.getEvent()
+                                      .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                                    cubeEvent.getEvent()
+                                             .equals(Constants.MatchScouting.CubeEvents.PLACED)))
+                    {
+                        if(Utilities.isSwitch(cubeEvent.getLocationX()))
+                        {
+                            double time = cubeEvent.getTime() - pickup.getTime();
+                            time /= 1000.0;
+                            list.add(time);
+                        }
+                        pickup = null;
+                    }
+                    else if(pickup == null && cubeEvent.getEvent().equals(Constants.MatchScouting.CubeEvents.PICK_UP))
+                    {
+                        pickup = cubeEvent;
+                    }
+                }
+            }
+            return LowLevelStats.fromDouble(list);
+        }
+
+        @Override
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
+
+            final SparseArray<Double>sortValues = new SparseArray<>();
+            for (int teamNumber : sortTeams)
+            {
+                LowLevelStats lls = createLlsValue(map.get(teamNumber));
+                sortValues.put(teamNumber, lls.getAverage());
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
     //region Cube Scale Filter
     private class CubeScaleOptionFilter implements SecondaryOption.Filter
     {
@@ -456,7 +532,7 @@ public class EventChartsActivity extends EventChartsActivityBase
     }
     //endregion
 
-    //region Cube AutoScale Filter
+    //region Cube Auto Scale Filter
     private class CubeAutoScaleOptionFilter implements SecondaryOption.Filter
     {
 
@@ -586,7 +662,79 @@ public class EventChartsActivity extends EventChartsActivityBase
     }
     //endregion
 
-    //region Cube Teleop Scale Filter
+    //region Cube Teleop Scale Time Filter
+    private class CubeTeleopScaleTimeOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            return 0;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            ArrayList<Double> list = new ArrayList<>();
+            for (TeamMatchData tmd : tmds)
+            {
+                CubeEvent pickup = null;
+                for (CubeEvent cubeEvent : tmd.getTeleopCubeEvents())
+                {
+                    if (pickup != null &&
+                            (cubeEvent.getEvent()
+                                      .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                                    cubeEvent.getEvent()
+                                             .equals(Constants.MatchScouting.CubeEvents.PLACED)))
+                    {
+                        if(Utilities.isSwitch(cubeEvent.getLocationX()))
+                        {
+                            double time = cubeEvent.getTime() - pickup.getTime();
+                            time /= 1000.0;
+                            list.add(time);
+                        }
+                        pickup = null;
+                    }
+                    else if(pickup == null && cubeEvent.getEvent().equals(Constants.MatchScouting.CubeEvents.PICK_UP))
+                    {
+                        pickup = cubeEvent;
+                    }
+                }
+            }
+            return LowLevelStats.fromDouble(list);
+        }
+
+        @Override
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
+
+            final SparseArray<Double>sortValues = new SparseArray<>();
+            for (int teamNumber : sortTeams)
+            {
+                LowLevelStats lls = createLlsValue(map.get(teamNumber));
+                sortValues.put(teamNumber, lls.getAverage());
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Cube Teleop Exchange Station Filter
     private class CubeExchangeStationOptionFilter implements SecondaryOption.Filter
     {
 
@@ -643,6 +791,78 @@ public class EventChartsActivity extends EventChartsActivityBase
                 public int compare(Integer o1, Integer o2)
                 {
                     return -Double.compare(sortValues.get(o1), sortValues.get(o2));
+                }
+            });
+
+            return sortTeams;
+        }
+    }
+    //endregion
+
+    //region Cube Teleop Exchange Station Time Filter
+    private class CubeTeleopExchangeStationTimeOptionFilter implements SecondaryOption.Filter
+    {
+
+        @Override
+        public float createBarValue(ArrayList<TeamMatchData> tmds)
+        {
+            return 0;
+        }
+
+        @Override
+        public LowLevelStats createLlsValue(ArrayList<TeamMatchData> tmds)
+        {
+            ArrayList<Double> list = new ArrayList<>();
+            for (TeamMatchData tmd : tmds)
+            {
+                CubeEvent pickup = null;
+                for (CubeEvent cubeEvent : tmd.getTeleopCubeEvents())
+                {
+                    if (pickup != null &&
+                            (cubeEvent.getEvent()
+                                      .equals(Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS) ||
+                                    cubeEvent.getEvent()
+                                             .equals(Constants.MatchScouting.CubeEvents.PLACED)))
+                    {
+                        if(Utilities.isExchange(cubeEvent.getLocationX()))
+                        {
+                            double time = cubeEvent.getTime() - pickup.getTime();
+                            time /= 1000.0;
+                            list.add(time);
+                        }
+                        pickup = null;
+                    }
+                    else if(pickup == null && cubeEvent.getEvent().equals(Constants.MatchScouting.CubeEvents.PICK_UP))
+                    {
+                        pickup = cubeEvent;
+                    }
+                }
+            }
+            return LowLevelStats.fromDouble(list);
+        }
+
+        @Override
+        public ArrayList<Integer> sort(SparseArray<ArrayList<TeamMatchData>> map)
+        {
+            ArrayList<Integer> sortTeams = new ArrayList();
+            for(int i = 0, end = map.size(); i < end; i++)
+            {
+                sortTeams.add(map.keyAt(i));
+            }
+
+            final SparseArray<Double>sortValues = new SparseArray<>();
+            for (int teamNumber : sortTeams)
+            {
+                LowLevelStats lls = createLlsValue(map.get(teamNumber));
+                sortValues.put(teamNumber, lls.getAverage());
+            }
+
+            Collections.sort(sortTeams, new Comparator<Integer>()
+            {
+                @Override
+                public int compare(Integer o1, Integer o2)
+                {
+                    return Double.compare(sortValues.get(o1), sortValues.get(o2));
                 }
             });
 

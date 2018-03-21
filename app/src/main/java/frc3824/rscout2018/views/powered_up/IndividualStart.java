@@ -20,6 +20,7 @@ public class IndividualStart extends ConstraintLayout
     TeamMatchData mTeamMatchData;
     IndividualStartLocation mIndividualStartLocation = null;
     TextView mStartedWithCube;
+    TextView mAutoCross;
 
 
     public IndividualStart(Context context, @Nullable AttributeSet attrs)
@@ -31,6 +32,7 @@ public class IndividualStart extends ConstraintLayout
 
         mIndividualStartLocation = findViewById(R.id.location);
         mStartedWithCube = findViewById(R.id.cube);
+        mAutoCross = findViewById(R.id.cross);
 
         if(mTeamMatchData != null)
         {
@@ -75,6 +77,16 @@ public class IndividualStart extends ConstraintLayout
                 {
                     mStartedWithCube.setText("Started without Cube");
                     mStartedWithCube.setTextColor(Color.RED);
+                }
+                if(mTeamMatchData.getCrossedAutoLine())
+                {
+                    mAutoCross.setText("Crossed in Auto");
+                    mAutoCross.setTextColor(Color.GREEN);
+                }
+                else
+                {
+                    mAutoCross.setText("Did not Cross in Auto");
+                    mAutoCross.setTextColor(Color.RED);
                 }
                 mIndividualStartLocation.invalidate();
                 mStartedWithCube.invalidate();

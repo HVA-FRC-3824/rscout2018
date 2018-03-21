@@ -46,6 +46,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Teleop Exchange:"
+        android:textColor="@color/Black"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Teleop Switch:"
         android:textColor="@color/Black"
         android:textSize="20sp"/>
@@ -60,21 +67,21 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Short Cycle:"
+        android:text="Exchange Cycle:"
         android:textColor="@color/Black"
         android:textSize="20sp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Medium Cycle:"
+        android:text="Switch Cycle:"
         android:textColor="@color/Black"
         android:textSize="20sp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Long Cycle:"
+        android:text="Scale Cycle:"
         android:textColor="@color/Black"
         android:textSize="20sp"/>
 

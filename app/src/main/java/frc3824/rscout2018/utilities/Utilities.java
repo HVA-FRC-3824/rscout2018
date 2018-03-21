@@ -109,4 +109,30 @@ public class Utilities {
 
         return inSampleSize;
     }
+
+    public static boolean isExchange(float x)
+    {
+        return x < Constants.TeamStats.Cubes.EXCHANGE_THESHOLD || x > 1.0 - Constants.TeamStats.Cubes.EXCHANGE_THESHOLD;
+    }
+
+    public static boolean isScale(float x)
+    {
+        return x > Constants.TeamStats.Cubes.SWITCH_THRESHOlD && x < 1.0 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD;
+    }
+
+    public static boolean isSwitch(float x)
+    {
+        return (x < Constants.TeamStats.Cubes.SWITCH_THRESHOlD || x > 1.0 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD) &&
+                !isExchange(x);
+    }
+
+    public static boolean isAllianceSwitch(float start_x, float x)
+    {
+        return isSwitch(x) && Math.abs(x - start_x) < Constants.TeamStats.Cubes.SWITCH_THRESHOlD;
+    }
+
+    public static boolean isOppSwitch(float start_x, float x)
+    {
+        return isSwitch(x) && Math.abs(x - start_x) > Constants.TeamStats.Cubes.SWITCH_THRESHOlD;
+    }
 }

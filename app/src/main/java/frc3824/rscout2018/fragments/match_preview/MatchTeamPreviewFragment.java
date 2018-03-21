@@ -265,39 +265,42 @@ public class MatchTeamPreviewFragment extends Fragment implements OnClickListene
                             break;
                         case Constants.MatchScouting.CubeEvents.PLACED:
                         case Constants.MatchScouting.CubeEvents.LAUNCH_SUCCESS:
-                            if (cubeEvent.getLocationX() < Constants.TeamStats.Cubes.EXCHANGE_THESHOLD ||
-                                    cubeEvent.getLocationX() > 1.0 - Constants.TeamStats.Cubes.EXCHANGE_THESHOLD)
+                            if (Utilities.isExchange(cubeEvent.getLocationX()))
                             {
-                                // exchange
+                                mPreviewTeam.incrementTeleopExchangeSuccesses();
                             }
-                            else if (cubeEvent.getLocationX() < Constants.TeamStats.Cubes.SWITCH_THRESHOlD ||
-                                    cubeEvent.getLocationX() > 1.0 - Constants.TeamStats.Cubes.SWITCH_THRESHOlD)
+                            else if (Utilities.isSwitch(cubeEvent.getLocationX()))
                             {
                                 mPreviewTeam.incrementTeleopSwitchSuccesses();
                             }
-                            else
+                            else if(Utilities.isScale(cubeEvent.getLocationX()))
                             {
                                 mPreviewTeam.incrementTeleopScaleSuccesses();
+                            }
+                            else
+                            {
+                                assert (false);
                             }
 
                             if (!first)
                             {
-                                distance = Math.sqrt(Math.pow(cubeEvent.getLocationX() - pickup.getLocationX(),
-                                                              2) + Math.pow(cubeEvent.getLocationY() - pickup
-                                        .getLocationY(), 2));
                                 time = cubeEvent.getTime() - pickup.getTime();
 
-                                if (distance < Constants.TeamStats.Cubes.SHORT_DISTANCE)
+                                if (Utilities.isExchange(cubeEvent.getLocationX()))
                                 {
-                                    mPreviewTeam.addToShortCycleSum(time);
+                                    mPreviewTeam.addToVaultCycleSum(time);
                                 }
-                                else if (distance < Constants.TeamStats.Cubes.MEDIUM_DISTANCE)
+                                else if (Utilities.isSwitch(cubeEvent.getLocationX()))
                                 {
-                                    mPreviewTeam.addToMediumCycleSum(time);
+                                    mPreviewTeam.addToSwitchCycleSum(time);
+                                }
+                                else if(Utilities.isScale(cubeEvent.getLocationX()))
+                                {
+                                    mPreviewTeam.addToScaleCycleSum(time);
                                 }
                                 else
                                 {
-                                    mPreviewTeam.addToLongCycleSum(time);
+                                    assert (false);
                                 }
                             }
                             pickup = null;
