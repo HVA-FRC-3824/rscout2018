@@ -156,10 +156,10 @@ const TeamMatchData = sequelize.define('teammatchdata', {
     type: Sequelize.BOOLEAN
 }, 
   autoCubeEvents: {
-    type: Sequelize.STRING(2047)
+    type: Sequelize.STRING(4095)
   },
   teleopCubeEvents: {
-    type: Sequelize.STRING(2047)
+    type: Sequelize.STRING(4095)
   },
   climbTime: {
     type: Sequelize.FLOAT
@@ -260,7 +260,7 @@ TeamPitData.sync({force: false}).then(() => {
 });
  
 //Sets event key so that we don't send it with every request
-var serverEventKey = '2018scmb';
+var serverEventKey = '2018tnkn';
  
 //Sets up JSON parsing for incoming data
 var bodyParser = require('body-parser');
