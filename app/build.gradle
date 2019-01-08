@@ -62,7 +62,7 @@ dependencies {
     compile 'com.sdsmdg.tastytoast:tastytoast:0.1.1'
     compile 'com.github.bumptech.glide:glide:4.1.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.1.1'
-    compile 'com.flurgle:camerakit:0.9.17'
+    //compile 'com.flurgle:camerakit:0.9.17'
     compile 'com.synnapps:carouselview:0.1.4'
     compile 'com.ogaclejapan.smarttablayout:library:1.6.1@aar'
     compile 'com.ogaclejapan.smarttablayout:utils-v13:1.6.1@aar'
