@@ -22,7 +22,6 @@ android {
         throw new GradleException("Could not read version.properties!")
     }
 
-
     defaultConfig {
         applicationId "frc3824.rscout2018"
         minSdkVersion 23 // Needs to stay for the Nexus 7
