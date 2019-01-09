@@ -74,11 +74,10 @@ public class PitPictureFragment extends PitScoutFragment implements View.OnClick
         mCancel.setVisibility(View.GONE);
 
         // Inflate the Camera view
-        /*
-        mCameraView = mView.findViewById(R.id.camera);
-        mCameraView.setCameraListener(new CameraListener());
-        mCameraView.setVisibility(View.GONE);
-        */
+        //mCameraView = mView.findViewById(R.id.camera);
+        //mCameraView.setCameraListener(new CameraListener());
+        //mCameraView.setVisibility(View.GONE);
+
         // Inflate the carousel
         mCarouselView = mView.findViewById(R.id.carousel);
         mCarouselView.setImageListener(this);
@@ -135,19 +134,20 @@ public class PitPictureFragment extends PitScoutFragment implements View.OnClick
     @Override
     public void onClick(View view)
     {
+        /*
         switch (view.getId())
         {
             // Start the camera and  hide the carousel when taking a picture
             case R.id.take_picture:
                 if(mTakingPicture)
                 {
-                    //mCameraView.captureImage();
+                    mCameraView.captureImage();
                     mTakingPicture = false;
                 }
                 else
                 {
                     mCancel.setVisibility(View.VISIBLE);
-                    //mCameraView.setVisibility(View.VISIBLE);
+                    mCameraView.setVisibility(View.VISIBLE);
                     mCarouselView.setVisibility(View.GONE);
                     mSetDefault.setVisibility(View.GONE);
                     mDelete.setVisibility(View.GONE);
@@ -157,7 +157,7 @@ public class PitPictureFragment extends PitScoutFragment implements View.OnClick
             // Cancel taking a picture
             case R.id.cancel:
                 mCancel.setVisibility(View.GONE);
-                //mCameraView.setVisibility(View.GONE);
+                mCameraView.setVisibility(View.GONE);
                 if(mPictureFilepaths.size() > 0)
                 {
                     mCarouselView.setVisibility(View.VISIBLE);
@@ -190,6 +190,7 @@ public class PitPictureFragment extends PitScoutFragment implements View.OnClick
                 }
                 break;
         }
+        */
     }
 
     /**
@@ -206,7 +207,7 @@ public class PitPictureFragment extends PitScoutFragment implements View.OnClick
         }
         // todo(Andrew): error
     }
-/*
+    /*
     // todo Document
     private class CameraListener extends com.flurgle.camerakit.CameraListener
     {
@@ -271,5 +272,5 @@ public class PitPictureFragment extends PitScoutFragment implements View.OnClick
             mDelete.setVisibility(View.VISIBLE);
         }
     }
-*/
+    */
 }

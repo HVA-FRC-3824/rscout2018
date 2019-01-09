@@ -4,7 +4,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-<!--
+    <!--
     <com.flurgle.camerakit.CameraView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -15,7 +15,7 @@
         app:ckFlash="off"
         app:ckZoom="pinch"
         app:ckJpegQuality="100"/>
--->
+    -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
