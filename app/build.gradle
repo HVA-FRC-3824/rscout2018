@@ -7,20 +7,20 @@ android {
     def versionPropsFile = file('version.properties')
     def versionBuild
 
-    if (versionPropsFile.canRead()) {
-        Properties versionProps = new Properties()
-
-        versionProps.load(new FileInputStream(versionPropsFile))
-
-        def code = versionProps['VERSION_CODE'].toInteger() + 1
-
-        versionBuild = code.toString()
-
-        versionProps['VERSION_CODE'] = versionBuild
-        versionProps.store(versionPropsFile.newWriter(), null)
-    } else {
-        throw new GradleException("Could not read version.properties!")
-    }
+//    if (versionPropsFile.canRead()) {
+//        Properties versionProps = new Properties()
+//
+//        versionProps.load(new FileInputStream(versionPropsFile))
+//
+//        def code = versionProps['VERSION_CODE'].toInteger() + 1
+//
+//        versionBuild = code.toString()
+//
+//        versionProps['VERSION_CODE'] = versionBuild
+//        versionProps.store(versionPropsFile.newWriter(), null)
+//    } else {
+//        throw new GradleException("Could not read version.properties!")
+//    }
 
     defaultConfig {
         applicationId "frc3824.rscout2018"
